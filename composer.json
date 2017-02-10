@@ -1,0 +1,27 @@
+{
+    "name": "Lab404/laravel-impersonate",
+    "description": "Laravel Impersonate is a plugin that allows to you to authenticate as your users.",
+    "type": "library",
+    "require": {
+        "laravel/laravel": "~5.4"
+    },
+    "license": "MIT",
+    "authors": [
+        {
+            "name": "404lab",
+            "email": "web@404lab.fr"
+        }
+    ],
+    "autoload": {
+      "psr-4": {
+        "Lab404\\Impersonate\\": "src/"
+      }
+    },
+    "autoload-dev": {
+      "psr-4": {
+        "Lab404\\Tests\\": "tests/"
+      }
+    },
+    "minimum-stability": "dev",
+    "prefer-stable": true
+}
