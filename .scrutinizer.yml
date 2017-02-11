@@ -1,0 +1,9 @@
+checks:
+    php:
+        code_rating: true
+filter:
+    paths: ["src/*.php"]
+    excluded_paths:
+        - "tests/"
+        - "config/"
+        - "migrations/"

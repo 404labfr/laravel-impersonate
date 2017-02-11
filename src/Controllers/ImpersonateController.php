@@ -40,6 +40,12 @@ class ImpersonateController extends Controller
             abort(403);
         }
 
+        // The user 
+        if ($request->user()->canImpersonate())
+        {
+            abort(403);
+        }
+
         if ($this->manager->take($request->user(), $this->manager->findUserById($id)))
         {
             return redirect()->to($this->manager->getTakeRedirectTo());
