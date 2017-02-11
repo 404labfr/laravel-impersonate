@@ -40,16 +40,17 @@ class ImpersonateServiceProvider extends \Illuminate\Support\ServiceProvider
             return new ImpersonateManager($app);
         });
 
+        $this->app->alias(ImpersonateManager::class, 'impersonate');
+
         $router = $this->app['router'];
         $router->group([
             'prefix'     => '/impersonate',
             'middleware' => ['web'],
-            'as'         => 'impersonate.',
             'namespace'  => 'Lab404\\Impersonate\\Controllers'
         ], function (Router $router)
         {
-            $router->get('/take/{id}', 'ImpersonateController@take')->name('take');
-            $router->get('/leave', 'ImpersonateController@leave')->name('leave');
+            $router->get('/take/{id}', 'ImpersonateController@take')->name('impersonate');
+            $router->get('/leave', 'ImpersonateController@leave')->name('impersonate.leave');
         });
     }
 
@@ -62,6 +63,6 @@ class ImpersonateServiceProvider extends \Illuminate\Support\ServiceProvider
     {
         $configPath = __DIR__ . '/../config/' . $this->configName . '.php';
 
-        $this->publishes([$configPath => config_path($this->configName . '.php')], 'config');
+        $this->publishes([$configPath => config_path($this->configName . '.php')], 'impersonate');
     }
 }
