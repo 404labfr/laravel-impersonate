@@ -1,9 +1,7 @@
 <?php
 
 return [
-
-    'model' => \App\User::class,
-
+    
     /**
      * The session key used to store the original user id.
      */

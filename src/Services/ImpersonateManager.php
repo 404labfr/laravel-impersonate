@@ -29,7 +29,7 @@ class ImpersonateManager
      */
     public function findUserById($id)
     {
-        $model = $this->app['config']->get('laravel-impersonate.model');
+        $model = $this->app['config']->get('auth.providers.users.model');
 
         $user = call_user_func([
             $model,
