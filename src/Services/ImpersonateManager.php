@@ -66,7 +66,8 @@ class ImpersonateManager
         try
         {
             session()->put(config('laravel-impersonate.session_key'), $from->id);
-            Auth::login($to);
+            $this->app['auth']->logout();
+            $this->app['auth']->login($to);
 
         } catch (\Exception $e)
         {
@@ -84,8 +85,9 @@ class ImpersonateManager
     {
         try
         {
+            $this->app['auth']->logout();
+            $this->app['auth']->loginUsingId($this->getImpersonatorId());
             $this->clear();
-            Auth::loginUsingId($this->getImpersonatorId());
         } catch (\Exception $e) {
             unset($e);
             return false;
