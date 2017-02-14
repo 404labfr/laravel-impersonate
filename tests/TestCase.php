@@ -40,7 +40,6 @@ class TestCase extends \Orchestra\Testbench\TestCase
 
         // Setup the right User class (using stub)
         $app['config']->set('auth.providers.users.model', User::class);
-        $app['config']->set('laravel-impersonate.model', User::class);
     }
 
     /**

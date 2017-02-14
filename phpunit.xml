@@ -11,7 +11,9 @@
          stopOnFailure="false">
     <testsuites>
         <testsuite name="Laravel Impersonate Test Suite">
-            <directory>tests</directory>
+            <file>tests/ImpersonateManagerTest.php</file>
+            <file>tests/ModelImpersonateTest.php</file>
+            <file>tests/BladeDirectivesTest.php</file>
         </testsuite>
     </testsuites>
     <filter>

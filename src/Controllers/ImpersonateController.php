@@ -40,8 +40,7 @@ class ImpersonateController extends Controller
             abort(403);
         }
 
-        // The user 
-        if ($request->user()->canImpersonate())
+        if (!$request->user()->canImpersonate())
         {
             abort(403);
         }
@@ -63,7 +62,6 @@ class ImpersonateController extends Controller
         {
             abort(403);
         }
-
         
         $this->manager->leave();
 

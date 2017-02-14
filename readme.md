@@ -118,6 +118,25 @@ Available options:
     // Only used in the built-in controller.
     'leave_redirect_to' => '/'
 ```
+## Blade
+
+There is two Blade directives available.
+
+### When the user can impersonate
+
+```blade
+@canImpersonate
+    <a href="{{ route('impersonate', $user->id) }}">Impersonate this user</a>
+@endCanImpersonate
+```
+
+### When the user is impersonated
+
+```blade
+@impersonating
+    <a href="{{ route('impersonate.leave') }}">Leave impersonation</a>
+@endImpersonating
+```
 
 ## Tests
 
