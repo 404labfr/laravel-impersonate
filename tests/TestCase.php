@@ -22,6 +22,8 @@ class TestCase extends \Orchestra\Testbench\TestCase
             '--database' => 'testbench',
             '--realpath' => realpath(__DIR__.'/../migrations'),
         ]);
+
+        $this->setUpRoutes();
     }
 
     /**
@@ -52,5 +54,17 @@ class TestCase extends \Orchestra\Testbench\TestCase
             ConsoleServiceProvider::class,
             ImpersonateServiceProvider::class,
         ];
+    }
+
+    /**
+     * @return void
+     */
+    protected function setUpRoutes()
+    {
+        // Add routes by calling macro
+        $this->app['router']->impersonate();
+
+        // Refresh named routes
+        $this->app['router']->getRoutes()->refreshNameLookups();
     }
 }

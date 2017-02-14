@@ -44,14 +44,9 @@ class ImpersonateServiceProvider extends \Illuminate\Support\ServiceProvider
         $this->app->alias(ImpersonateManager::class, 'impersonate');
 
         $router = $this->app['router'];
-        $router->group([
-            'prefix'     => '/impersonate',
-            'middleware' => ['web'],
-            'namespace'  => 'Lab404\\Impersonate\\Controllers'
-        ], function (Router $router)
-        {
-            $router->get('/take/{id}', 'ImpersonateController@take')->name('impersonate');
-            $router->get('/leave', 'ImpersonateController@leave')->name('impersonate.leave');
+        $router->macro('impersonate', function () use ($router) {
+            $router->get('/impersonate/take/{id}', '\Lab404\Impersonate\Controllers\ImpersonateController@take')->name('impersonate');
+            $router->get('/impersonate/leave', '\Lab404\Impersonate\Controllers\ImpersonateController@leave')->name('impersonate.leave');
         });
 
         $this->registerBladeDirectives();
