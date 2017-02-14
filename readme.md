@@ -36,7 +36,7 @@ Auth::user()->impersonate($other_user);
 
 Leave impersonation:
 ```php
-Auth::user()->leaveImpersonation();`
+Auth::user()->leaveImpersonation();
 // You're now logged as your original user.
 ```
 
