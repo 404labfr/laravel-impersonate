@@ -2,8 +2,6 @@
 
 namespace Lab404\Tests;
 
-use Lab404\Impersonate\Services\ImpersonateManager;
-
 class RoutesTest extends TestCase
 {
     private $routes;
