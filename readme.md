@@ -42,7 +42,12 @@ Auth::user()->leaveImpersonation();
 
 ### Using the built-in controller
 
+In your routes file you must call the `impersonate` route macro. 
+```php
+Route::impersonate();
 ```
+
+```php
 // Where $id is the ID of the user you want impersonate
 route('impersonate', $id)
 
