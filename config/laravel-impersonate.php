@@ -19,6 +19,13 @@ return [
      *
      * Only used in the built-in controller.
      */
-    'leave_redirect_to' => '/'
+    'leave_redirect_to' => '/',
+
+    /**
+     * The URI to redirect when the impersonator doesnt have an acces to a route
+     *
+     * Only used in the middleware CantAccesIfImpersonate.
+     */
+    'cant_acces_if_impersonate_redirect_to' => '/'
 
 ];
