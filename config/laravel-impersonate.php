@@ -19,6 +19,6 @@ return [
      *
      * Only used in the built-in controller.
      */
-    'leave_redirect_to' => '/'
+    'leave_redirect_to' => '/',
 
 ];

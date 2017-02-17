@@ -4,6 +4,7 @@ namespace Lab404\Impersonate;
 
 use Illuminate\Routing\Router;
 use Illuminate\Support\Facades\Blade;
+use Lab404\Impersonate\Middleware\CantAccesIfImpersonate;
 use Lab404\Impersonate\Services\ImpersonateManager;
 
 /**
@@ -50,6 +51,8 @@ class ImpersonateServiceProvider extends \Illuminate\Support\ServiceProvider
         });
 
         $this->registerBladeDirectives();
+
+        $this->app['router']->aliasMiddleware('impersonate.protect', CantAccesIfImpersonate::class);
     }
 
     /**
