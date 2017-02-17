@@ -15,7 +15,7 @@
             <file>tests/ModelImpersonateTest.php</file>
             <file>tests/BladeDirectivesTest.php</file>
             <file>tests/RoutesTest.php</file>
-            <file>tests/CantAccesIfImpersonateMiddlewareTest.php</file>
+            <file>tests/MiddlewareCantAccesIfImpersonateTest.php</file>
         </testsuite>
     </testsuites>
     <filter>

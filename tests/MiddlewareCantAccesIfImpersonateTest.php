@@ -6,7 +6,7 @@ use Illuminate\Http\Request;
 use Lab404\Tests\Stubs\Models\User;
 use Lab404\Impersonate\Middleware\CantAccesIfImpersonate;
 
-class CantAccesIfImpersonateMiddlewareTest extends TestCase
+class MiddlewareCantAccesIfImpersonateTest extends TestCase
 {
     /** @var  User */
     protected $user;
