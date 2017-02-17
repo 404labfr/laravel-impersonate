@@ -3,6 +3,7 @@
 namespace Lab404\Impersonate\Middleware;
 
 use Closure;
+use Illuminate\Support\Facades\Redirect;
 use Lab404\Impersonate\Services\ImpersonateManager;
 
 class CantAccesIfImpersonate
@@ -19,7 +20,7 @@ class CantAccesIfImpersonate
         $impersonate_manager = app()->make(ImpersonateManager::class);
 
         if ($impersonate_manager->isImpersonating()) {
-            return redirect($impersonate_manager->getCantAccesIfImpersonateRedirectTo());
+            return Redirect::back();
         }
 
         return $next($request);
