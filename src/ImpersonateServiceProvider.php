@@ -4,7 +4,7 @@ namespace Lab404\Impersonate;
 
 use Illuminate\Routing\Router;
 use Illuminate\Support\Facades\Blade;
-use Lab404\Impersonate\Middleware\CantAccesIfImpersonate;
+use Lab404\Impersonate\Middleware\ProtectFromImpersonation;
 use Lab404\Impersonate\Services\ImpersonateManager;
 
 /**
@@ -52,7 +52,7 @@ class ImpersonateServiceProvider extends \Illuminate\Support\ServiceProvider
 
         $this->registerBladeDirectives();
 
-        $this->app['router']->aliasMiddleware('impersonate.protect', CantAccesIfImpersonate::class);
+        $this->app['router']->aliasMiddleware('impersonate.protect', ProtectFromImpersonation::class);
     }
 
     /**
@@ -75,19 +75,19 @@ class ImpersonateServiceProvider extends \Illuminate\Support\ServiceProvider
      */
     protected function registerBladeDirectives()
     {
-        Blade::directive('impersonating', function($expression) {
+        Blade::directive('impersonating', function() {
             return '<?php if (app()["auth"]->check() && app()["auth"]->user()->isImpersonated()): ?>';
         });
 
-        Blade::directive('endImpersonating', function($expression) {
+        Blade::directive('endImpersonating', function() {
             return '<?php endif; ?>';
         });
 
-        Blade::directive('canImpersonate', function($expression) {
+        Blade::directive('canImpersonate', function() {
             return '<?php if (app()["auth"]->check() && app()["auth"]->user()->canImpersonate()): ?>';
         });
 
-        Blade::directive('endCanImpersonate', function($expression) {
+        Blade::directive('endCanImpersonate', function() {
             return '<?php endif; ?>';
         });
     }

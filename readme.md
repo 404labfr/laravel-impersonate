@@ -144,11 +144,11 @@ There is two Blade directives available.
 ```
 
 ## Middleware
-**CantAccesIfImpersonate**
 
-You can use the middleware 'impersonate.protect' to protect your routes against user impersonation.
+**Protect From Impersonation**
 
-Example: User's Bank Card, User's preferences ...
+You can use the middleware `impersonate.protect` to protect your routes against user impersonation.  
+This middleware can be useful when you want to protect specific pages like users subscriptions, users credit cards, ... 
 
 ```php
 Router::get('/my-credit-card', function() {

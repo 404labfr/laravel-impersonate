@@ -6,14 +6,14 @@ use Closure;
 use Illuminate\Support\Facades\Redirect;
 use Lab404\Impersonate\Services\ImpersonateManager;
 
-class CantAccesIfImpersonate
+class ProtectFromImpersonation
 {
     /**
      * Handle an incoming request.
      *
-     * @param  \Illuminate\Http\Request  $request
-     * @param  \Closure  $next
-     * @return mixed
+     * @param   \Illuminate\Http\Request  $request
+     * @param   \Closure  $next
+     * @return  mixed
      */
     public function handle($request, Closure $next)
     {
