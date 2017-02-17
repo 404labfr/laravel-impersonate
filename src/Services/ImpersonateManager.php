@@ -127,4 +127,12 @@ class ImpersonateManager
     {
         return config('laravel-impersonate.leave_redirect_to');
     }
+
+    /**
+     * @return  string
+     */
+    public function getCantAccesIfImpersonateRedirectTo()
+    {
+        return config('laravel-impersonate.cant_acces_if_impersonate_redirect_to');
+    }
 }
