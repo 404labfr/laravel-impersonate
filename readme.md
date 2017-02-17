@@ -143,6 +143,10 @@ There is two Blade directives available.
 @endImpersonating
 ```
 
+## Middleware
+CantAccesIfImpersonate : protect some routes when there is an impersonation.
+Example: User's Bank Card, User's preferences ...
+
 ## Tests
 
 ```bash
