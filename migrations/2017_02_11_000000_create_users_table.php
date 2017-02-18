@@ -22,7 +22,7 @@ class CreateUsersTable extends Migration
             $table->string('email')->unique();
             $table->string('password');
             $table->boolean('is_admin')->default(0)->index();
-            $table->boolean('can_be_impersonate')->default(1)->index();
+            $table->boolean('can_be_impersonated')->default(1)->index();
             $table->rememberToken();
             $table->timestamps();
         });
@@ -33,7 +33,7 @@ class CreateUsersTable extends Migration
                 'email'      => 'admin@test.rocks',
                 'password'   => bcrypt('password'),
                 'is_admin'   => 1,
-                'can_be_impersonate' => 1,
+                'can_be_impersonated' => 1,
                 'created_at' => Carbon::now()->toDateTimeString(),
             ],
             [
@@ -41,7 +41,7 @@ class CreateUsersTable extends Migration
                 'email'      => 'user@test.rocks',
                 'password'   => bcrypt('password'),
                 'is_admin'   => 0,
-                'can_be_impersonate' => 1,
+                'can_be_impersonated' => 1,
                 'created_at' => Carbon::now()->toDateTimeString(),
             ],
             [
@@ -49,7 +49,7 @@ class CreateUsersTable extends Migration
                 'email'      => 'superadmin@test.rocks',
                 'password'   => bcrypt('password'),
                 'is_admin'   => 1,
-                'can_be_impersonate' => 0,
+                'can_be_impersonated' => 0,
                 'created_at' => Carbon::now()->toDateTimeString(),
             ],
         ]);

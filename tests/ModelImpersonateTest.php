@@ -24,14 +24,14 @@ class ModelImpersonateTest extends TestCase
     public function it_can_be_impersonate()
     {
         $user = $this->app['auth']->loginUsingId(1);
-        $this->assertTrue($user->canBeImpersonate());
+        $this->assertTrue($user->canBeImpersonated());
     }
 
     /** @test */
     public function it_cant_be_impersonate()
     {
         $user = $this->app['auth']->loginUsingId(3);
-        $this->assertFalse($user->canBeImpersonate());
+        $this->assertFalse($user->canBeImpersonated());
     }
 
     /** @test */

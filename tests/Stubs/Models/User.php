@@ -35,8 +35,8 @@ class User extends Authenticatable
     /*
      * @return bool
      */
-    public function canBeImpersonate()
+    public function canBeImpersonated()
     {
-        return $this->attributes['can_be_impersonate'] == 1;
+        return $this->attributes['can_be_impersonated'] == 1;
     }
 }

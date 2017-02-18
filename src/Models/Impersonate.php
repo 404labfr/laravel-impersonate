@@ -24,7 +24,7 @@ trait Impersonate
      * @param   Model $user
      * @return  bool
      */
-    public function canBeImpersonate()
+    public function canBeImpersonated()
     {
         return true;
     }
@@ -37,11 +37,7 @@ trait Impersonate
      */
     public function impersonate(Model $user)
     {
-        if ($user->canBeImpersonate($user)) {
-            return app(ImpersonateManager::class)->take($this, $user);
-        } else {
-            return false;
-        }
+        return app(ImpersonateManager::class)->take($this, $user);
     }
 
     /**
