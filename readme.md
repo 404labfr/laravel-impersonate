@@ -4,19 +4,19 @@
 
 **Laravel Impersonate** makes it easy to **authenticate as your users**. Add a simple **trait** to your **user model** and impersonate as on of your users in one click.
  
-[Requirements](#requirements)
-[Installation](#installation)
-[Simple usage](#simple-usage)
-    [Using the built-in controller](#using-the-built-in-controller)
-[Advanced Usage](#advanced-usage)
-    [Defining impersonation authorization](#defining-impersonation-authorization)
-    [Using your own strategy](#using-your-own-strategy)
-    [Middleware](#middleware)
-    [Events](#events)
-[Configuration](#configuration)
-[Blade](#blade)
-[Tests](#tests)
-[Contributors](#contributors)
+- [Requirements](#requirements)
+- [Installation](#installation)
+- [Simple usage](#simple-usage)
+    - [Using the built-in controller](#using-the-built-in-controller)
+- [Advanced Usage](#advanced-usage)
+    - [Defining impersonation authorization](#defining-impersonation-authorization)
+    - [Using your own strategy](#using-your-own-strategy)
+    - [Middleware](#middleware)
+    - [Events](#events)
+- [Configuration](#configuration)
+- [Blade](#blade)
+- [Tests](#tests)
+- [Contributors](#contributors)
 
 
 ## Requirements
