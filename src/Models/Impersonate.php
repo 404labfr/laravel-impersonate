@@ -39,6 +39,8 @@ trait Impersonate
     {
         if ($user->canBeImpersonate($user)) {
             return app(ImpersonateManager::class)->take($this, $user);
+        } else {
+            return false;
         }
     }
 

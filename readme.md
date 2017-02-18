@@ -59,7 +59,7 @@ route('impersonate.leave')
 
 ### Defining impersonation authorization
 
-By default all users can impersonate an user.  
+By default all users can **impersonate** an user.  
 You need to add the method `canImpersonate()` to your user model:
 
 ```php
@@ -70,6 +70,20 @@ You need to add the method `canImpersonate()` to your user model:
     {
         // For example
         return $this->attributes['id_admin'] == 1;
+    }
+```
+
+By default all users can **be impersonate**.  
+You need to add the method `canBeImpersonate()` to your user model:
+
+```php
+    /**
+     * @return bool
+     */
+    public function canBeImpersonate()
+    {
+        // For example
+        return $this->attributes['can-be-impersonate'] == 1;
     }
 ```
 
