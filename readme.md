@@ -130,6 +130,14 @@ Router::get('/my-credit-card', function() {
 })->middleware('impersonate.protect');
 ```
 
+### Events
+
+There are two events available that can be used to improve your workflow:
+- `TakeImpersonation` is fired when an impersonation is taken.
+- `LeaveImpersonation` is fired when an impersonation is leaved.
+
+Each returns two properties `$event->impersonator` and `$event->impersonated` containing an User model isntance.
+
 ## Configuration
 
 The package comes with a configuration file.  
