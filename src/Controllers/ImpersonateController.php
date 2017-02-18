@@ -29,24 +29,26 @@ class ImpersonateController extends Controller
     public function take(Request $request, $id)
     {
         // Cannot impersonate yourself
-        if ($id == $request->user()->id)
-        {
+        if ($id == $request->user()->id) {
             abort(403);
         }
 
         // Cannot impersonate again if you're already impersonate a user
-        if ($this->manager->isImpersonating())
-        {
+        if ($this->manager->isImpersonating()) {
             abort(403);
         }
 
-        if (!$request->user()->canImpersonate())
-        {
+        if (!$request->user()->canImpersonate()) {
             abort(403);
         }
 
-        if ($request->user()->canBeImpersonated && $this->manager->take($request->user(), $this->manager->findUserById($id)))
-        {
+        if (!$this->manager->findUserById($id)) {
+             abort(403);
+        } else {
+            $user_to_impersonate = $this->manager->findUserById($id);
+        }
+
+        if ($user_to_impersonate->canBeImpersonated() && $this->manager->take($request->user(), $user_to_impersonate)) {
             return redirect()->to($this->manager->getTakeRedirectTo());
         }
 
@@ -58,11 +60,10 @@ class ImpersonateController extends Controller
      */
     public function leave()
     {
-        if (!$this->manager->isImpersonating())
-        {
+        if (!$this->manager->isImpersonating()) {
             abort(403);
         }
-        
+
         $this->manager->leave();
 
         return redirect()->to($this->manager->getLeaveRedirectTo());
