@@ -12,6 +12,7 @@
     [Defining impersonation authorization](#defining-impersonation-authorization)
     [Using your own strategy](#using-your-own-strategy)
     [Middleware](#middleware)
+    [Events](#events)
 [Configuration](#configuration)
 [Blade](#blade)
 [Tests](#tests)
