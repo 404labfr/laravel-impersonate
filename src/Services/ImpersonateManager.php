@@ -5,6 +5,8 @@ namespace Lab404\Impersonate\Services;
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Foundation\Application;
 use Illuminate\Support\Facades\Auth;
+use Lab404\Impersonate\Events\LeaveImpersonation;
+use Lab404\Impersonate\Events\TakeImpersonation;
 
 class ImpersonateManager
 {
@@ -65,7 +67,11 @@ class ImpersonateManager
     {
         try
         {
+            $impersonator = $this->app['auth']->user();
+            $impersonated = $to;
+
             session()->put(config('laravel-impersonate.session_key'), $from->id);
+
             $this->app['auth']->logout();
             $this->app['auth']->login($to);
 
@@ -74,6 +80,8 @@ class ImpersonateManager
             unset($e);
             return false;
         }
+
+        $this->app['events']->fire(new TakeImpersonation($impersonator, $impersonated));
 
         return true;
     }
@@ -85,13 +93,22 @@ class ImpersonateManager
     {
         try
         {
+            $impersonated = $this->app['auth']->user();
+
             $this->app['auth']->logout();
             $this->app['auth']->loginUsingId($this->getImpersonatorId());
+
+            $impersonator = $this->app['auth']->user();
+
             $this->clear();
-        } catch (\Exception $e) {
+
+        } catch (\Exception $e)
+        {
             unset($e);
             return false;
         }
+
+        $this->app['events']->fire(new LeaveImpersonation($impersonator, $impersonated));
 
         return true;
     }

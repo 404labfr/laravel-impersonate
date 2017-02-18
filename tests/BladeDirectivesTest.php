@@ -49,7 +49,6 @@ class BladeDirectivesTest extends TestCase
         $this->actingAs($this->admin);
         $this->makeView();
         $this->assertContains('Impersonate this user', $this->view);
-        $this->logout();
 
         $this->admin->impersonate($this->user);
         $this->admin->leaveImpersonation();

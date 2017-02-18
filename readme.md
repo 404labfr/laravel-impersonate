@@ -2,7 +2,21 @@
 
 [![Build Status](https://travis-ci.org/404labfr/laravel-impersonate.svg?branch=master)](https://travis-ci.org/404labfr/laravel-impersonate) [![Scrutinizer Code Quality](https://scrutinizer-ci.com/g/404labfr/laravel-impersonate/badges/quality-score.png?b=master)](https://scrutinizer-ci.com/g/404labfr/laravel-impersonate/?branch=master)
 
-**Laravel Impersonate** makes it easy to **authenticate as your users**. Add a simple **trait** to your **user model** and impersonate as on of your users in one click. 
+**Laravel Impersonate** makes it easy to **authenticate as your users**. Add a simple **trait** to your **user model** and impersonate as on of your users in one click.
+ 
+[Requirements](#requirements)
+[Installation](#installation)
+[Simple usage](#simple-usage)
+    [Using the built-in controller](#using-the-built-in-controller)
+[Advanced Usage](#advanced-usage)
+    [Defining impersonation authorization](#defining-impersonation-authorization)
+    [Using your own strategy](#using-your-own-strategy)
+    [Middleware](#middleware)
+[Configuration](#configuration)
+[Blade](#blade)
+[Tests](#tests)
+[Contributors](#contributors)
+
 
 ## Requirements
 
@@ -103,6 +117,19 @@ $manager->leave();
 $manager->getImpersonatorId();
 ```
 
+### Middleware
+
+**Protect From Impersonation**
+
+You can use the middleware `impersonate.protect` to protect your routes against user impersonation.  
+This middleware can be useful when you want to protect specific pages like users subscriptions, users credit cards, ... 
+
+```php
+Router::get('/my-credit-card', function() {
+    echo "Can't be accessed by an impersonator";
+})->middleware('impersonate.protect');
+```
+
 ## Configuration
 
 The package comes with a configuration file.  
@@ -141,19 +168,6 @@ There is two Blade directives available.
 @impersonating
     <a href="{{ route('impersonate.leave') }}">Leave impersonation</a>
 @endImpersonating
-```
-
-## Middleware
-
-**Protect From Impersonation**
-
-You can use the middleware `impersonate.protect` to protect your routes against user impersonation.  
-This middleware can be useful when you want to protect specific pages like users subscriptions, users credit cards, ... 
-
-```php
-Router::get('/my-credit-card', function() {
-    echo "Can't be accessed by an impersonator";
-})->middleware('impersonate.protect');
 ```
 
 ## Tests
