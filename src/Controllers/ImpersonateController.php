@@ -42,14 +42,12 @@ class ImpersonateController extends Controller
             abort(403);
         }
 
-        if (!$this->manager->findUserById($id)) {
-             abort(403);
-        } else {
-            $user_to_impersonate = $this->manager->findUserById($id);
-        }
+       $user_to_impersonate = $this->manager->findUserById($id);
 
-        if ($user_to_impersonate->canBeImpersonated() && $this->manager->take($request->user(), $user_to_impersonate)) {
-            return redirect()->to($this->manager->getTakeRedirectTo());
+        if ($user_to_impersonate->canBeImpersonated()) {
+            if ($this->manager->take($request->user(), $user_to_impersonate)) {
+                return redirect()->to($this->manager->getTakeRedirectTo());
+            }
         }
 
         return redirect()->back();
