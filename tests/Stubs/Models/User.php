@@ -31,4 +31,12 @@ class User extends Authenticatable
     {
         return $this->attributes['is_admin'] == 1;
     }
+
+    /*
+     * @return bool
+     */
+    public function canBeImpersonated()
+    {
+        return $this->attributes['can_be_impersonated'] == 1;
+    }
 }

@@ -19,6 +19,17 @@ trait Impersonate
     }
 
     /**
+     * Return true or false if the user can be impersonate.
+     *
+     * @param   Model $user
+     * @return  bool
+     */
+    public function canBeImpersonated()
+    {
+        return true;
+    }
+
+    /**
      * Impersonate the given user.
      *
      * @param   Model $user
