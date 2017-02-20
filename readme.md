@@ -84,21 +84,21 @@ You need to add the method `canImpersonate()` to your user model:
     public function canImpersonate()
     {
         // For example
-        return $this->attributes['id_admin'] == 1;
+        return $this->is_admin == 1;
     }
 ```
 
-By default all users can **be impersonate**.  
-You need to add the method `canBeImpersonate()` to your user model:
+By default all users can **be impersonated**.  
+You need to add the method `canBeImpersonate()` to your user model to extend this behavior:
 
 ```php
     /**
      * @return bool
      */
-    public function canBeImpersonate()
+    public function canBeImpersonated()
     {
         // For example
-        return $this->attributes['can-be-impersonate'] == 1;
+        return $this->can_be_impersonate == 1;
     }
 ```
 

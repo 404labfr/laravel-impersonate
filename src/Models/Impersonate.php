@@ -21,7 +21,7 @@ trait Impersonate
     /**
      * Return true or false if the user can be impersonate.
      *
-     * @param   Model $user
+     * @param   void
      * @return  bool
      */
     public function canBeImpersonated()
