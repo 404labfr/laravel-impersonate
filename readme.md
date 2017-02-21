@@ -2,7 +2,7 @@
 
 [![Build Status](https://travis-ci.org/404labfr/laravel-impersonate.svg?branch=master)](https://travis-ci.org/404labfr/laravel-impersonate) [![Scrutinizer Code Quality](https://scrutinizer-ci.com/g/404labfr/laravel-impersonate/badges/quality-score.png?b=master)](https://scrutinizer-ci.com/g/404labfr/laravel-impersonate/?branch=master)
 
-**Laravel Impersonate** makes it easy to **authenticate as your users**. Add a simple **trait** to your **user model** and impersonate as on of your users in one click.
+**Laravel Impersonate** makes it easy to **authenticate as your users**. Add a simple **trait** to your **user model** and impersonate as one of your users in one click.
  
 - [Requirements](#requirements)
 - [Installation](#installation)
@@ -89,7 +89,7 @@ You need to add the method `canImpersonate()` to your user model:
 ```
 
 By default all users can **be impersonated**.  
-You need to add the method `canBeImpersonate()` to your user model to extend this behavior:
+You need to add the method `canBeImpersonated()` to your user model to extend this behavior:
 
 ```php
     /**
@@ -151,7 +151,7 @@ There are two events available that can be used to improve your workflow:
 - `TakeImpersonation` is fired when an impersonation is taken.
 - `LeaveImpersonation` is fired when an impersonation is leaved.
 
-Each returns two properties `$event->impersonator` and `$event->impersonated` containing an User model isntance.
+Each events returns two properties `$event->impersonator` and `$event->impersonated` containing User model isntance.
 
 ## Configuration
 
