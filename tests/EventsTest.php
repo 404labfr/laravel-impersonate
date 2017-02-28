@@ -33,14 +33,16 @@ class EventsTest extends TestCase
 
         $this->dispatcher->listen(TakeImpersonation::class, function ($impersonator, $impersonated)
         {
-            $this->assertEquals(1, $impersonator->id);
-            $this->assertEquals(2, $impersonated->id);
+            $key = $impersonator->getKeyName();
+            $this->assertEquals(1, $impersonator->$key);
+            $this->assertEquals(2, $impersonated->$key);
         });
 
         $this->dispatcher->listen(LeaveImpersonation::class, function ($impersonator, $impersonated)
         {
-            $this->assertEquals(1, $impersonator->id);
-            $this->assertEquals(2, $impersonated->id);
+            $key = $impersonator->getKeyName();
+            $this->assertEquals(1, $impersonator->$key);
+            $this->assertEquals(2, $impersonated->$key);
         });
     }
 
