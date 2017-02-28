@@ -62,7 +62,7 @@ class ImpersonateManagerTest extends TestCase
         $this->app['auth']->loginUsingId(1);
         $this->assertTrue($this->app['auth']->check());
         $this->manager->take($this->app['auth']->user(), $this->manager->findUserById(2));
-        $this->assertEquals(2, $this->app['auth']->user()->id);
+        $this->assertEquals(2, $this->app['auth']->user()->getKey());
         $this->assertEquals(1, $this->manager->getImpersonatorId());
         $this->assertTrue($this->manager->isImpersonating());
     }

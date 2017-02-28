@@ -42,7 +42,7 @@ class ModelImpersonateTest extends TestCase
         $user  = $this->app[ImpersonateManager::class]->findUserById(2);
         $admin->impersonate($user);
         $this->assertTrue($user->isImpersonated());
-        $this->assertEquals($this->app['auth']->user()->id, 2);
+        $this->assertEquals($this->app['auth']->user()->getKey(), 2);
     }
 
     /** @test */
@@ -53,6 +53,6 @@ class ModelImpersonateTest extends TestCase
         $admin->impersonate($user);
         $admin->leaveImpersonation();
         $this->assertFalse($user->isImpersonated());
-        $this->assertNotEquals($this->app['auth']->user()->id, 2);
+        $this->assertNotEquals($this->app['auth']->user()->getKey(), 2);
     }
 }

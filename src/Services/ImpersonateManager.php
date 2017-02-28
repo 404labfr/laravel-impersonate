@@ -70,7 +70,7 @@ class ImpersonateManager
             $impersonator = $this->app['auth']->user();
             $impersonated = $to;
 
-            session()->put(config('laravel-impersonate.session_key'), $from->id);
+            session()->put(config('laravel-impersonate.session_key'), $from->getKey());
 
             $this->app['auth']->logout();
             $this->app['auth']->login($to);

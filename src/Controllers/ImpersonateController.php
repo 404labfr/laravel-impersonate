@@ -29,7 +29,7 @@ class ImpersonateController extends Controller
     public function take(Request $request, $id)
     {
         // Cannot impersonate yourself
-        if ($id == $request->user()->id) {
+        if ($id == $request->user()->getKey()) {
             abort(403);
         }
 
