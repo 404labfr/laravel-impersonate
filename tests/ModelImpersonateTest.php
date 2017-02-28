@@ -37,24 +37,22 @@ class ModelImpersonateTest extends TestCase
     /** @test */
     public function it_impersonates()
     {
-        $key = $this->app['auth']->user()->getKeyName();
         $admin = $this->app['auth']->loginUsingId(1);
         $this->assertFalse($admin->isImpersonated());
         $user  = $this->app[ImpersonateManager::class]->findUserById(2);
         $admin->impersonate($user);
         $this->assertTrue($user->isImpersonated());
-        $this->assertEquals($this->app['auth']->user()->$key, 2);
+        $this->assertEquals($this->app['auth']->user()->getKey(), 2);
     }
 
     /** @test */
     public function it_can_leave_impersonation()
     {
-        $key = $this->app['auth']->user()->getKeyName();
         $admin = $this->app['auth']->loginUsingId(1);
         $user  = $this->app[ImpersonateManager::class]->findUserById(2);
         $admin->impersonate($user);
         $admin->leaveImpersonation();
         $this->assertFalse($user->isImpersonated());
-        $this->assertNotEquals($this->app['auth']->user()->$key, 2);
+        $this->assertNotEquals($this->app['auth']->user()->getKey(), 2);
     }
 }
