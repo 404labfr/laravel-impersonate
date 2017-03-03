@@ -31,9 +31,7 @@ class ImpersonateServiceProvider extends \Illuminate\Support\ServiceProvider
      */
     public function register()
     {
-        $configPath = __DIR__ . '/../config/' . $this->configName . '.php';
-
-        $this->mergeConfigFrom($configPath, $this->configName);
+        $this->mergeConfig();
 
         $this->app->bind(ImpersonateManager::class, ImpersonateManager::class);
 
@@ -44,15 +42,9 @@ class ImpersonateServiceProvider extends \Illuminate\Support\ServiceProvider
 
         $this->app->alias(ImpersonateManager::class, 'impersonate');
 
-        $router = $this->app['router'];
-        $router->macro('impersonate', function () use ($router) {
-            $router->get('/impersonate/take/{id}', '\Lab404\Impersonate\Controllers\ImpersonateController@take')->name('impersonate');
-            $router->get('/impersonate/leave', '\Lab404\Impersonate\Controllers\ImpersonateController@leave')->name('impersonate.leave');
-        });
-
+        $this->registerRoutesMacro();
         $this->registerBladeDirectives();
-
-        $this->app['router']->aliasMiddleware('impersonate.protect', ProtectFromImpersonation::class);
+        $this->registerMiddleware();
     }
 
     /**
@@ -62,16 +54,14 @@ class ImpersonateServiceProvider extends \Illuminate\Support\ServiceProvider
      */
     public function boot()
     {
-        $configPath = __DIR__ . '/../config/' . $this->configName . '.php';
-
-        $this->publishes([$configPath => config_path($this->configName . '.php')], 'impersonate');
+        $this->publishConfig();
     }
 
     /**
      * Register plugin blade directives.
      *
      * @param   void
-     * @return  void`
+     * @return  void
      */
     protected function registerBladeDirectives()
     {
@@ -90,5 +80,58 @@ class ImpersonateServiceProvider extends \Illuminate\Support\ServiceProvider
         Blade::directive('endCanImpersonate', function() {
             return '<?php endif; ?>';
         });
+    }
+
+    /**
+     * Register routes macro.
+     *
+     * @param   void
+     * @return  void
+     */
+    protected function registerRoutesMacro()
+    {
+        $router = $this->app['router'];
+
+        $router->macro('impersonate', function () use ($router) {
+            $router->get('/impersonate/take/{id}', '\Lab404\Impersonate\Controllers\ImpersonateController@take')->name('impersonate');
+            $router->get('/impersonate/leave', '\Lab404\Impersonate\Controllers\ImpersonateController@leave')->name('impersonate.leave');
+        });
+    }
+
+    /**
+     * Register plugin middleware.
+     *
+     * @param   void
+     * @return  void
+     */
+    public function registerMiddleware()
+    {
+        $this->app['router']->aliasMiddleware('impersonate.protect', ProtectFromImpersonation::class);
+    }
+
+    /**
+     * Merge config file.
+     *
+     * @param   void
+     * @return  void
+     */
+    protected function mergeConfig()
+    {
+        $configPath = __DIR__ . '/../config/' . $this->configName . '.php';
+
+        $this->mergeConfigFrom($configPath, $this->configName);
+    }
+
+    /**
+     * Publish config file.
+     *
+     * @param   void
+     * @return  void
+     */
+    protected function publishConfig()
+    {
+        $configPath = __DIR__ . '/../config/' . $this->configName . '.php';
+
+        $this->publishes([$configPath => config_path($this->configName . '.php')], 'impersonate');
     }
 }
