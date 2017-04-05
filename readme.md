@@ -175,7 +175,7 @@ Available options:
 ```
 ## Blade
 
-There is two Blade directives available.
+There is three Blade directives available.
 
 ### When the user can impersonate
 
@@ -183,6 +183,17 @@ There is two Blade directives available.
 @canImpersonate
     <a href="{{ route('impersonate', $user->id) }}">Impersonate this user</a>
 @endCanImpersonate
+```
+
+### When the user can be impersonated
+
+This comes in handy when you have a user list and want to show an "Impersonate" button next to all the users.
+But you don\'t want that button next to the current authenticated user neither to that users which should not be able to impersonated according your implementation of `canBeImpersonated()` . 
+
+```blade
+@canBeImpersonated($user)
+    <a href="{{ route('impersonate', $user->id) }}">Impersonate this user</a>
+@endBeImpersonated
 ```
 
 ### When the user is impersonated
