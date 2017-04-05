@@ -4,7 +4,6 @@ namespace Lab404\Impersonate\Services;
 
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Foundation\Application;
-use Illuminate\Support\Facades\Auth;
 use Lab404\Impersonate\Events\LeaveImpersonation;
 use Lab404\Impersonate\Events\TakeImpersonation;
 
@@ -65,23 +64,18 @@ class ImpersonateManager
      */
     public function take($from, $to)
     {
-        try
-        {
-            $impersonator = $this->app['auth']->user();
-            $impersonated = $to;
-
+        try {
             session()->put(config('laravel-impersonate.session_key'), $from->getKey());
 
-            $this->app['auth']->logout();
-            $this->app['auth']->login($to);
+            $this->app['auth']->quietLogout();
+            $this->app['auth']->quietLogin($to);
 
-        } catch (\Exception $e)
-        {
+        } catch (\Exception $e) {
             unset($e);
             return false;
         }
 
-        $this->app['events']->fire(new TakeImpersonation($impersonator, $impersonated));
+        $this->app['events']->fire(new TakeImpersonation($from, $to));
 
         return true;
     }
@@ -91,19 +85,16 @@ class ImpersonateManager
      */
     public function leave()
     {
-        try
-        {
+        try {
             $impersonated = $this->app['auth']->user();
+            $impersonator = $this->findUserById($this->getImpersonatorId());
 
-            $this->app['auth']->logout();
-            $this->app['auth']->loginUsingId($this->getImpersonatorId());
-
-            $impersonator = $this->app['auth']->user();
-
+            $this->app['auth']->quietLogout();
+            $this->app['auth']->quietLogin($impersonator);
+            
             $this->clear();
 
-        } catch (\Exception $e)
-        {
+        } catch (\Exception $e) {
             unset($e);
             return false;
         }

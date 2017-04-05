@@ -2,20 +2,15 @@
 
 namespace Lab404\Tests;
 
-use Illuminate\Events\Dispatcher;
+use Illuminate\Auth\Events\Login;
+use Illuminate\Auth\Events\Logout;
+use Illuminate\Support\Facades\Event;
 use Lab404\Impersonate\Events\LeaveImpersonation;
 use Lab404\Impersonate\Events\TakeImpersonation;
-use Lab404\Impersonate\Services\ImpersonateManager;
 use Lab404\Tests\Stubs\Models\User;
 
 class EventsTest extends TestCase
 {
-    /** @var  ImpersonateManager */
-    protected $manager;
-
-    /** @var  Dispatcher */
-    protected $dispatcher;
-
     /** @var  User */
     protected $admin;
 
@@ -26,33 +21,42 @@ class EventsTest extends TestCase
     {
         parent::setUp();
 
-        $this->manager = $this->app->make(ImpersonateManager::class);
-        $this->dispatcher = $this->app['events'];
         $this->admin = User::find(1);
         $this->user = User::find(2);
-
-        $this->dispatcher->listen(TakeImpersonation::class, function ($impersonator, $impersonated)
-        {
-            $this->assertEquals(1, $impersonator->getKey());
-            $this->assertEquals(2, $impersonated->getKey());
-        });
-
-        $this->dispatcher->listen(LeaveImpersonation::class, function ($impersonator, $impersonated)
-        {
-            $this->assertEquals(1, $impersonator->getKey());
-            $this->assertEquals(2, $impersonated->getKey());
-        });
     }
 
     /** @test */
-    public function it_dispatch_make_impersonation_event()
+    public function it_dispatches_events_when_taking_impersonation()
     {
-        $this->dispatcher->fire(TakeImpersonation::class, [$this->admin, $this->user]);
+        Event::fake();
+
+        $admin = $this->admin;
+        $user = $this->user;
+
+        $this->assertTrue($admin->impersonate($user));
+
+        Event::assertDispatched(TakeImpersonation::class, function ($event) use ($admin, $user) {
+            return $event->impersonator->id == $admin->id && $event->impersonated->id == $user->id;
+        });
+
+        Event::assertNotDispatched(Login::class);
     }
 
     /** @test */
-    public function it_dispatch_leave_impersonation_event()
+    public function it_dispatches_events_when_leaving_impersonation()
     {
-        $this->dispatcher->fire(LeaveImpersonation::class, [$this->admin, $this->user]);
+        Event::fake();
+
+        $admin = $this->admin;
+        $user = $this->user;
+
+        $this->assertTrue($admin->impersonate($user));
+        $this->assertTrue($user->leaveImpersonation());
+
+        Event::assertDispatched(LeaveImpersonation::class, function ($event) use ($admin, $user) {
+            return $event->impersonator->id == $admin->id && $event->impersonated->id == $user->id;
+        });
+
+        Event::assertNotDispatched(Logout::class);
     }
 }

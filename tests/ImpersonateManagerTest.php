@@ -2,7 +2,6 @@
 
 namespace Lab404\Tests;
 
-use Lab404\Impersonate\Impersonate;
 use Lab404\Impersonate\Services\ImpersonateManager;
 use Lab404\Tests\Stubs\Models\User;
 
@@ -75,5 +74,26 @@ class ImpersonateManagerTest extends TestCase
         $this->assertTrue($this->manager->leave());
         $this->assertFalse($this->manager->isImpersonating());
         $this->assertInstanceOf(User::class, $this->app['auth']->user());
+    }
+
+    /** @test */
+    public function it_keeps_remember_token_when_taking_and_leaving()
+    {
+        $admin = $this->manager->findUserById(1);
+        $admin->remember_token = 'impersonator_token';
+        $admin->save();
+
+        $user = $this->manager->findUserById(2);
+        $user->remember_token = 'impersonated_token';
+        $user->save();
+
+        $admin->impersonate($user);
+        $user->leaveImpersonation();
+
+        $user->fresh();
+        $admin->fresh();
+
+        $this->assertEquals('impersonator_token', $admin->remember_token);
+        $this->assertEquals('impersonated_token', $user->remember_token);
     }
 }
