@@ -80,6 +80,15 @@ class ImpersonateServiceProvider extends \Illuminate\Support\ServiceProvider
         Blade::directive('endCanImpersonate', function() {
             return '<?php endif; ?>';
         });
+
+        Blade::directive('canBeImpersonated', function($expression) {
+            $user = trim($expression);
+            return "<?php if (app()['auth']->check() && app()['auth']->user()->id != {$user}->id && {$user}->canBeImpersonated()): ?>";
+        });
+
+        Blade::directive('endCanBeImpersonated', function() {
+            return '<?php endif; ?>';
+        });
     }
 
     /**
