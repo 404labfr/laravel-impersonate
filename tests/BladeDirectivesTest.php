@@ -2,7 +2,6 @@
 
 namespace Lab404\Tests;
 
-use Illuminate\View\Factory;
 use Lab404\Tests\Stubs\Models\User;
 
 class BladeDirectivesTest extends TestCase
@@ -26,12 +25,13 @@ class BladeDirectivesTest extends TestCase
     }
 
     /**
-     * @param   void
+     * @param   string $view
+     * @param   array $with
      * @return  void
      */
-    protected function makeView()
+    protected function makeView($view = 'impersonate', array $with = [])
     {
-        $this->view = (string) $this->app['view']->make('impersonate');
+        $this->view = (string)$this->app['view']->make($view, $with);
     }
 
     /**
@@ -89,6 +89,21 @@ class BladeDirectivesTest extends TestCase
         $this->admin->leaveImpersonation();
         $this->makeView();
         $this->assertNotContains('Leave impersonation', $this->view);
+        $this->logout();
+    }
+
+    /** @test */
+    public function it_displays_can_be_impersonated_content_directive()
+    {
+        $this->actingAs($this->admin);
+        $this->makeView('can_be_impersonated', ['user' => $this->user]);
+        $this->assertContains('Impersonate this user', $this->view);
+        $this->logout();
+
+        $this->actingAs($this->admin);
+        $this->admin->impersonate($this->user);
+        $this->makeView('can_be_impersonated', ['user' => $this->user]);
+        $this->assertNotContains('Impersonate this user', $this->view);
         $this->logout();
     }
 }
