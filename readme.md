@@ -175,7 +175,7 @@ Available options:
 ```
 ## Blade
 
-There is three Blade directives available.
+There are three Blade directives available.
 
 ### When the user can impersonate
 
