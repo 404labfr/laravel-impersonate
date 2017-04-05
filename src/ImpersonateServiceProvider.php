@@ -2,8 +2,10 @@
 
 namespace Lab404\Impersonate;
 
-use Illuminate\Routing\Router;
+use Illuminate\Auth\AuthManager;
+use Illuminate\Foundation\Application;
 use Illuminate\Support\Facades\Blade;
+use Lab404\Impersonate\Guard\SessionGuard;
 use Lab404\Impersonate\Middleware\ProtectFromImpersonation;
 use Lab404\Impersonate\Services\ImpersonateManager;
 
@@ -35,8 +37,7 @@ class ImpersonateServiceProvider extends \Illuminate\Support\ServiceProvider
 
         $this->app->bind(ImpersonateManager::class, ImpersonateManager::class);
 
-        $this->app->singleton(ImpersonateManager::class, function ($app)
-        {
+        $this->app->singleton(ImpersonateManager::class, function ($app) {
             return new ImpersonateManager($app);
         });
 
@@ -45,6 +46,7 @@ class ImpersonateServiceProvider extends \Illuminate\Support\ServiceProvider
         $this->registerRoutesMacro();
         $this->registerBladeDirectives();
         $this->registerMiddleware();
+        $this->registerAuthDriver();
     }
 
     /**
@@ -65,19 +67,19 @@ class ImpersonateServiceProvider extends \Illuminate\Support\ServiceProvider
      */
     protected function registerBladeDirectives()
     {
-        Blade::directive('impersonating', function() {
+        Blade::directive('impersonating', function () {
             return '<?php if (app()["auth"]->check() && app()["auth"]->user()->isImpersonated()): ?>';
         });
 
-        Blade::directive('endImpersonating', function() {
+        Blade::directive('endImpersonating', function () {
             return '<?php endif; ?>';
         });
 
-        Blade::directive('canImpersonate', function() {
+        Blade::directive('canImpersonate', function () {
             return '<?php if (app()["auth"]->check() && app()["auth"]->user()->canImpersonate()): ?>';
         });
 
-        Blade::directive('endCanImpersonate', function() {
+        Blade::directive('endCanImpersonate', function () {
             return '<?php endif; ?>';
         });
 
@@ -102,8 +104,40 @@ class ImpersonateServiceProvider extends \Illuminate\Support\ServiceProvider
         $router = $this->app['router'];
 
         $router->macro('impersonate', function () use ($router) {
-            $router->get('/impersonate/take/{id}', '\Lab404\Impersonate\Controllers\ImpersonateController@take')->name('impersonate');
-            $router->get('/impersonate/leave', '\Lab404\Impersonate\Controllers\ImpersonateController@leave')->name('impersonate.leave');
+            $router->get('/impersonate/take/{id}',
+                '\Lab404\Impersonate\Controllers\ImpersonateController@take')->name('impersonate');
+            $router->get('/impersonate/leave',
+                '\Lab404\Impersonate\Controllers\ImpersonateController@leave')->name('impersonate.leave');
+        });
+    }
+
+    /**
+     * @param   void
+     * @return  void
+     */
+    protected function registerAuthDriver()
+    {
+        /** @var AuthManager $auth */
+        $auth = $this->app['auth'];
+
+        $auth->extend('session', function (Application $app, $name, array $config) use ($auth) {
+            $provider = $auth->createUserProvider($config['provider']);
+
+            $guard = new SessionGuard($name, $provider, $app['session.store']);
+
+            if (method_exists($guard, 'setCookieJar')) {
+                $guard->setCookieJar($app['cookie']);
+            }
+
+            if (method_exists($guard, 'setDispatcher')) {
+                $guard->setDispatcher($app['events']);
+            }
+
+            if (method_exists($guard, 'setRequest')) {
+                $guard->setRequest($app->refresh('request', $guard, 'setRequest'));
+            }
+
+            return $guard;
         });
     }
 
