@@ -11,8 +11,8 @@
       "user",
       "auth",
       "laravel-package",
-      "laravel-plugin",
-      ],
+      "laravel-plugin"
+    ],
     "require": {
       "laravel/framework": "5.4.*"
     },
