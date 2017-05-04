@@ -125,7 +125,7 @@ class ImpersonateManager
      */
     public function getTakeRedirectTo()
     {
-        return config('laravel-impersonate.take_redirect_to');
+        return route(config('laravel-impersonate.take_redirect_to'));
     }
 
     /**
@@ -133,6 +133,6 @@ class ImpersonateManager
      */
     public function getLeaveRedirectTo()
     {
-        return config('laravel-impersonate.leave_redirect_to');
+        return route(config('laravel-impersonate.leave_redirect_to'));
     }
 }
