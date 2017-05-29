@@ -166,13 +166,16 @@ Available options:
 ```php
     // The session key used to store the original user id.
     'session_key' => 'impersonated_by',
-    // The URI to redirect after taking an impersonation.
+    // Where to redirect after taking an impersonation.
     // Only used in the built-in controller.
+    // You can use: an URI, the keyword back (to redirect back) or a route name
     'take_redirect_to' => '/',
-    // The URI to redirect after leaving an impersonation.
+    // Where to redirect after leaving an impersonation.
     // Only used in the built-in controller.
+    // You can use: an URI, the keyword back (to redirect back) or a route name
     'leave_redirect_to' => '/'
 ```
+
 ## Blade
 
 There are three Blade directives available.
