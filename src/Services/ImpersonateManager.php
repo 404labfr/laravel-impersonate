@@ -125,7 +125,13 @@ class ImpersonateManager
      */
     public function getTakeRedirectTo()
     {
-        return config('laravel-impersonate.take_redirect_to');
+        try {
+            $uri = route(config('laravel-impersonate.take_redirect_to'));
+        } catch (\InvalidArgumentException $e) {
+            $uri = config('laravel-impersonate.take_redirect_to');
+        }
+
+        return $uri;
     }
 
     /**
@@ -133,6 +139,12 @@ class ImpersonateManager
      */
     public function getLeaveRedirectTo()
     {
-        return config('laravel-impersonate.leave_redirect_to');
+        try {
+            $uri = route(config('laravel-impersonate.leave_redirect_to'));
+        } catch (\InvalidArgumentException $e) {
+            $uri = config('laravel-impersonate.leave_redirect_to');
+        }
+
+        return $uri;
     }
 }
