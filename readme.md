@@ -43,7 +43,7 @@ composer require lab404/laravel-impersonate
 
 ## Simple usage
 
-Impersonate an user:
+Impersonate a user:
 ```php
 Auth::user()->impersonate($other_user);
 // You're now logged as the $other_user
