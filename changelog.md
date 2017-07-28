@@ -1,5 +1,12 @@
 # Laravel Impersonate Changelog
 
+## 1.2.0 (2017-07-28)
+
+### Added
+
+- Laravel 5.5 compatibility
+- Package auto-discovery
+
 ## 1.1.0 (2017-03-05)
 
 ### Added
