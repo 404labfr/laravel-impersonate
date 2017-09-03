@@ -1,5 +1,12 @@
 # Laravel Impersonate Changelog
 
+## 1.2.1 (2017-09-03)
+
+### Changed
+
+- PHP version requirement
+- Laravel version requirement
+
 ## 1.2.0 (2017-07-28)
 
 ### Added
