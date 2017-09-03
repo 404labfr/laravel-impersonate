@@ -21,8 +21,10 @@
 
 ## Requirements
 
-- Laravel >= 5.4
-- PHP >= 5.6
+- Laravel >= 5.5
+- PHP >= 7
+
+**See release v1.1 for Laravel <= 5.4 support.**
 
 ## Installation
 

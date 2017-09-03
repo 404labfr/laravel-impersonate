@@ -14,7 +14,8 @@
     "laravel-plugin"
   ],
   "require": {
-    "laravel/framework": ">=5.4"
+    "php": ">=7.0",
+    "laravel/framework": ">=5.5"
   },
   "require-dev": {
     "phpunit/phpunit": "^5.7",
