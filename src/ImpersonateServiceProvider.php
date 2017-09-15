@@ -4,7 +4,7 @@ namespace Lab404\Impersonate;
 
 use Illuminate\Auth\AuthManager;
 use Illuminate\Foundation\Application;
-use Illuminate\Support\Facades\Blade;
+use Illuminate\View\Compilers\BladeCompiler;
 use Lab404\Impersonate\Guard\SessionGuard;
 use Lab404\Impersonate\Middleware\ProtectFromImpersonation;
 use Lab404\Impersonate\Services\ImpersonateManager;
@@ -67,29 +67,32 @@ class ImpersonateServiceProvider extends \Illuminate\Support\ServiceProvider
      */
     protected function registerBladeDirectives()
     {
-        Blade::directive('impersonating', function () {
-            return '<?php if (app()["auth"]->check() && app()["auth"]->user()->isImpersonated()): ?>';
-        });
+        $this->app->afterResolving('blade.compiler', function (BladeCompiler $bladeCompiler) {
+            $bladeCompiler->directive('impersonating', function () {
+                return '<?php if (app()["auth"]->check() && app()["auth"]->user()->isImpersonated()): ?>';
+            });
 
-        Blade::directive('endImpersonating', function () {
-            return '<?php endif; ?>';
-        });
+            $bladeCompiler->directive('endImpersonating', function () {
+                return '<?php endif; ?>';
+            });
 
-        Blade::directive('canImpersonate', function () {
-            return '<?php if (app()["auth"]->check() && app()["auth"]->user()->canImpersonate()): ?>';
-        });
+            $bladeCompiler->directive('canImpersonate', function () {
+                return '<?php if (app()["auth"]->check() && app()["auth"]->user()->canImpersonate()): ?>';
+            });
 
-        Blade::directive('endCanImpersonate', function () {
-            return '<?php endif; ?>';
-        });
+            $bladeCompiler->directive('endCanImpersonate', function () {
+                return '<?php endif; ?>';
+            });
 
-        Blade::directive('canBeImpersonated', function($expression) {
-            $user = trim($expression);
-            return "<?php if (app()['auth']->check() && app()['auth']->user()->id != {$user}->id && {$user}->canBeImpersonated()): ?>";
-        });
+            $bladeCompiler->directive('canBeImpersonated', function ($expression) {
+                $user = trim($expression);
 
-        Blade::directive('endCanBeImpersonated', function() {
-            return '<?php endif; ?>';
+                return "<?php if (app()['auth']->check() && app()['auth']->user()->id != {$user}->id && {$user}->canBeImpersonated()): ?>";
+            });
+
+            $bladeCompiler->directive('endCanBeImpersonated', function () {
+                return '<?php endif; ?>';
+            });
         });
     }
 
