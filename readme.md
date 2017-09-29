@@ -198,7 +198,7 @@ But you don\'t want that button next to the current authenticated user neither t
 ```blade
 @canBeImpersonated($user)
     <a href="{{ route('impersonate', $user->id) }}">Impersonate this user</a>
-@endBeImpersonated
+@endCanBeImpersonated
 ```
 
 ### When the user is impersonated
