@@ -56,6 +56,25 @@ class ImpersonateManager
     {
         return session($this->getSessionKey(), null);
     }
+    
+    /**
+     * @param   void
+     * @return  int|null
+     */
+    public function getImpersonatedId()
+    {
+        try {
+            $impersonated = $this->app['auth']->user();
+        } catch (\Exception $e) {
+            unset($e);
+            return null;
+        }
+        
+        if(!empty($impersonated)) {
+            return $impersonated->id;
+        }
+        return null;
+    }
 
     /**
      * @param Model $from
