@@ -21,36 +21,42 @@ class CreateUsersTable extends Migration
             $table->string('name');
             $table->string('email')->unique();
             $table->string('password');
-            $table->boolean('is_admin')->default(0)->index();
-            $table->boolean('can_be_impersonated')->default(1)->index();
-            // $table->string('role')->nullable();
+            $table->string('role')->nullable();
             $table->rememberToken();
             $table->timestamps();
         });
 
         DB::table('users')->insert([
             [
+                'id'         =>  1,
                 'name'       => 'Admin',
                 'email'      => 'admin@test.rocks',
                 'password'   => bcrypt('password'),
-                'is_admin'   => 1,
-                'can_be_impersonated' => 1,
+                'role'       => 'admin',
                 'created_at' => Carbon::now()->toDateTimeString(),
             ],
             [
+                'id'         =>  2,
                 'name'       => 'User',
                 'email'      => 'user@test.rocks',
                 'password'   => bcrypt('password'),
-                'is_admin'   => 0,
-                'can_be_impersonated' => 1,
+                'role'       => 'user',
                 'created_at' => Carbon::now()->toDateTimeString(),
             ],
             [
+                'id'         =>  3,
                 'name'       => 'SuperAdmin',
                 'email'      => 'superadmin@test.rocks',
                 'password'   => bcrypt('password'),
-                'is_admin'   => 1,
-                'can_be_impersonated' => 0,
+                'role'       => 'superadmin',
+                'created_at' => Carbon::now()->toDateTimeString(),
+            ],
+            [
+                'id'         =>  4,
+                'name'       => 'Manager',
+                'email'      => 'manager@test.rocks',
+                'password'   => bcrypt('password'),
+                'role'       => 'manager',
                 'created_at' => Carbon::now()->toDateTimeString(),
             ],
         ]);

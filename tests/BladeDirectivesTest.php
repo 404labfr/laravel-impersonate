@@ -29,7 +29,7 @@ class BladeDirectivesTest extends TestCase
      * @param   array $with
      * @return  void
      */
-    protected function makeView($view = 'impersonate', array $with = [])
+    protected function makeView($view, array $with = [])
     {
         $this->view = (string)$this->app['view']->make($view, $with);
     }
@@ -47,21 +47,21 @@ class BladeDirectivesTest extends TestCase
     public function it_displays_can_impersonate_content_directive()
     {
         $this->actingAs($this->admin);
-        $this->makeView();
+        $this->makeView('impersonate', ['user' => $this->user]);
         $this->assertContains('Impersonate this user', $this->view);
 
         $this->admin->impersonate($this->user);
         $this->admin->leaveImpersonation();
-        $this->makeView();
+        $this->makeView('impersonate', ['user' => $this->user]);
         $this->assertContains('Impersonate this user', $this->view);
         $this->logout();
     }
 
     /** @test */
-    public function it_not_displays_can_impersonate_content_directive()
+    public function it_does_not_display_can_impersonate_content_directive()
     {
         $this->actingAs($this->user);
-        $this->makeView();
+        $this->makeView('impersonate', ['user' => $this->admin]);
         $this->assertNotContains('Impersonate this user', $this->view);
         $this->logout();
     }
@@ -71,23 +71,23 @@ class BladeDirectivesTest extends TestCase
     {
         $this->actingAs($this->admin);
         $this->admin->impersonate($this->user);
-        $this->makeView();
+        $this->makeView('impersonate');
         $this->assertContains('Leave impersonation', $this->view);
         $this->logout();
     }
 
     /** @test */
-    public function it_not_displays_impersonating_content_directive()
+    public function it_does_not_display_impersonating_content_directive()
     {
         $this->actingAs($this->user);
-        $this->makeView();
+        $this->makeView('impersonate');
         $this->assertNotContains('Leave impersonation', $this->view);
         $this->logout();
 
         $this->actingAs($this->admin);
         $this->admin->impersonate($this->user);
         $this->admin->leaveImpersonation();
-        $this->makeView();
+        $this->makeView('impersonate');
         $this->assertNotContains('Leave impersonation', $this->view);
         $this->logout();
     }

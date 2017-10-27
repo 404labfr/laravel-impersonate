@@ -2,10 +2,12 @@
 
 namespace Lab404\Impersonate\Services;
 
-use Illuminate\Database\Eloquent\Model;
 use Illuminate\Foundation\Application;
-use Lab404\Impersonate\Events\LeaveImpersonation;
+use Illuminate\Database\Eloquent\Model;
 use Lab404\Impersonate\Events\TakeImpersonation;
+use Lab404\Impersonate\Events\LeaveImpersonation;
+use Lab404\Impersonate\Exceptions\CannotImpersonateException;
+use Lab404\Impersonate\Exceptions\CannotBeImpersonatedException;
 
 class ImpersonateManager
 {
@@ -13,6 +15,11 @@ class ImpersonateManager
      * @var Application
      */
     private $app;
+
+    /**
+     * @var boolean
+     */
+    private $isGuarded = true;
 
     /**
      * UserFinder constructor.
@@ -62,8 +69,36 @@ class ImpersonateManager
      * @param Model $to
      * @return bool
      */
+    public function forceTake($from, $to)
+    {
+        $this->isGuarded = false;
+        $return = $this->take($from, $to);
+        $this->isGuarded = true;
+
+        return $return;
+    }
+
+    /**
+     * @param Model $from
+     * @param Model $to
+     * @return bool
+     */
     public function take($from, $to)
     {
+        if ($this->isGuarded) {
+            if (method_exists($from, 'canImpersonate')) {
+                if (!$from->canImpersonate($to)) {
+                    throw new CannotImpersonateException($from, $to, "The user {$from->id} cannot impersonate the user {$to->id}.");
+                }
+            }
+
+            if (method_exists($to, 'canBeImpersonated')) {
+                if (!$to->canBeImpersonated($from)) {
+                    throw new CannotBeImpersonatedException($from, $to, "The user {$to->id} cannot be impersonated by the user {$from->id}.");
+                }
+            }
+        }
+
         try {
             session()->put($this->getSessionKey(), $from->getKey());
 

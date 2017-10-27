@@ -27,16 +27,29 @@ class User extends Authenticatable
     /**
      * @return  bool
      */
-    public function canImpersonate()
+    public function canImpersonate($impersonate_whom)
     {
-        return $this->attributes['is_admin'] == 1;
+        // Superadmins cannot be impersonated, so check for that.
+        return $this->role !== 'user' && in_array($impersonate_whom->role, ['user', 'manager', 'admin']);
     }
 
     /*
      * @return bool
      */
-    public function canBeImpersonated()
+    public function canBeImpersonated($impersonated_by)
     {
-        return $this->attributes['can_be_impersonated'] == 1;
+        if ($this->role === 'user') {
+            return true;
+        }
+
+        if ($this->role === 'manager') {
+            return in_array($impersonated_by, ['admin', 'superadmin']);
+        }
+
+        if ($this->role === 'admin') {
+            return $impersonated_by->role === 'superadmin';
+        }
+
+        return false;
     }
 }

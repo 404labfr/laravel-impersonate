@@ -2,10 +2,12 @@
 
 namespace Lab404\Impersonate\Controllers;
 
-use Illuminate\Http\RedirectResponse;
 use Illuminate\Http\Request;
 use Illuminate\Routing\Controller;
+use Illuminate\Http\RedirectResponse;
 use Lab404\Impersonate\Services\ImpersonateManager;
+use Lab404\Impersonate\Exceptions\CannotImpersonateException;
+use Lab404\Impersonate\Exceptions\CannotBeImpersonatedException;
 
 class ImpersonateController extends Controller
 {
@@ -38,20 +40,18 @@ class ImpersonateController extends Controller
             abort(403);
         }
 
-        if (!$request->user()->canImpersonate()) {
-            abort(403);
-        }
-
         $user_to_impersonate = $this->manager->findUserById($id);
 
-        if ($user_to_impersonate->canBeImpersonated()) {
+        try {
             if ($this->manager->take($request->user(), $user_to_impersonate)) {
                 $takeRedirect = $this->manager->getTakeRedirectTo();
                 if ($takeRedirect !== 'back') {
                     return redirect()->to($takeRedirect);
                 }
             }
-        }
+        } catch (CannotImpersonateException $e) {
+            abort(403);
+        } catch (CannotBeImpersonatedException $e) {}
 
         return redirect()->back();
     }

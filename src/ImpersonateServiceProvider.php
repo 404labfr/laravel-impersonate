@@ -76,8 +76,10 @@ class ImpersonateServiceProvider extends \Illuminate\Support\ServiceProvider
                 return '<?php endif; ?>';
             });
 
-            $bladeCompiler->directive('canImpersonate', function () {
-                return '<?php if (app()["auth"]->check() && app()["auth"]->user()->canImpersonate()): ?>';
+            $bladeCompiler->directive('canImpersonate', function ($expression) {
+                $user = trim($expression);
+
+                return "<?php if (app()[\"auth\"]->check() && app()[\"auth\"]->user()->canImpersonate({$user})): ?>";
             });
 
             $bladeCompiler->directive('endCanImpersonate', function () {
@@ -87,7 +89,7 @@ class ImpersonateServiceProvider extends \Illuminate\Support\ServiceProvider
             $bladeCompiler->directive('canBeImpersonated', function ($expression) {
                 $user = trim($expression);
 
-                return "<?php if (app()['auth']->check() && app()['auth']->user()->id != {$user}->id && {$user}->canBeImpersonated()): ?>";
+                return "<?php if (app()[\"auth\"]->check() && app()[\"auth\"]->user()->id != {$user}->id && {$user}->canBeImpersonated(app()[\"auth\"]->user())): ?>";
             });
 
             $bladeCompiler->directive('endCanBeImpersonated', function () {

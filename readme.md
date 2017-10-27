@@ -3,7 +3,7 @@
 [![Build Status](https://travis-ci.org/404labfr/laravel-impersonate.svg?branch=master)](https://travis-ci.org/404labfr/laravel-impersonate) [![Scrutinizer Code Quality](https://scrutinizer-ci.com/g/404labfr/laravel-impersonate/badges/quality-score.png?b=master)](https://scrutinizer-ci.com/g/404labfr/laravel-impersonate/?branch=master)
 
 **Laravel Impersonate** makes it easy to **authenticate as your users**. Add a simple **trait** to your **user model** and impersonate as one of your users in one click.
- 
+
 - [Requirements](#requirements)
 - [Installation](#installation)
 - [Simple usage](#simple-usage)
@@ -59,7 +59,7 @@ Auth::user()->leaveImpersonation();
 
 ### Using the built-in controller
 
-In your routes file you must call the `impersonate` route macro. 
+In your routes file you must call the `impersonate` route macro.
 ```php
 Route::impersonate();
 ```
@@ -76,31 +76,31 @@ route('impersonate.leave')
 
 ### Defining impersonation authorization
 
-By default all users can **impersonate** an user.  
+By default all users can **impersonate** an user.
 You need to add the method `canImpersonate()` to your user model:
 
 ```php
     /**
      * @return bool
      */
-    public function canImpersonate()
+    public function canImpersonate($impersonated)
     {
         // For example
-        return $this->is_admin == 1;
+        return $this->is_admin == 1 && !$impersonated->is_superadmin;
     }
 ```
 
-By default all users can **be impersonated**.  
+By default all users can **be impersonated**.
 You need to add the method `canBeImpersonated()` to your user model to extend this behavior:
 
 ```php
     /**
      * @return bool
      */
-    public function canBeImpersonated()
+    public function canBeImpersonated($impersonator)
     {
         // For example
-        return $this->can_be_impersonate == 1;
+        return $this->can_be_impersonated == 1 || $impersonator->is_superadmin;
     }
 ```
 
@@ -125,7 +125,9 @@ $manager->findUserById($id);
 $manager->isImpersonating();
 
 // Impersonate an user. Pass the original user and the user you want to impersonate
-$manager->take($from, $to);
+$manager->take($from, $to); // Will check for the canBeImpersonated and canImpersonate guards and throw exceptions if they fail
+// or
+$manager->forceTake($from, $to);
 
 // Leave current impersonation
 $manager->leave();
@@ -138,8 +140,8 @@ $manager->getImpersonatorId();
 
 **Protect From Impersonation**
 
-You can use the middleware `impersonate.protect` to protect your routes against user impersonation.  
-This middleware can be useful when you want to protect specific pages like users subscriptions, users credit cards, ... 
+You can use the middleware `impersonate.protect` to protect your routes against user impersonation.
+This middleware can be useful when you want to protect specific pages like users subscriptions, users credit cards, ...
 
 ```php
 Router::get('/my-credit-card', function() {
@@ -157,7 +159,7 @@ Each events returns two properties `$event->impersonator` and `$event->impersona
 
 ## Configuration
 
-The package comes with a configuration file.  
+The package comes with a configuration file.
 
 Publish it with the following command:
 ```bash
@@ -193,7 +195,7 @@ There are three Blade directives available.
 ### When the user can be impersonated
 
 This comes in handy when you have a user list and want to show an "Impersonate" button next to all the users.
-But you don\'t want that button next to the current authenticated user neither to that users which should not be able to impersonated according your implementation of `canBeImpersonated()` . 
+But you don\'t want that button next to the current authenticated user neither to that users which should not be able to impersonated according your implementation of `canBeImpersonated()` .
 
 ```blade
 @canBeImpersonated($user)

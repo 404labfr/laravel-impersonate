@@ -2,6 +2,8 @@
 <a href="{{ route('impersonate.leave') }}">Leave impersonation</a>
 @endImpersonating
 
-@canImpersonate
-<a href="{{ route('impersonate', 2) }}">Impersonate this user</a>
-@endCanImpersonate
+@if (!empty($user))
+	@canImpersonate($user)
+	<a href="{{ route('impersonate', $user->id) }}">Impersonate this user</a>
+	@endCanImpersonate
+@endif
