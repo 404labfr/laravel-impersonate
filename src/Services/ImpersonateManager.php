@@ -65,7 +65,7 @@ class ImpersonateManager
     public function take($from, $to)
     {
         try {
-            session()->put(config('laravel-impersonate.session_key'), $from->getKey());
+            session()->put($this->getSessionKey(), $from->getKey());
 
             $this->app['auth']->quietLogout();
             $this->app['auth']->quietLogin($to);
@@ -91,7 +91,7 @@ class ImpersonateManager
 
             $this->app['auth']->quietLogout();
             $this->app['auth']->quietLogin($impersonator);
-            
+
             $this->clear();
 
         } catch (\Exception $e) {
