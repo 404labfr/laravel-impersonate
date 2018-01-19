@@ -1,5 +1,15 @@
 # Laravel Impersonate Changelog
 
+## 1.2.2 (2018-01-19)
+
+### Changed
+
+- Register Blade directives after resolving
+
+### Fixed
+
+- Blade directives documentation
+
 ## 1.2.1 (2017-09-03)
 
 ### Changed
