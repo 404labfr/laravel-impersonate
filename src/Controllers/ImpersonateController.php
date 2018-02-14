@@ -38,7 +38,7 @@ class ImpersonateController extends Controller
             abort(403);
         }
 
-        if (!$request->user()->canImpersonate()) {
+        if (!$request->user()->canImpersonate($id)) {
             abort(403);
         }
 
