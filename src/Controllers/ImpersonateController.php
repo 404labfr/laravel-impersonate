@@ -41,6 +41,11 @@ class ImpersonateController extends Controller
         if (!$request->user()->canImpersonate()) {
             abort(403);
         }
+        
+        // save the origin when set in config
+        if ($this->manager->getLeaveRedirectTo() === 'origin') {
+            session()->put('impersonate_origin', $request->header('referer'));
+        }
 
         $user_to_impersonate = $this->manager->findUserById($id);
 
@@ -68,6 +73,12 @@ class ImpersonateController extends Controller
         $this->manager->leave();
 
         $leaveRedirect = $this->manager->getLeaveRedirectTo();
+        
+        // redirect back to origin when set and when session available
+        if ($leaveRedirect === 'origin' && session()->get('impersonate_origin')) {
+            return redirect()->to(session()->get('impersonate_origin'));
+        }
+        
         if ($leaveRedirect !== 'back') {
             return redirect()->to($leaveRedirect);
         }
