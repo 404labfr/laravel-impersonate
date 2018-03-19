@@ -20,6 +20,7 @@ return [
      *
      * Only used in the built-in controller.
      * Use 'back' to redirect to the previous page
+     * Use 'origin' to redirect back to the page you impersonated from
      */
     'leave_redirect_to' => '/',
 
