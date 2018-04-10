@@ -17,6 +17,7 @@
 - [Blade](#blade)
 - [Tests](#tests)
 - [Contributors](#contributors)
+- [Why Not Just Use loginAsId()?](#rationale)
 
 
 ## Requirements
@@ -220,6 +221,11 @@ vendor/bin/phpunit
 - [MarceauKa](https://github.com/MarceauKa)
 - [tghpow](https://github.com/tghpow)
 - and all others [contributors](https://github.com/404labfr/laravel-impersonate/graphs/contributors)
+
+## Rationale
+### Why not just use `loginAsId()`?
+
+This package adds broader functionality, including Blade directives to allow you to override analytics and other tracking events when impersonating, fire events based on impersonation status, and more. Brief discussion at [issues/5](https://github.com/404labfr/laravel-impersonate/issues/5)
 
 ## Licence
 
