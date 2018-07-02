@@ -1,32 +1,51 @@
 {
-    "name": "lab404/laravel-impersonate",
-    "description": "Laravel Impersonate is a plugin that allows to you to authenticate as your users.",
-    "type": "library",
-    "require": {
-        "laravel/framework": "5.4.*"
-    },
-    "require-dev": {
-      "phpunit/phpunit": "^5.7",
-      "orchestra/testbench": "~3.4.0",
-      "orchestra/database": "~3.4.0"
-    },
-    "license": "MIT",
-    "authors": [
-        {
-            "name": "404lab",
-            "email": "web@404lab.fr"
-        }
-    ],
-    "autoload": {
-      "psr-4": {
-        "Lab404\\Impersonate\\": "src/"
-      }
-    },
-    "autoload-dev": {
-      "psr-4": {
-        "Lab404\\Tests\\": "tests/"
-      }
-    },
-    "minimum-stability": "dev",
-    "prefer-stable": true
+  "name": "lab404/laravel-impersonate",
+  "description": "Laravel Impersonate is a plugin that allows to you to authenticate as your users.",
+  "type": "library",
+  "keywords": [
+    "laravel",
+    "package",
+    "plugin",
+    "impersonate",
+    "impersonation",
+    "user",
+    "auth",
+    "laravel-package",
+    "laravel-plugin"
+  ],
+  "require": {
+    "php": ">=7.0",
+    "laravel/framework": ">=5.5"
+  },
+  "require-dev": {
+    "phpunit/phpunit": "^5.7",
+    "orchestra/testbench": "~3.4.0",
+    "orchestra/database": "~3.4.0"
+  },
+  "license": "MIT",
+  "authors": [
+    {
+      "name": "404lab",
+      "email": "web@404lab.fr"
+    }
+  ],
+  "autoload": {
+    "psr-4": {
+      "Lab404\\Impersonate\\": "src/"
+    }
+  },
+  "autoload-dev": {
+    "psr-4": {
+      "Lab404\\Tests\\": "tests/"
+    }
+  },
+  "extra": {
+    "laravel": {
+      "providers": [
+        "Lab404\\Impersonate\\ImpersonateServiceProvider"
+      ]
+    }
+  },
+  "minimum-stability": "dev",
+  "prefer-stable": true
 }

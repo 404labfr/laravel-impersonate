@@ -21,8 +21,10 @@
 
 ## Requirements
 
-- Laravel >= 5.4
-- PHP >= 5.6
+- Laravel >= 5.5
+- PHP >= 7
+
+**See release v1.1 for Laravel <= 5.4 support.**
 
 ## Installation
 
@@ -43,7 +45,7 @@ composer require lab404/laravel-impersonate
 
 ## Simple usage
 
-Impersonate an user:
+Impersonate a user:
 ```php
 Auth::user()->impersonate($other_user);
 // You're now logged as the $other_user
@@ -166,13 +168,16 @@ Available options:
 ```php
     // The session key used to store the original user id.
     'session_key' => 'impersonated_by',
-    // The URI to redirect after taking an impersonation.
+    // Where to redirect after taking an impersonation.
     // Only used in the built-in controller.
+    // You can use: an URI, the keyword back (to redirect back) or a route name
     'take_redirect_to' => '/',
-    // The URI to redirect after leaving an impersonation.
+    // Where to redirect after leaving an impersonation.
     // Only used in the built-in controller.
+    // You can use: an URI, the keyword back (to redirect back) or a route name
     'leave_redirect_to' => '/'
 ```
+
 ## Blade
 
 There are three Blade directives available.
@@ -193,7 +198,7 @@ But you don\'t want that button next to the current authenticated user neither t
 ```blade
 @canBeImpersonated($user)
     <a href="{{ route('impersonate', $user->id) }}">Impersonate this user</a>
-@endBeImpersonated
+@endCanBeImpersonated
 ```
 
 ### When the user is impersonated
