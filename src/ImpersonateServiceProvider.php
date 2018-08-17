@@ -72,6 +72,10 @@ class ImpersonateServiceProvider extends \Illuminate\Support\ServiceProvider
                 return '<?php if (app()["auth"]->check() && app()["auth"]->user()->isImpersonated()): ?>';
             });
 
+            $bladeCompiler->directive('elseImpersonating', function () {
+                return '<?php else: ?>';
+            });
+
             $bladeCompiler->directive('endImpersonating', function () {
                 return '<?php endif; ?>';
             });
