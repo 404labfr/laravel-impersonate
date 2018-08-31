@@ -26,11 +26,22 @@ class ImpersonateManager
 
     /**
      * @param   int $id
+     * @param   string|null $guardName
      * @return  Model
      */
-    public function findUserById($id)
+    public function findUserById($id, $guardName = null)
     {
+      if($guardName)
+      {
+          $userProvider = $this->app['config']->get('auth.guards.'. $guardName .'.provider');
+          $model = $this->app['config']->get('auth.providers.'. $userProvider .'.model');
+
+          if(!$model)
+            throw new \Exception("Auth guard doesn not exist.", 1);
+
+      } else {
         $model = $this->app['config']->get('auth.providers.users.model');
+      }
 
         $user = call_user_func([
             $model,
@@ -58,17 +69,27 @@ class ImpersonateManager
     }
 
     /**
+    * @return string|null
+    */
+   public function getImpersonatorGuardName()
+   {
+       return session($this->getSessionGuard(), null);
+   }
+
+    /**
      * @param Model $from
      * @param Model $to
+     * @param   string|null $guardName
      * @return bool
      */
-    public function take($from, $to)
+    public function take($from, $to, $guardName = null)
     {
         try {
             session()->put(config('laravel-impersonate.session_key'), $from->getKey());
+            session()->put(config('laravel-impersonate.session_guard'), $this->getCurrentAuthGuardName());
 
             $this->app['auth']->quietLogout();
-            $this->app['auth']->quietLogin($to);
+            $this->app['auth']->guard($guardName)->quietLogin($to);
 
         } catch (\Exception $e) {
             unset($e);
@@ -86,12 +107,12 @@ class ImpersonateManager
     public function leave()
     {
         try {
-            $impersonated = $this->app['auth']->user();
-            $impersonator = $this->findUserById($this->getImpersonatorId());
+            $impersonated = $this->app['auth']->guard($this->getCurrentAuthGuardName())->user();
+            $impersonator = $this->findUserById($this->getImpersonatorId(), $this->getImpersonatorGuardName());
 
-            $this->app['auth']->quietLogout();
-            $this->app['auth']->quietLogin($impersonator);
-            
+            $this->app['auth']->guard($this->getCurrentAuthGuardName())->quietLogout();
+            $this->app['auth']->guard($this->getImpersonatorGuardName())->quietLogin($impersonator);
+
             $this->clear();
 
         } catch (\Exception $e) {
@@ -110,6 +131,7 @@ class ImpersonateManager
     public function clear()
     {
         session()->forget($this->getSessionKey());
+        session()->forget($this->getSessionGuard());
     }
 
     /**
@@ -118,6 +140,14 @@ class ImpersonateManager
     public function getSessionKey()
     {
         return config('laravel-impersonate.session_key');
+    }
+
+    /**
+     * @return string
+     */
+    public function getSessionGuard()
+    {
+        return config('laravel-impersonate.session_guard');
     }
 
     /**
@@ -146,5 +176,19 @@ class ImpersonateManager
         }
 
         return $uri;
+    }
+
+    /**
+     * @return string|null
+     */
+    public function getCurrentAuthGuardName()
+    {
+        $guards = array_keys(config('auth.guards'));
+        foreach ($guards as $guard) {
+            if ($this->app['auth']->guard($guard)->check()) {
+                return $guard;
+            }
+        }
+         return null;
     }
 }

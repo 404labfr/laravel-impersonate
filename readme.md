@@ -3,7 +3,7 @@
 [![Build Status](https://travis-ci.org/404labfr/laravel-impersonate.svg?branch=master)](https://travis-ci.org/404labfr/laravel-impersonate) [![Scrutinizer Code Quality](https://scrutinizer-ci.com/g/404labfr/laravel-impersonate/badges/quality-score.png?b=master)](https://scrutinizer-ci.com/g/404labfr/laravel-impersonate/?branch=master)
 
 **Laravel Impersonate** makes it easy to **authenticate as your users**. Add a simple **trait** to your **user model** and impersonate as one of your users in one click.
- 
+
 - [Requirements](#requirements)
 - [Installation](#installation)
 - [Simple usage](#simple-usage)
@@ -59,7 +59,7 @@ Auth::user()->leaveImpersonation();
 
 ### Using the built-in controller
 
-In your routes file you must call the `impersonate` route macro. 
+In your routes file you must call the `impersonate` route macro.
 ```php
 Route::impersonate();
 ```
@@ -139,7 +139,7 @@ $manager->getImpersonatorId();
 **Protect From Impersonation**
 
 You can use the middleware `impersonate.protect` to protect your routes against user impersonation.  
-This middleware can be useful when you want to protect specific pages like users subscriptions, users credit cards, ... 
+This middleware can be useful when you want to protect specific pages like users subscriptions, users credit cards, ...
 
 ```php
 Router::get('/my-credit-card', function() {
@@ -188,16 +188,24 @@ There are three Blade directives available.
 @canImpersonate
     <a href="{{ route('impersonate', $user->id) }}">Impersonate this user</a>
 @endCanImpersonate
+
+@canImpersonate
+    <a href="{{ route('impersonate', [$client->id, 'client-web']) }}">Impersonate this user</a>
+@endCanImpersonate
 ```
 
 ### When the user can be impersonated
 
 This comes in handy when you have a user list and want to show an "Impersonate" button next to all the users.
-But you don\'t want that button next to the current authenticated user neither to that users which should not be able to impersonated according your implementation of `canBeImpersonated()` . 
+But you don\'t want that button next to the current authenticated user neither to that users which should not be able to impersonated according your implementation of `canBeImpersonated()` .
 
 ```blade
 @canBeImpersonated($user)
     <a href="{{ route('impersonate', $user->id) }}">Impersonate this user</a>
+@endCanBeImpersonated
+
+@canBeImpersonated($user)
+    <a href="{{ route('impersonate', [$client->id, 'client-web']) }}">Impersonate this user</a>
 @endCanBeImpersonated
 ```
 
