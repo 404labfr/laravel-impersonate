@@ -15,7 +15,7 @@ trait Impersonate
      */
     public function canImpersonate()
     {
-        return true;
+        return false;
     }
 
     /**
