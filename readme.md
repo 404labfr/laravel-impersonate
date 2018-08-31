@@ -100,7 +100,7 @@ You need to add the method `canBeImpersonated()` to your user model to extend th
     public function canBeImpersonated()
     {
         // For example
-        return $this->can_be_impersonate == 1;
+        return $this->can_be_impersonated == 1;
     }
 ```
 
