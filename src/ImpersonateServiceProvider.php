@@ -7,7 +7,9 @@ use Illuminate\Foundation\Application;
 use Illuminate\View\Compilers\BladeCompiler;
 use Lab404\Impersonate\Guard\SessionGuard;
 use Lab404\Impersonate\Middleware\ProtectFromImpersonation;
+use Lab404\Impersonate\Middleware\ProtectAuthenticateImpersonation;
 use Lab404\Impersonate\Services\ImpersonateManager;
+use Lab404\Impersonate\Listeners\AuthEventSubscriber;
 
 /**
  * Class ServiceProvider
@@ -47,6 +49,8 @@ class ImpersonateServiceProvider extends \Illuminate\Support\ServiceProvider
         $this->registerBladeDirectives();
         $this->registerMiddleware();
         $this->registerAuthDriver();
+        //$this->registerAuthEventListener();
+
     }
 
     /**
@@ -56,6 +60,7 @@ class ImpersonateServiceProvider extends \Illuminate\Support\ServiceProvider
      */
     public function boot()
     {
+
         $this->publishConfig();
     }
 
@@ -126,6 +131,7 @@ class ImpersonateServiceProvider extends \Illuminate\Support\ServiceProvider
         $auth = $this->app['auth'];
 
         $auth->extend('session', function (Application $app, $name, array $config) use ($auth) {
+
             $provider = $auth->createUserProvider($config['provider']);
 
             $guard = new SessionGuard($name, $provider, $app['session.store']);
@@ -155,6 +161,7 @@ class ImpersonateServiceProvider extends \Illuminate\Support\ServiceProvider
     public function registerMiddleware()
     {
         $this->app['router']->aliasMiddleware('impersonate.protect', ProtectFromImpersonation::class);
+        $this->app['router']->aliasMiddleware('impersonate.auth',    ProtectAuthenticateImpersonation::class);
     }
 
     /**
@@ -181,5 +188,13 @@ class ImpersonateServiceProvider extends \Illuminate\Support\ServiceProvider
         $configPath = __DIR__ . '/../config/' . $this->configName . '.php';
 
         $this->publishes([$configPath => config_path($this->configName . '.php')], 'impersonate');
+    }
+
+    /**
+    * hook to laravel Event
+    */
+    protected function registerAuthEventListener()
+    {
+        $this->app->register(AuthEventSubscriber::class);
     }
 }

@@ -17,9 +17,9 @@ class ImpersonateController extends Controller
      */
     public function __construct()
     {
-        $this->middleware('web');
+      $this->middleware('impersonate.auth');
 
-        $this->manager = app()->make(ImpersonateManager::class);
+      $this->manager = app()->make(ImpersonateManager::class);
     }
 
     /**

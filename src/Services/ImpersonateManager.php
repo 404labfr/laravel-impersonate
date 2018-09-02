@@ -76,6 +76,14 @@ class ImpersonateManager
        return session($this->getSessionGuard(), null);
    }
 
+   /**
+   * @return string|null
+   */
+  public function getImpersonatorGuardUsingName()
+  {
+      return session($this->getSessionGuardUsing(), null);
+  }
+
     /**
      * @param Model $from
      * @param Model $to
@@ -87,6 +95,7 @@ class ImpersonateManager
         try {
             session()->put(config('laravel-impersonate.session_key'), $from->getKey());
             session()->put(config('laravel-impersonate.session_guard'), $this->getCurrentAuthGuardName());
+            session()->put(config('laravel-impersonate.session_guard_using'), $guardName);
 
             $this->app['auth']->quietLogout();
             $this->app['auth']->guard($guardName)->quietLogin($to);
@@ -107,7 +116,8 @@ class ImpersonateManager
     public function leave()
     {
         try {
-            $impersonated = $this->app['auth']->guard($this->getCurrentAuthGuardName())->user();
+
+            $impersonated = $this->app['auth']->guard($this->getImpersonatorGuardUsingName())->user();
             $impersonator = $this->findUserById($this->getImpersonatorId(), $this->getImpersonatorGuardName());
 
             $this->app['auth']->guard($this->getCurrentAuthGuardName())->quietLogout();
@@ -116,6 +126,7 @@ class ImpersonateManager
             $this->clear();
 
         } catch (\Exception $e) {
+          dd($e);
             unset($e);
             return false;
         }
@@ -132,6 +143,7 @@ class ImpersonateManager
     {
         session()->forget($this->getSessionKey());
         session()->forget($this->getSessionGuard());
+        session()->forget($this->getSessionGuardUsing());
     }
 
     /**
@@ -148,6 +160,14 @@ class ImpersonateManager
     public function getSessionGuard()
     {
         return config('laravel-impersonate.session_guard');
+    }
+
+    /**
+     * @return string
+     */
+    public function getSessionGuardUsing()
+    {
+        return config('laravel-impersonate.session_guard_using');
     }
 
     /**
@@ -189,6 +209,6 @@ class ImpersonateManager
                 return $guard;
             }
         }
-         return null;
+        return null;
     }
 }
