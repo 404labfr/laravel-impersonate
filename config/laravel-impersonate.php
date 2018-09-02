@@ -13,6 +13,11 @@ return [
     'session_guard' => 'impersonator_guard',
 
     /**
+     * The session key used to stored what guard is impersonator using.
+     */
+    'session_guard_using' => 'impersonator_guard_using',
+
+    /**
      * The URI to redirect after taking an impersonation.
      *
      * Only used in the built-in controller.
