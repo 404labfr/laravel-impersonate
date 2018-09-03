@@ -66,7 +66,7 @@ In your routes file, under web middleware, you must call the `impersonate` route
 Route::impersonate();
 ```
 
-alternatively, you can execute this macro with your `RouteServiceProvider`.
+Alternatively, you can execute this macro with your `RouteServiceProvider`.
 
 ```php
 namespace App\Providers;
@@ -239,6 +239,7 @@ vendor/bin/phpunit
 - and all others [contributors](https://github.com/404labfr/laravel-impersonate/graphs/contributors)
 
 ## Rationale
+
 ### Why not just use `loginAsId()`?
 
 This package adds broader functionality, including Blade directives to allow you to override analytics and other tracking events when impersonating, fire events based on impersonation status, and more. Brief discussion at [issues/5](https://github.com/404labfr/laravel-impersonate/issues/5)
