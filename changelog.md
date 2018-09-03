@@ -1,5 +1,12 @@
 # Laravel Impersonate Changelog
 
+## 1.2.3 (2018-09-03)
+
+### Changed
+
+- Documentation
+- Use `getSessionKey()` in `take()` method
+
 ## 1.2.2 (2018-01-19)
 
 ### Changed
