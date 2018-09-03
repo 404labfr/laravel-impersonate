@@ -59,9 +59,25 @@ Auth::user()->leaveImpersonation();
 
 ### Using the built-in controller
 
-In your routes file you must call the `impersonate` route macro. 
+In your routes file, under web middleware, you must call the `impersonate` route macro. 
+
 ```php
 Route::impersonate();
+```
+
+alternatively, you can execute this macro with your `RouteServiceProvider`.
+
+```php
+namespace App\Providers;
+
+class RouteServiceProvider extends ServiceProvider
+{
+    public function map() {
+        Route::middleware('web')->group(function (Router $router) {
+            $router->impersonate();
+        });
+    }
+}
 ```
 
 ```php
