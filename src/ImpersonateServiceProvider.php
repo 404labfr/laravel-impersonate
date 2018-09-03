@@ -49,7 +49,6 @@ class ImpersonateServiceProvider extends \Illuminate\Support\ServiceProvider
         $this->registerBladeDirectives();
         $this->registerMiddleware();
         $this->registerAuthDriver();
-        //$this->registerAuthEventListener();
 
     }
 
@@ -60,8 +59,16 @@ class ImpersonateServiceProvider extends \Illuminate\Support\ServiceProvider
      */
     public function boot()
     {
-
         $this->publishConfig();
+
+        //We want to remove data from storage on real login and logout
+        \Event::listen('Illuminate\Auth\Events\Login', function ($event) {
+          app('impersonate')->clear();
+        });
+
+        \Event::listen('Illuminate\Auth\Events\Logout', function ($event) {
+          app('impersonate')->clear();
+        });
     }
 
     /**
@@ -188,13 +195,5 @@ class ImpersonateServiceProvider extends \Illuminate\Support\ServiceProvider
         $configPath = __DIR__ . '/../config/' . $this->configName . '.php';
 
         $this->publishes([$configPath => config_path($this->configName . '.php')], 'impersonate');
-    }
-
-    /**
-    * hook to laravel Event
-    */
-    protected function registerAuthEventListener()
-    {
-        $this->app->register(AuthEventSubscriber::class);
     }
 }
