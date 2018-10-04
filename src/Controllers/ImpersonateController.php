@@ -30,7 +30,7 @@ class ImpersonateController extends Controller
     public function take(Request $request, $id, $guardName = null )
     {
         // Cannot impersonate yourself
-        if ($id == $request->user()->getKey()) {
+        if ($id == $request->user()->getKey() and ($this->manager->getCurrentAuthGuardName() == $guardName)) { //TODO check guards someime 1==1
             abort(403);
         }
 
