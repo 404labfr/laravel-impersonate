@@ -32,12 +32,7 @@ class ImpersonateManager
     {
         $model = $this->app['config']->get('auth.providers.users.model');
 
-        $user = call_user_func([
-            $model,
-            'findOrFail'
-        ], $id);
-
-        return $user;
+        return app($model)->withoutGlobalScopes()->findOrFail($id);
     }
 
     /**
