@@ -17,12 +17,16 @@ class EventsTest extends TestCase
     /** @var  User */
     protected $user;
 
+    /** @var  string */
+    protected $guard;
+
     public function setUp()
     {
         parent::setUp();
 
         $this->admin = User::find(1);
         $this->user = User::find(2);
+        $this->guard = 'web';
     }
 
     /** @test */
@@ -33,7 +37,7 @@ class EventsTest extends TestCase
         $admin = $this->admin;
         $user = $this->user;
 
-        $this->assertTrue($admin->impersonate($user));
+        $this->assertTrue($admin->impersonate($user, $this->guard));
 
         Event::assertDispatched(TakeImpersonation::class, function ($event) use ($admin, $user) {
             return $event->impersonator->id == $admin->id && $event->impersonated->id == $user->id;
@@ -49,8 +53,9 @@ class EventsTest extends TestCase
 
         $admin = $this->admin;
         $user = $this->user;
+        $this->app['auth']->loginUsingId($admin->id);
 
-        $this->assertTrue($admin->impersonate($user));
+        $this->assertTrue($admin->impersonate($user, $this->guard));
         $this->assertTrue($user->leaveImpersonation());
 
         Event::assertDispatched(LeaveImpersonation::class, function ($event) use ($admin, $user) {

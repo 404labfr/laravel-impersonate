@@ -3,6 +3,7 @@
 namespace Lab404\Tests;
 
 use Lab404\Impersonate\ImpersonateServiceProvider;
+use Lab404\Tests\Stubs\Models\AbsoluteAdmin;
 use Lab404\Tests\Stubs\Models\User;
 use Orchestra\Database\ConsoleServiceProvider;
 
@@ -42,6 +43,14 @@ class TestCase extends \Orchestra\Testbench\TestCase
 
         // Setup the right User class (using stub)
         $app['config']->set('auth.providers.users.model', User::class);
+        $app['config']->set('auth.providers.absolute_admin', [
+            'driver' => 'eloquent',
+            'model' => AbsoluteAdmin::class,
+        ]);
+        $app['config']->set('auth.guards.absolute_admin', [
+            'driver' => 'session',
+            'provider' => 'absolute_admin',
+        ]);
     }
 
     /**
