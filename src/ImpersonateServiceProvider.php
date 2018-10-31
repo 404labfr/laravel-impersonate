@@ -3,11 +3,14 @@
 namespace Lab404\Impersonate;
 
 use Illuminate\Auth\AuthManager;
+use Illuminate\Auth\Events\Login;
+use Illuminate\Auth\Events\Logout;
 use Illuminate\Foundation\Application;
 use Illuminate\View\Compilers\BladeCompiler;
 use Lab404\Impersonate\Guard\SessionGuard;
 use Lab404\Impersonate\Middleware\ProtectFromImpersonation;
 use Lab404\Impersonate\Services\ImpersonateManager;
+use Illuminate\Support\Facades\Event;
 
 /**
  * Class ServiceProvider
@@ -57,6 +60,14 @@ class ImpersonateServiceProvider extends \Illuminate\Support\ServiceProvider
     public function boot()
     {
         $this->publishConfig();
+
+        //We want to remove data from storage on real login and logout
+        Event::listen(Login::class, function ($event) {
+            app('impersonate')->clear();
+        });
+        Event::listen(Logout::class, function ($event) {
+            app('impersonate')->clear();
+        });
     }
 
     /**

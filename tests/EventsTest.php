@@ -7,6 +7,7 @@ use Illuminate\Auth\Events\Logout;
 use Illuminate\Support\Facades\Event;
 use Lab404\Impersonate\Events\LeaveImpersonation;
 use Lab404\Impersonate\Events\TakeImpersonation;
+use Lab404\Impersonate\Services\ImpersonateManager;
 use Lab404\Tests\Stubs\Models\User;
 
 class EventsTest extends TestCase
@@ -63,5 +64,31 @@ class EventsTest extends TestCase
         });
 
         Event::assertNotDispatched(Logout::class);
+    }
+
+    /** @test */
+    public function it_dispatches_login_event()
+    {
+        $manager = $this->app->make(ImpersonateManager::class);
+        $manager->take($this->admin, $this->user, $this->guard);
+
+        event(new Login($this->user, false));
+
+        $this->assertFalse($this->app['session']->has($manager->getSessionKey()));
+        $this->assertFalse($this->app['session']->has($manager->getSessionGuard()));
+        $this->assertFalse($this->app['session']->has($manager->getSessionGuardUsing()));
+    }
+
+    /** @test */
+    public function it_dispatches_logout_event()
+    {
+        $manager = $this->app->make(ImpersonateManager::class);
+        $manager->take($this->admin, $this->user, $this->guard);
+
+        event(new Logout($this->user));
+
+        $this->assertFalse($this->app['session']->has($manager->getSessionKey()));
+        $this->assertFalse($this->app['session']->has($manager->getSessionGuard()));
+        $this->assertFalse($this->app['session']->has($manager->getSessionGuardUsing()));
     }
 }
