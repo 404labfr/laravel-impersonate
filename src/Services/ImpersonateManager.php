@@ -30,7 +30,7 @@ class ImpersonateManager
      */
     public function findUserById($id)
     {
-        $provider = $this->app['config']->get('auth.providers.guards.'.$this->getImpersonatorGuardName().'.provider');
+        $provider = $this->app['config']->get('auth.guards.'.$this->getImpersonatorGuardName().'.provider');
         $model = $this->app['config']->get('auth.providers.'.$provider.'.model');
 
         $user = call_user_func([
