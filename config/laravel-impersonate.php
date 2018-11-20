@@ -8,6 +8,11 @@ return [
     'session_key' => 'impersonated_by',
 
     /**
+     * The session key used to stored the original user guard.
+     */
+    'session_guard' => 'impersonator_guard',
+
+    /**
      * The URI to redirect after taking an impersonation.
      *
      * Only used in the built-in controller.
