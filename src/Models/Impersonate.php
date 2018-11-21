@@ -32,12 +32,13 @@ trait Impersonate
     /**
      * Impersonate the given user.
      *
-     * @param   Model $user
+     * @param   Model       $user
+     * @param   string|null $guardName
      * @return  bool
      */
-    public function impersonate(Model $user)
+    public function impersonate(Model $user, $guardName = null)
     {
-        return app(ImpersonateManager::class)->take($this, $user);
+        return app(ImpersonateManager::class)->take($this, $user, $guardName);
     }
 
     /**
