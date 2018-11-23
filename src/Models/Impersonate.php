@@ -36,7 +36,7 @@ trait Impersonate
      * @param   string|null $guardName
      * @return  bool
      */
-    public function impersonate(Model $user, $guardName = null)
+    public function impersonate(Model $user, $guardName = 'web')
     {
         return app(ImpersonateManager::class)->take($this, $user, $guardName);
     }

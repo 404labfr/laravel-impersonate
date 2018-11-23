@@ -3,6 +3,7 @@
 namespace Lab404\Tests;
 
 use Lab404\Impersonate\Services\ImpersonateManager;
+use Lab404\Tests\Stubs\Models\Administrator;
 use Lab404\Tests\Stubs\Models\User;
 
 class ImpersonateManagerTest extends TestCase
@@ -67,6 +68,17 @@ class ImpersonateManagerTest extends TestCase
     }
 
     /** @test */
+    public function it_can_take_impersonating_from_different_guard()
+    {
+        $this->app['auth']->guard('administrators')->loginUsingId(1);
+        $this->assertTrue($this->app['auth']->guard('administrators')->check());
+        $this->manager->take($this->app['auth']->guard('administrators')->user(), $this->manager->findUserById(2), 'web');
+        $this->assertEquals(2, $this->app['auth']->user()->getKey());
+        $this->assertEquals(1, $this->manager->getImpersonatorId());
+        $this->assertTrue($this->manager->isImpersonating());
+    }
+
+    /** @test */
     public function it_can_leave_impersonating()
     {
         $this->app['auth']->loginUsingId(1);
@@ -74,6 +86,16 @@ class ImpersonateManagerTest extends TestCase
         $this->assertTrue($this->manager->leave());
         $this->assertFalse($this->manager->isImpersonating());
         $this->assertInstanceOf(User::class, $this->app['auth']->user());
+    }
+
+    /** @test */
+    public function it_can_leave_impersonating_from_different_guard()
+    {
+        $this->app['auth']->guard('administrators')->loginUsingId(1);
+        $this->manager->take($this->app['auth']->guard('administrators')->user(), $this->manager->findUserById(2),'web');
+        $this->assertTrue($this->manager->leave());
+        $this->assertFalse($this->manager->isImpersonating());
+        $this->assertInstanceOf(Administrator::class, $this->app['auth']->guard('administrators')->user());
     }
 
     /** @test */

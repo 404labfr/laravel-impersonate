@@ -52,6 +52,12 @@ Auth::user()->impersonate($other_user);
 // You're now logged as the $other_user
 ```
 
+Impersonate a user from a different guard:
+```php
+Auth::user()->impersonate($other_user, $other_user_guard_name);
+// You're now logged as the $other_user
+```
+
 Leave impersonation:
 ```php
 Auth::user()->leaveImpersonation();
@@ -142,7 +148,10 @@ $manager->findUserById($id);
 $manager->isImpersonating();
 
 // Impersonate an user. Pass the original user and the user you want to impersonate
-$manager->take($from, $to);
+$manager->take($from, $to); //defaults to web guard
+
+// Impersonate an user from different guard. Pass the original user and the user you want to impersonate
+$manager->take($from, $to, $guard_name_to);
 
 // Leave current impersonation
 $manager->leave();

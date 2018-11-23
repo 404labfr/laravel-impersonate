@@ -26,11 +26,12 @@ class ImpersonateManager
 
     /**
      * @param   int $id
+     * @param   string $guard
      * @return  Model
      */
-    public function findUserById($id)
+    public function findUserById($id, $guard = 'web')
     {
-        $provider = $this->app['config']->get('auth.guards.'.$this->getImpersonatorGuardName().'.provider');
+        $provider = $this->app['config']->get('auth.guards.'.$guard.'.provider');
         $model = $this->app['config']->get('auth.providers.'.$provider.'.model');
 
         $user = call_user_func([
@@ -72,7 +73,7 @@ class ImpersonateManager
      * @param string|null   $guardName
      * @return bool
      */
-    public function take($from, $to, $guardName = null)
+    public function take($from, $to, $guardName = 'web')
     {
         try {
             session()->put($this->getSessionKey(), $from->getKey());
@@ -96,9 +97,8 @@ class ImpersonateManager
     public function leave()
     {
         try {
-            $impersonated = $this->app['auth']->user();
-            $impersonator = $this->findUserById($this->getImpersonatorId());
-
+            $impersonated = $this->app['auth']->guard($this->getCurrentAuthGuardName())->user();
+            $impersonator = $this->findUserById($this->getImpersonatorId(), $this->getImpersonatorGuardName());
             $this->app['auth']->quietLogout();
             $this->app['auth']->guard($this->getImpersonatorGuardName())->quietLogin($impersonator);
             
