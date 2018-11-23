@@ -26,8 +26,11 @@ class ImpersonateController extends Controller
      * @param   int $id
      * @return  RedirectResponse
      */
-    public function take(Request $request, $id, $guardName = 'web')
+    public function take(Request $request, $id, $guardName = null)
     {
+        if(empty($guardName)){
+            $guardName = config('auth.defaults.guard');
+        }
         // Cannot impersonate yourself
         if ($id == $request->user()->getKey() and ($this->manager->getCurrentAuthGuardName() == $guardName) ) {
             abort(403);
