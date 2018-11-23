@@ -29,8 +29,11 @@ class ImpersonateManager
      * @param   string $guard
      * @return  Model
      */
-    public function findUserById($id, $guard = 'web')
+    public function findUserById($id, $guard = null)
     {
+        if(empty($guard)){
+            $guard = $this->app['config']->get('auth.defaults.guard');
+        }
         $provider = $this->app['config']->get('auth.guards.'.$guard.'.provider');
         $model = $this->app['config']->get('auth.providers.'.$provider.'.model');
 
@@ -73,8 +76,11 @@ class ImpersonateManager
      * @param string|null   $guardName
      * @return bool
      */
-    public function take($from, $to, $guardName = 'web')
+    public function take($from, $to, $guardName = null)
     {
+        if(empty($guardName)){
+            $guardName = $this->app['config']->get('auth.defaults.guard');
+        }
         try {
             session()->put($this->getSessionKey(), $from->getKey());
             session()->put($this->getSessionGuard(), $this->getCurrentAuthGuardName());
