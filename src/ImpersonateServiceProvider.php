@@ -7,6 +7,7 @@ use Illuminate\Foundation\Application;
 use Illuminate\View\Compilers\BladeCompiler;
 use Lab404\Impersonate\Guard\SessionGuard;
 use Lab404\Impersonate\Middleware\ProtectFromImpersonation;
+use Lab404\Impersonate\Middleware\ProtectAuthenticateImpersonation;
 use Lab404\Impersonate\Services\ImpersonateManager;
 
 /**
@@ -57,6 +58,12 @@ class ImpersonateServiceProvider extends \Illuminate\Support\ServiceProvider
     public function boot()
     {
         $this->publishConfig();
+        \Event::listen('Illuminate\Auth\Events\Login', function ($event) {
+            app('impersonate')->clear();
+        });
+        \Event::listen('Illuminate\Auth\Events\Logout', function ($event) {
+            app('impersonate')->clear();
+        });
     }
 
     /**
@@ -69,7 +76,7 @@ class ImpersonateServiceProvider extends \Illuminate\Support\ServiceProvider
     {
         $this->app->afterResolving('blade.compiler', function (BladeCompiler $bladeCompiler) {
             $bladeCompiler->directive('impersonating', function () {
-                return '<?php if (app()["auth"]->check() && app()["auth"]->user()->isImpersonated()): ?>';
+                return '<?php if (app()["auth"]->guard(app("impersonate")->getCurrentAuthGuardName())->check() && app()["auth"]->guard(app("impersonate")->getCurrentAuthGuardName())->user()->isImpersonated()): ?>';
             });
 
             $bladeCompiler->directive('endImpersonating', function () {
@@ -77,7 +84,7 @@ class ImpersonateServiceProvider extends \Illuminate\Support\ServiceProvider
             });
 
             $bladeCompiler->directive('canImpersonate', function () {
-                return '<?php if (app()["auth"]->check() && app()["auth"]->user()->canImpersonate()): ?>';
+                return '<?php if (app()["auth"]->guard(app("impersonate")->getCurrentAuthGuardName())->check() && app()["auth"]->guard(app("impersonate")->getCurrentAuthGuardName())->user()->canImpersonate()): ?>';
             });
 
             $bladeCompiler->directive('endCanImpersonate', function () {
@@ -87,7 +94,8 @@ class ImpersonateServiceProvider extends \Illuminate\Support\ServiceProvider
             $bladeCompiler->directive('canBeImpersonated', function ($expression) {
                 $user = trim($expression);
 
-                return "<?php if (app()['auth']->check() && app()['auth']->user()->id != {$user}->id && {$user}->canBeImpersonated()): ?>";
+                return "<?php if (app()['auth']->guard(app('impersonate')->getCurrentAuthGuardName())->check()
+                && app()['auth']->guard(app('impersonate')->getCurrentAuthGuardName())->user()->id != {$user}->id && {$user}->canBeImpersonated()): ?>";
             });
 
             $bladeCompiler->directive('endCanBeImpersonated', function () {
@@ -107,7 +115,7 @@ class ImpersonateServiceProvider extends \Illuminate\Support\ServiceProvider
         $router = $this->app['router'];
 
         $router->macro('impersonate', function () use ($router) {
-            $router->get('/impersonate/take/{id}',
+            $router->get('/impersonate/take/{id}/{guardName?}',
                 '\Lab404\Impersonate\Controllers\ImpersonateController@take')->name('impersonate');
             $router->get('/impersonate/leave',
                 '\Lab404\Impersonate\Controllers\ImpersonateController@leave')->name('impersonate.leave');
@@ -153,6 +161,7 @@ class ImpersonateServiceProvider extends \Illuminate\Support\ServiceProvider
     public function registerMiddleware()
     {
         $this->app['router']->aliasMiddleware('impersonate.protect', ProtectFromImpersonation::class);
+        $this->app['router']->aliasMiddleware('impersonate.auth',    ProtectAuthenticateImpersonation::class);
     }
 
     /**

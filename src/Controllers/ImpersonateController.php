@@ -17,7 +17,7 @@ class ImpersonateController extends Controller
      */
     public function __construct()
     {
-        $this->middleware('auth');
+        $this->middleware('impersonate.auth');
 
         $this->manager = app()->make(ImpersonateManager::class);
     }
@@ -26,10 +26,10 @@ class ImpersonateController extends Controller
      * @param   int $id
      * @return  RedirectResponse
      */
-    public function take(Request $request, $id)
+    public function take(Request $request, $id, $guardName = 'web')
     {
         // Cannot impersonate yourself
-        if ($id == $request->user()->getKey()) {
+        if ($id == $request->user()->getKey() and ($this->manager->getCurrentAuthGuardName() == $guardName) ) {
             abort(403);
         }
 
@@ -42,10 +42,10 @@ class ImpersonateController extends Controller
             abort(403);
         }
 
-        $user_to_impersonate = $this->manager->findUserById($id, $request['guard']);
+        $user_to_impersonate = $this->manager->findUserById($id, $guardName);
 
         if ($user_to_impersonate->canBeImpersonated()) {
-            if ($this->manager->take($request->user(), $user_to_impersonate, $request['guard'])) {
+            if ($this->manager->take($request->user(), $user_to_impersonate, $guardName)) {
                 $takeRedirect = $this->manager->getTakeRedirectTo();
                 if ($takeRedirect !== 'back') {
                     return redirect()->to($takeRedirect);
