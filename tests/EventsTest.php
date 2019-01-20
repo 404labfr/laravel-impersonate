@@ -48,6 +48,7 @@ class EventsTest extends TestCase
         Event::fake();
 
         $admin = $this->admin;
+        $this->app['auth']->login($admin);
         $user = $this->user;
 
         $this->assertTrue($admin->impersonate($user));

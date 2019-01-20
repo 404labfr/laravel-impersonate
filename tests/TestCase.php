@@ -4,6 +4,7 @@ namespace Lab404\Tests;
 
 use Lab404\Impersonate\ImpersonateServiceProvider;
 use Lab404\Tests\Stubs\Models\User;
+use Lab404\Tests\Stubs\Models\Administrator;
 use Orchestra\Database\ConsoleServiceProvider;
 
 class TestCase extends \Orchestra\Testbench\TestCase
@@ -42,6 +43,15 @@ class TestCase extends \Orchestra\Testbench\TestCase
 
         // Setup the right User class (using stub)
         $app['config']->set('auth.providers.users.model', User::class);
+        // Setup the right Administrator class (using stub)
+        $app['config']->set('auth.guards.administrators', [
+            'driver' => 'session',
+            'provider' => 'administrators'
+        ]);
+        $app['config']->set('auth.providers.administrators', [
+            'driver' => 'eloquent',
+            'model' => Administrator::class
+        ]);
     }
 
     /**
