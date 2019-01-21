@@ -17,6 +17,7 @@
 - [Blade](#blade)
 - [Tests](#tests)
 - [Contributors](#contributors)
+- [Why Not Just Use loginAsId()?](#rationale)
 
 
 ## Requirements
@@ -59,9 +60,24 @@ Auth::user()->leaveImpersonation();
 
 ### Using the built-in controller
 
-In your routes file you must call the `impersonate` route macro.
+In your routes file, under web middleware, you must call the `impersonate` route macro. 
 ```php
 Route::impersonate();
+```
+
+Alternatively, you can execute this macro with your `RouteServiceProvider`.
+
+```php
+namespace App\Providers;
+
+class RouteServiceProvider extends ServiceProvider
+{
+    public function map() {
+        Route::middleware('web')->group(function (Router $router) {
+            $router->impersonate();
+        });
+    }
+}
 ```
 
 ```php
@@ -100,7 +116,7 @@ You need to add the method `canBeImpersonated()` to your user model to extend th
     public function canBeImpersonated()
     {
         // For example
-        return $this->can_be_impersonate == 1;
+        return $this->can_be_impersonated == 1;
     }
 ```
 
@@ -228,6 +244,12 @@ vendor/bin/phpunit
 - [MarceauKa](https://github.com/MarceauKa)
 - [tghpow](https://github.com/tghpow)
 - and all others [contributors](https://github.com/404labfr/laravel-impersonate/graphs/contributors)
+
+## Rationale
+
+### Why not just use `loginAsId()`?
+
+This package adds broader functionality, including Blade directives to allow you to override analytics and other tracking events when impersonating, fire events based on impersonation status, and more. Brief discussion at [issues/5](https://github.com/404labfr/laravel-impersonate/issues/5)
 
 ## Licence
 
