@@ -2,6 +2,8 @@
 
 return [
 
+    'default_guard' => 'web',
+
     /**
      * The session key used to store the original user id.
      */

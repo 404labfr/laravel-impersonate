@@ -31,7 +31,9 @@ class ProtectAuthenticateImpersonation
      */
     public function handle($request, Closure $next)
     {
-        $guard = session(config('laravel-impersonate.session_guard_using'), config('auth.defaults.guard'));
+        $guard = session(config('laravel-impersonate.session_guard_using'), config('laravel-impersonate.default_guard'));
+
+        \Auth::shouldUse($guard);
 
         if(!$this->auth->guard($guard)->check())
         {
