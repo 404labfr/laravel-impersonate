@@ -97,10 +97,11 @@ class ImpersonateManager
             session()->put(config('laravel-impersonate.session_guard'), $this->getCurrentAuthGuardName());
             session()->put(config('laravel-impersonate.session_guard_using'), $guardName);
 
-            $this->app['auth']->quietLogout();
+            $this->app['auth']->guard($this->getCurrentAuthGuardName())->quietLogout();
             $this->app['auth']->guard($guardName)->quietLogin($to);
 
         } catch (\Exception $e) {
+
             unset($e);
             return false;
         }
