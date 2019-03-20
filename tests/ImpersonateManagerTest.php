@@ -96,4 +96,15 @@ class ImpersonateManagerTest extends TestCase
         $this->assertEquals('impersonator_token', $admin->remember_token);
         $this->assertEquals('impersonated_token', $user->remember_token);
     }
+
+    /** @test */
+    public function it_can_get_impersonator()
+    {
+        $this->app['auth']->loginUsingId(1);
+        $this->assertTrue($this->app['auth']->check());
+        $this->manager->take($this->app['auth']->user(), $this->manager->findUserById(2));
+        $this->assertEquals(2, $this->app['auth']->user()->getKey());
+        $this->assertEquals(1, $this->manager->getImpersonator()->id);
+        $this->assertEquals('Admin', $this->manager->getImpersonator()->name);
+    }
 }
