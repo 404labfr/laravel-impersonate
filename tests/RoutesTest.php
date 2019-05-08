@@ -6,7 +6,7 @@ class RoutesTest extends TestCase
 {
     private $routes;
 
-    public function setUp()
+    public function setUp() : void
     {
         parent::setUp();
 

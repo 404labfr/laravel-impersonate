@@ -20,7 +20,7 @@ class MiddlewareProtectFromImpersonationTest extends TestCase
     /** @var  ProtectFromImpersonation */
     protected $middleware;
 
-    public function setUp()
+    public function setUp() : void
     {
         parent::setUp();
 
