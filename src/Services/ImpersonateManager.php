@@ -9,6 +9,8 @@ use Lab404\Impersonate\Events\TakeImpersonation;
 
 class ImpersonateManager
 {
+    const REMEMBER_PREFIX = 'remember_web';
+
     /**
      * @var Application
      */
@@ -64,6 +66,8 @@ class ImpersonateManager
      */
     public function take($from, $to)
     {
+        $this->saveAuthCookieInSession();
+
         try {
             session()->put($this->getSessionKey(), $from->getKey());
 
@@ -92,9 +96,12 @@ class ImpersonateManager
             $this->app['auth']->quietLogout();
             $this->app['auth']->quietLogin($impersonator);
 
+            $this->extractAuthCookieFromSession();
+
             $this->clear();
 
         } catch (\Exception $e) {
+            dump($e->getMessage());
             unset($e);
             return false;
         }
@@ -146,5 +153,50 @@ class ImpersonateManager
         }
 
         return $uri;
+    }
+
+    /**
+     * @return void
+     */
+    protected function saveAuthCookieInSession()
+    {
+        $cookie = $this->findByKeyInArray($this->app['request']->cookies->all(), static::REMEMBER_PREFIX);
+        $key = $cookie->keys()->first();
+        $val = $cookie->values()->first();
+
+        if (! $key || ! $val) {
+            return;
+        }
+
+        session()->put(static::REMEMBER_PREFIX, [
+            $key,
+            $val,
+        ]);
+    }
+
+    /**
+     * @return void
+     */
+    protected function extractAuthCookieFromSession()
+    {
+        if (! $session = $this->findByKeyInArray(session()->all(), static::REMEMBER_PREFIX)->first()) {
+            return;
+        }
+
+        $this->app['cookie']->queue($session[0], $session[1]);
+        session()->forget($session);
+    }
+
+    /**
+     * @param array $values
+     * @param string $search
+     * @return \Illuminate\Support\Collection
+     */
+    protected function findByKeyInArray(array $values, string $search)
+    {
+        return collect($values ?? session()->all())
+            ->filter(function ($val, $key) use ($search) {
+                return strpos($key, $search) !== false;
+            });
     }
 }
