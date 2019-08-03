@@ -3,7 +3,6 @@
 namespace Lab404\Tests;
 
 use Lab404\Impersonate\Services\ImpersonateManager;
-use Lab404\Tests\Stubs\Models\AbsoluteAdmin;
 use Lab404\Tests\Stubs\Models\User;
 
 class ImpersonateManagerTest extends TestCase
@@ -24,7 +23,7 @@ class ImpersonateManagerTest extends TestCase
         $this->manager = $this->app->make(ImpersonateManager::class);
 
         $this->firstGuard = 'web';
-        $this->secondGuard = 'absolute_admin';
+        $this->secondGuard = 'admin';
     }
 
     /** @test */
@@ -40,14 +39,14 @@ class ImpersonateManagerTest extends TestCase
     {
         $admin = $this->manager->findUserById(1, $this->firstGuard);
         $user = $this->manager->findUserById(2, $this->firstGuard);
-        $absoluteAdmin = $this->manager->findUserById(1, $this->secondGuard);
+        $superAdmin = $this->manager->findUserById(3, $this->secondGuard);
 
         $this->assertInstanceOf(User::class, $admin);
         $this->assertInstanceOf(User::class, $user);
-        $this->assertInstanceOf(AbsoluteAdmin::class, $absoluteAdmin);
+        $this->assertInstanceOf(User::class, $superAdmin);
         $this->assertEquals('Admin', $admin->name);
         $this->assertEquals('User', $user->name);
-        $this->assertEquals('absolute_admin', $absoluteAdmin->username);
+        $this->assertEquals('SuperAdmin', $superAdmin->name);
     }
 
     /** @test */
@@ -125,7 +124,7 @@ class ImpersonateManagerTest extends TestCase
         );
         $this->assertTrue($this->manager->leave());
         $this->assertFalse($this->manager->isImpersonating());
-        $this->assertInstanceOf(AbsoluteAdmin::class, $this->app['auth']->guard($this->secondGuard)->user());
+        $this->assertInstanceOf(User::class, $this->app['auth']->guard($this->secondGuard)->user());
     }
 
     /** @test */
