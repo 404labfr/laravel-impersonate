@@ -42,6 +42,14 @@ class TestCase extends \Orchestra\Testbench\TestCase
 
         // Setup the right User class (using stub)
         $app['config']->set('auth.providers.users.model', User::class);
+        $app['config']->set('auth.providers.admins', [
+            'driver' => 'eloquent',
+            'model' => User::class,
+        ]);
+        $app['config']->set('auth.guards.admin', [
+            'driver' => 'session',
+            'provider' => 'admins',
+        ]);
     }
 
     /**
