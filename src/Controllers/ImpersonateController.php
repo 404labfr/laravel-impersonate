@@ -23,13 +23,17 @@ class ImpersonateController extends Controller
     }
 
     /**
-     * @param   int $id
+     * @param int         $id
+     * @param string|null $guardName
      * @return  RedirectResponse
+     * @throws  \Exception
      */
-    public function take(Request $request, $id)
+    public function take(Request $request, $id, $guardName = null)
     {
+        $guardName = $guardName ?? $this->manager->getDefaultSessionGuard();
+
         // Cannot impersonate yourself
-        if ($id == $request->user()->getKey()) {
+        if ($id == $request->user()->getKey() && ($this->manager->getCurrentAuthGuardName() == $guardName)) {
             abort(403);
         }
 
@@ -42,10 +46,10 @@ class ImpersonateController extends Controller
             abort(403);
         }
 
-        $user_to_impersonate = $this->manager->findUserById($id);
+        $userToImpersonate = $this->manager->findUserById($id, $guardName);
 
-        if ($user_to_impersonate->canBeImpersonated()) {
-            if ($this->manager->take($request->user(), $user_to_impersonate)) {
+        if ($userToImpersonate->canBeImpersonated()) {
+            if ($this->manager->take($request->user(), $userToImpersonate, $guardName)) {
                 $takeRedirect = $this->manager->getTakeRedirectTo();
                 if ($takeRedirect !== 'back') {
                     return redirect()->to($takeRedirect);
@@ -56,7 +60,7 @@ class ImpersonateController extends Controller
         return redirect()->back();
     }
 
-    /*
+    /**
      * @return RedirectResponse
      */
     public function leave()

@@ -1,5 +1,17 @@
 # Laravel Impersonate Changelog
 
+## 1.4.0
+
+### Added
+
+### Changed
+
+- Laravel 6.0 compatibility (min version is 5.8) 
+
+### Fixed
+
+- 
+
 ## 1.3.0 (2019-02-28)
 
 ### Changed

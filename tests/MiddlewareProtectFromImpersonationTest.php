@@ -8,19 +8,19 @@ use Lab404\Impersonate\Middleware\ProtectFromImpersonation;
 
 class MiddlewareProtectFromImpersonationTest extends TestCase
 {
-    /** @var  User */
+    /** @var  User $user */
     protected $user;
 
-    /** @var  User */
+    /** @var  User $admin */
     protected $admin;
 
-    /** @var  Request */
+    /** @var  Request $request */
     protected $request;
 
     /** @var  ProtectFromImpersonation */
     protected $middleware;
 
-    public function setUp()
+    public function setUp() : void
     {
         parent::setUp();
 

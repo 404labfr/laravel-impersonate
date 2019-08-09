@@ -6,16 +6,16 @@ use Lab404\Tests\Stubs\Models\User;
 
 class BladeDirectivesTest extends TestCase
 {
-    /** @var  User */
+    /** @var  User $user */
     protected $user;
 
-    /** @var  User */
+    /** @var  User $admin */
     protected $admin;
 
-    /** @var  string */
+    /** @var  string $view */
     protected $view;
 
-    public function setUp()
+    public function setUp(): void
     {
         parent::setUp();
 
@@ -25,8 +25,8 @@ class BladeDirectivesTest extends TestCase
     }
 
     /**
-     * @param   string $view
-     * @param   array $with
+     * @param string $view
+     * @param array  $with
      * @return  void
      */
     protected function makeView($view = 'impersonate', array $with = [])
@@ -35,7 +35,7 @@ class BladeDirectivesTest extends TestCase
     }
 
     /**
-     * @param   void
+     * @param void
      * @return  void
      */
     protected function logout()
@@ -48,12 +48,12 @@ class BladeDirectivesTest extends TestCase
     {
         $this->actingAs($this->admin);
         $this->makeView();
-        $this->assertContains('Impersonate this user', $this->view);
+        $this->assertStringContainsString('Impersonate this user', $this->view);
 
         $this->admin->impersonate($this->user);
         $this->admin->leaveImpersonation();
         $this->makeView();
-        $this->assertContains('Impersonate this user', $this->view);
+        $this->assertStringContainsString('Impersonate this user', $this->view);
         $this->logout();
     }
 
@@ -62,7 +62,7 @@ class BladeDirectivesTest extends TestCase
     {
         $this->actingAs($this->user);
         $this->makeView();
-        $this->assertNotContains('Impersonate this user', $this->view);
+        $this->assertStringNotContainsString('Impersonate this user', $this->view);
         $this->logout();
     }
 
@@ -72,7 +72,7 @@ class BladeDirectivesTest extends TestCase
         $this->actingAs($this->admin);
         $this->admin->impersonate($this->user);
         $this->makeView();
-        $this->assertContains('Leave impersonation', $this->view);
+        $this->assertStringContainsString('Leave impersonation', $this->view);
         $this->logout();
     }
 
@@ -81,14 +81,14 @@ class BladeDirectivesTest extends TestCase
     {
         $this->actingAs($this->user);
         $this->makeView();
-        $this->assertNotContains('Leave impersonation', $this->view);
+        $this->assertStringNotContainsString('Leave impersonation', $this->view);
         $this->logout();
 
         $this->actingAs($this->admin);
         $this->admin->impersonate($this->user);
         $this->admin->leaveImpersonation();
         $this->makeView();
-        $this->assertNotContains('Leave impersonation', $this->view);
+        $this->assertStringNotContainsString('Leave impersonation', $this->view);
         $this->logout();
     }
 
@@ -97,13 +97,13 @@ class BladeDirectivesTest extends TestCase
     {
         $this->actingAs($this->admin);
         $this->makeView('can_be_impersonated', ['user' => $this->user]);
-        $this->assertContains('Impersonate this user', $this->view);
+        $this->assertStringContainsString('Impersonate this user', $this->view);
         $this->logout();
 
         $this->actingAs($this->admin);
         $this->admin->impersonate($this->user);
         $this->makeView('can_be_impersonated', ['user' => $this->user]);
-        $this->assertNotContains('Impersonate this user', $this->view);
+        $this->assertStringNotContainsString('Impersonate this user', $this->view);
         $this->logout();
     }
 }

@@ -3,7 +3,10 @@
 namespace Lab404\Impersonate;
 
 use Illuminate\Auth\AuthManager;
+use Illuminate\Auth\Events\Login;
+use Illuminate\Auth\Events\Logout;
 use Illuminate\Foundation\Application;
+use Illuminate\Support\Facades\Event;
 use Illuminate\View\Compilers\BladeCompiler;
 use Lab404\Impersonate\Guard\SessionGuard;
 use Lab404\Impersonate\Middleware\ProtectFromImpersonation;
@@ -16,14 +19,7 @@ use Lab404\Impersonate\Services\ImpersonateManager;
  */
 class ImpersonateServiceProvider extends \Illuminate\Support\ServiceProvider
 {
-    /**
-     * @var bool
-     */
-    protected $defer = false;
-
-    /**
-     * @var string
-     */
+    /** @var string $configName */
     protected $configName = 'laravel-impersonate';
 
     /**
@@ -57,19 +53,28 @@ class ImpersonateServiceProvider extends \Illuminate\Support\ServiceProvider
     public function boot()
     {
         $this->publishConfig();
+
+        // We want to remove data from storage on real login and logout
+        Event::listen(Login::class, function ($event) {
+            app('impersonate')->clear();
+        });
+        Event::listen(Logout::class, function ($event) {
+            app('impersonate')->clear();
+        });
     }
 
     /**
      * Register plugin blade directives.
      *
-     * @param   void
+     * @param void
      * @return  void
      */
     protected function registerBladeDirectives()
     {
         $this->app->afterResolving('blade.compiler', function (BladeCompiler $bladeCompiler) {
             $bladeCompiler->directive('impersonating', function () {
-                return '<?php if (app()["auth"]->check() && app()["auth"]->user()->isImpersonated()): ?>';
+                $guard = $this->app['impersonate']->getCurrentAuthGuardName();
+                return "<?php if (app()['auth']->guard('$guard')->check() && app()['auth']->guard('$guard')->user()->isImpersonated()): ?>";
             });
 
             $bladeCompiler->directive('endImpersonating', function () {
@@ -77,7 +82,9 @@ class ImpersonateServiceProvider extends \Illuminate\Support\ServiceProvider
             });
 
             $bladeCompiler->directive('canImpersonate', function () {
-                return '<?php if (app()["auth"]->check() && app()["auth"]->user()->canImpersonate()): ?>';
+                $guard = $this->app['impersonate']->getCurrentAuthGuardName();
+                return "<?php if (app()['auth']->guard('$guard')->check()
+                    && app()['auth']->guard('$guard')->user()->canImpersonate()): ?>";
             });
 
             $bladeCompiler->directive('endCanImpersonate', function () {
@@ -86,8 +93,10 @@ class ImpersonateServiceProvider extends \Illuminate\Support\ServiceProvider
 
             $bladeCompiler->directive('canBeImpersonated', function ($expression) {
                 $user = trim($expression);
+                $guard = $this->app['impersonate']->getCurrentAuthGuardName();
 
-                return "<?php if (app()['auth']->check() && app()['auth']->user()->id != {$user}->id && {$user}->canBeImpersonated()): ?>";
+                return "<?php if (app()['auth']->guard('$guard')->check()
+                    && app()['auth']->guard('$guard')->user()->id != {$user}->id && {$user}->canBeImpersonated()): ?>";
             });
 
             $bladeCompiler->directive('endCanBeImpersonated', function () {
@@ -99,7 +108,7 @@ class ImpersonateServiceProvider extends \Illuminate\Support\ServiceProvider
     /**
      * Register routes macro.
      *
-     * @param   void
+     * @param void
      * @return  void
      */
     protected function registerRoutesMacro()
@@ -107,7 +116,7 @@ class ImpersonateServiceProvider extends \Illuminate\Support\ServiceProvider
         $router = $this->app['router'];
 
         $router->macro('impersonate', function () use ($router) {
-            $router->get('/impersonate/take/{id}',
+            $router->get('/impersonate/take/{id}/{guardName?}',
                 '\Lab404\Impersonate\Controllers\ImpersonateController@take')->name('impersonate');
             $router->get('/impersonate/leave',
                 '\Lab404\Impersonate\Controllers\ImpersonateController@leave')->name('impersonate.leave');
@@ -115,7 +124,7 @@ class ImpersonateServiceProvider extends \Illuminate\Support\ServiceProvider
     }
 
     /**
-     * @param   void
+     * @param void
      * @return  void
      */
     protected function registerAuthDriver()
@@ -147,7 +156,7 @@ class ImpersonateServiceProvider extends \Illuminate\Support\ServiceProvider
     /**
      * Register plugin middleware.
      *
-     * @param   void
+     * @param void
      * @return  void
      */
     public function registerMiddleware()
@@ -158,7 +167,7 @@ class ImpersonateServiceProvider extends \Illuminate\Support\ServiceProvider
     /**
      * Merge config file.
      *
-     * @param   void
+     * @param void
      * @return  void
      */
     protected function mergeConfig()
@@ -171,7 +180,7 @@ class ImpersonateServiceProvider extends \Illuminate\Support\ServiceProvider
     /**
      * Publish config file.
      *
-     * @param   void
+     * @param void
      * @return  void
      */
     protected function publishConfig()

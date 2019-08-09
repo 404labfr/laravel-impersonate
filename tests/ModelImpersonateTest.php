@@ -6,6 +6,21 @@ use Lab404\Impersonate\Services\ImpersonateManager;
 
 class ModelImpersonateTest extends TestCase
 {
+    /** @var  ImpersonateManager $manager */
+    protected $manager;
+
+    /** @var  string $guard */
+    protected $guard;
+
+    public function setUp(): void
+    {
+        parent::setUp();
+
+        $this->manager = $this->app->make(ImpersonateManager::class);
+
+        $this->guard = 'web';
+    }
+
     /** @test */
     public function it_can_impersonate()
     {
@@ -39,8 +54,8 @@ class ModelImpersonateTest extends TestCase
     {
         $admin = $this->app['auth']->loginUsingId(1);
         $this->assertFalse($admin->isImpersonated());
-        $user  = $this->app[ImpersonateManager::class]->findUserById(2);
-        $admin->impersonate($user);
+        $user = $this->manager->findUserById(2, $this->guard);
+        $admin->impersonate($user, $this->guard);
         $this->assertTrue($user->isImpersonated());
         $this->assertEquals($this->app['auth']->user()->getKey(), 2);
     }
@@ -49,8 +64,8 @@ class ModelImpersonateTest extends TestCase
     public function it_can_leave_impersonation()
     {
         $admin = $this->app['auth']->loginUsingId(1);
-        $user  = $this->app[ImpersonateManager::class]->findUserById(2);
-        $admin->impersonate($user);
+        $user = $this->manager->findUserById(2, $this->guard);
+        $admin->impersonate($user, $this->guard);
         $admin->leaveImpersonation();
         $this->assertFalse($user->isImpersonated());
         $this->assertNotEquals($this->app['auth']->user()->getKey(), 2);

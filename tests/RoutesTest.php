@@ -6,7 +6,7 @@ class RoutesTest extends TestCase
 {
     private $routes;
 
-    public function setUp()
+    public function setUp(): void
     {
         parent::setUp();
 
@@ -16,14 +16,14 @@ class RoutesTest extends TestCase
     /** @test */
     function it_adds_impersonate_route()
     {
-        $this->assertTrue((bool) $this->routes->getByName('impersonate'));
-        $this->assertTrue((bool) $this->routes->getByAction('Lab404\Impersonate\Controllers\ImpersonateController@take'));
+        $this->assertTrue((bool)$this->routes->getByName('impersonate'));
+        $this->assertTrue((bool)$this->routes->getByAction('Lab404\Impersonate\Controllers\ImpersonateController@take'));
     }
 
     /** @test */
     function it_adds_leave_route()
     {
-        $this->assertTrue((bool) $this->routes->getByName('impersonate.leave'));
-        $this->assertTrue((bool) $this->routes->getByAction('Lab404\Impersonate\Controllers\ImpersonateController@leave'));
+        $this->assertTrue((bool)$this->routes->getByName('impersonate.leave'));
+        $this->assertTrue((bool)$this->routes->getByAction('Lab404\Impersonate\Controllers\ImpersonateController@leave'));
     }
 }
