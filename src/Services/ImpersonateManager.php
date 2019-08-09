@@ -70,6 +70,18 @@ class ImpersonateManager
     }
 
     /**
+     * Get impersonator model
+     *
+     * @return  Model
+     */
+    public function getImpersonator()
+    {
+        $id = session($this->getSessionKey(), null);
+
+        return is_null($id) ? null : $this->findUserById($id);
+    }
+  
+    /**
      * @return string|null
      */
     public function getImpersonatorGuardName()

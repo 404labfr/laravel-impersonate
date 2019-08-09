@@ -152,6 +152,16 @@ class ImpersonateManagerTest extends TestCase
     }
 
     /** @test */
+    public function it_can_get_impersonator()
+    {
+        $this->app['auth']->loginUsingId(1);
+        $this->assertTrue($this->app['auth']->check());
+        $this->manager->take($this->app['auth']->user(), $this->manager->findUserById(2));
+        $this->assertEquals(2, $this->app['auth']->user()->getKey());
+        $this->assertEquals(1, $this->manager->getImpersonator()->id);
+        $this->assertEquals('Admin', $this->manager->getImpersonator()->name);
+    }
+
     public function it_renames_the_remember_web_cookie_when_taking_and_reverts_the_change_when_leaving()
     {
         app('router')->get('/cookie', function () {
