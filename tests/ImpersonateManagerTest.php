@@ -2,8 +2,11 @@
 
 namespace Lab404\Tests;
 
+use Illuminate\Support\Facades\Cookie;
+use Illuminate\Support\Facades\Request;
 use Lab404\Impersonate\Services\ImpersonateManager;
 use Lab404\Tests\Stubs\Models\User;
+use Symfony\Component\HttpFoundation\ParameterBag;
 
 class ImpersonateManagerTest extends TestCase
 {
@@ -16,7 +19,7 @@ class ImpersonateManagerTest extends TestCase
     /** @var  string */
     protected $secondGuard;
 
-    public function setUp()
+    public function setUp() : void
     {
         parent::setUp();
 
@@ -146,5 +149,37 @@ class ImpersonateManagerTest extends TestCase
 
         $this->assertEquals('impersonator_token', $admin->remember_token);
         $this->assertEquals('impersonated_token', $user->remember_token);
+    }
+
+    /** @test */
+    public function it_renames_the_remember_web_cookie_when_taking_and_reverts_the_change_when_leaving()
+    {
+        app('router')->get('/cookie', function () {
+            return 'hello';
+        })->middleware([\Illuminate\Cookie\Middleware\AddQueuedCookiesToResponse::class]);
+
+        $this->app['auth']->loginUsingId(1, true);
+        $cookie = array_values($this->app['cookie']->getQueuedCookies())[0];
+        $cookies = [$cookie->getName() => $cookie->getValue(), 'random' => 'cookie'];
+        $this->app['request'] = (object) ['cookies' => new ParameterBag($cookies)];
+
+        $this->manager->take($this->app['auth']->user(), $this->manager->findUserById(2));
+        $this->assertArrayHasKey(ImpersonateManager::REMEMBER_PREFIX, session()->all());
+        $this->assertEquals([$cookie->getName(), $cookie->getValue()], session()->get(ImpersonateManager::REMEMBER_PREFIX));
+
+        // When user's session's auth !== the remember cookie's auth
+        // Laravel seems to delete the cookie, so this is what we are faking
+        $this->app['cookie']->unqueue($cookie->getName());
+
+        $response = $this->get('/cookie');
+        $this->assertCount(0, $response->headers->getCookies());
+
+        $this->manager->leave();
+        $this->assertArrayNotHasKey($cookie->getName(), session()->all());
+
+        $response = $this->get('/cookie');
+        $response->assertCookie($cookie->getName());
+        $this->assertEquals($cookie->getName(), $response->headers->getCookies()[0]->getName());
+        $this->assertEquals($cookie->getValue(), $response->headers->getCookies()[0]->getValue());
     }
 }

@@ -21,7 +21,7 @@ class EventsTest extends TestCase
     /** @var  string */
     protected $guard;
 
-    public function setUp()
+    public function setUp() : void
     {
         parent::setUp();
 
