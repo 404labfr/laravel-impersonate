@@ -6,9 +6,12 @@ use Illuminate\Database\Eloquent\Model;
 use Illuminate\Foundation\Application;
 use Lab404\Impersonate\Events\LeaveImpersonation;
 use Lab404\Impersonate\Events\TakeImpersonation;
+use Exception;
 
 class ImpersonateManager
 {
+    const REMEMBER_PREFIX = 'remember_web';
+
     /**
      * @var Application
      */
@@ -27,17 +30,24 @@ class ImpersonateManager
     /**
      * @param   int $id
      * @return  Model
+     * @throws Exception
      */
-    public function findUserById($id)
+    public function findUserById($id, $guardName = null)
     {
-        $model = $this->app['config']->get('auth.providers.users.model');
+        $userProvider = $this->app['config']->get("auth.guards.$guardName.provider");
+        $model = $this->app['config']->get("auth.providers.$userProvider.model");
 
-        $user = call_user_func([
+        if(!$model) {
+            throw new Exception("Auth guard doesn not exist.", 1);
+        }
+
+        /** @var Model $modelInstance */
+        $modelInstance = call_user_func([
             $model,
             'findOrFail'
         ], $id);
 
-        return $user;
+        return $modelInstance;
     }
 
     /**
@@ -68,19 +78,41 @@ class ImpersonateManager
 
         return is_null($id) ? null : $this->findUserById($id);
     }
+  
+    /**
+     * @return string|null
+     */
+    public function getImpersonatorGuardName()
+    {
+        return session($this->getSessionGuard(), null);
+    }
+
+    /**
+     * @return string|null
+     */
+    public function getImpersonatorGuardUsingName()
+    {
+        return session($this->getSessionGuardUsing(), null);
+    }
 
     /**
      * @param Model $from
      * @param Model $to
+     * @param string|null $guardName
      * @return bool
      */
-    public function take($from, $to)
+    public function take($from, $to, $guardName = null)
     {
-        try {
-            session()->put($this->getSessionKey(), $from->getKey());
+        $this->saveAuthCookieInSession();
 
-            $this->app['auth']->quietLogout();
-            $this->app['auth']->quietLogin($to);
+        try {
+            $currentGuard = $this->getCurrentAuthGuardName();
+            session()->put($this->getSessionKey(), $from->getKey());
+            session()->put($this->getSessionGuard(), $currentGuard);
+            session()->put($this->getSessionGuardUsing(), $guardName);
+
+            $this->app['auth']->guard($currentGuard)->quietLogout();
+            $this->app['auth']->guard($guardName)->quietLogin($to);
 
         } catch (\Exception $e) {
             unset($e);
@@ -98,15 +130,18 @@ class ImpersonateManager
     public function leave()
     {
         try {
-            $impersonated = $this->app['auth']->user();
-            $impersonator = $this->findUserById($this->getImpersonatorId());
+            $impersonated = $this->app['auth']->guard($this->getImpersonatorGuardUsingName())->user();
+            $impersonator = $this->findUserById($this->getImpersonatorId(), $this->getImpersonatorGuardName());
 
-            $this->app['auth']->quietLogout();
-            $this->app['auth']->quietLogin($impersonator);
+            $this->app['auth']->guard($this->getCurrentAuthGuardName())->quietLogout();
+            $this->app['auth']->guard($this->getImpersonatorGuardName())->quietLogin($impersonator);
+
+            $this->extractAuthCookieFromSession();
 
             $this->clear();
 
         } catch (\Exception $e) {
+            dump($e->getMessage());
             unset($e);
             return false;
         }
@@ -122,6 +157,8 @@ class ImpersonateManager
     public function clear()
     {
         session()->forget($this->getSessionKey());
+        session()->forget($this->getSessionGuard());
+        session()->forget($this->getSessionGuardUsing());
     }
 
     /**
@@ -130,6 +167,30 @@ class ImpersonateManager
     public function getSessionKey()
     {
         return config('laravel-impersonate.session_key');
+    }
+
+    /**
+     * @return string
+     */
+    public function getSessionGuard()
+    {
+        return config('laravel-impersonate.session_guard');
+    }
+
+    /**
+     * @return string
+     */
+    public function getSessionGuardUsing()
+    {
+        return config('laravel-impersonate.session_guard_using');
+    }
+
+    /**
+     * @return string
+     */
+    public function getDefaultSessionGuard()
+    {
+        return config('laravel-impersonate.default_impersonator_guard');
     }
 
     /**
@@ -158,5 +219,64 @@ class ImpersonateManager
         }
 
         return $uri;
+    }
+
+    /**
+     * @return array
+     */
+    public function getCurrentAuthGuardName()
+    {
+        $guards = array_keys(config('auth.guards'));
+        foreach ($guards as $guard) {
+            if ($this->app['auth']->guard($guard)->check()) {
+                return $guard;
+            }
+        }
+        return null;
+    }
+  
+    /**
+     * @return void
+     */
+    protected function saveAuthCookieInSession()
+    {
+        $cookie = $this->findByKeyInArray($this->app['request']->cookies->all(), static::REMEMBER_PREFIX);
+        $key = $cookie->keys()->first();
+        $val = $cookie->values()->first();
+
+        if (! $key || ! $val) {
+            return;
+        }
+
+        session()->put(static::REMEMBER_PREFIX, [
+            $key,
+            $val,
+        ]);
+    }
+
+    /**
+     * @return void
+     */
+    protected function extractAuthCookieFromSession()
+    {
+        if (! $session = $this->findByKeyInArray(session()->all(), static::REMEMBER_PREFIX)->first()) {
+            return;
+        }
+
+        $this->app['cookie']->queue($session[0], $session[1]);
+        session()->forget($session);
+    }
+
+    /**
+     * @param array $values
+     * @param string $search
+     * @return \Illuminate\Support\Collection
+     */
+    protected function findByKeyInArray(array $values, string $search)
+    {
+        return collect($values ?? session()->all())
+            ->filter(function ($val, $key) use ($search) {
+                return strpos($key, $search) !== false;
+            });
     }
 }
