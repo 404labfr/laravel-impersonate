@@ -4,13 +4,16 @@
 
 ### Added
 
+- Allows impersonation through multiple guards ([Pull 58](https://github.com/404labfr/laravel-impersonate/pull/58))
+- Added the public method `getImpersonator` to `ImpersonateManager` ([Pull 69](https://github.com/404labfr/laravel-impersonate/pull/69))
+
 ### Changed
 
 - Laravel 6.0 compatibility (min version is 5.8) 
 
 ### Fixed
 
-- 
+- The user `remember_token` is now preserved ([Pull 71](https://github.com/404labfr/laravel-impersonate/pull/71))
 
 ## 1.3.0 (2019-02-28)
 
