@@ -143,7 +143,6 @@ class ImpersonateManager
             $this->clear();
 
         } catch (\Exception $e) {
-            dump($e->getMessage());
             unset($e);
             return false;
         }
