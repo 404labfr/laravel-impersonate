@@ -1,5 +1,12 @@
 # Laravel Impersonate Changelog
 
+## 1.4.1
+
+### Fixed
+
+- Laravel 6.0 dependencies compatibility
+- dump() in ImpersonateManager.php
+
 ## 1.4.0
 
 ### Added
