@@ -19,8 +19,8 @@
   },
   "require-dev": {
     "phpunit/phpunit": "^7.5 | ^8.0",
-    "orchestra/testbench": "^3.8",
-    "orchestra/database": "^3.8"
+    "orchestra/testbench": "^3.8 | ^4.0",
+    "orchestra/database": "^3.8 | ^4.0"
   },
   "license": "MIT",
   "authors": [
