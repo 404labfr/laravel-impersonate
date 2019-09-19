@@ -5,6 +5,7 @@ namespace Lab404\Impersonate\Controllers;
 use Illuminate\Http\RedirectResponse;
 use Illuminate\Http\Request;
 use Illuminate\Routing\Controller;
+use Illuminate\Support\Facades\URL;
 use Lab404\Impersonate\Services\ImpersonateManager;
 
 class ImpersonateController extends Controller
@@ -56,7 +57,8 @@ class ImpersonateController extends Controller
                 }
             }
         }
-
+        if(request()->session()->previousUrl() == URL::current())
+            abort(403);
         return redirect()->back();
     }
 
