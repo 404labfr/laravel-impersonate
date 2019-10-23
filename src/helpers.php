@@ -29,7 +29,6 @@ if (! function_exists('can_be_impersonated')) {
 	 */
 	function can_be_impersonated(Authenticatable $user, string $guard = null): bool
 	{
-		$user = trim($user);
 		$guard = $guard ?? app('impersonate')->getCurrentAuthGuardName();
 
 		return app('auth')->guard($guard)->check()
