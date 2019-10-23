@@ -37,3 +37,19 @@ if (! function_exists('can_be_impersonated')) {
 		       && $user->canBeImpersonated();
 	}
 }
+
+if (! function_exists('is_impersonating')) {
+
+	/**
+	 * Check whether the current user is being impersonated.
+	 *
+	 * @param  string|null  $guard
+	 * @return bool
+	 */
+	function is_impersonating(string $guard = null): bool
+	{
+		$guard = $guard ?? app('impersonate')->getCurrentAuthGuardName();
+
+		return app('auth')->guard($guard)->check() && app('auth')->guard($guard)->user()->isImpersonated();
+	}
+}
