@@ -82,9 +82,7 @@ class ImpersonateServiceProvider extends \Illuminate\Support\ServiceProvider
             });
 
             $bladeCompiler->directive('canImpersonate', function () {
-                $guard = $this->app['impersonate']->getCurrentAuthGuardName();
-                return "<?php if (app()['auth']->guard('$guard')->check()
-                    && app()['auth']->guard('$guard')->user()->canImpersonate()): ?>";
+                return "<?php if (can_impersonate()) :";
             });
 
             $bladeCompiler->directive('endCanImpersonate', function () {
