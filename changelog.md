@@ -1,5 +1,15 @@
 # Laravel Impersonate Changelog
 
+## 1.4.2
+
+## Added
+
+- `is_impersonating()`, `can_impersonate()` and `can_be_impersonated()` helpers
+
+### Changed
+
+- Blade directives now use helpers
+
 ## 1.4.1
 
 ### Fixed
