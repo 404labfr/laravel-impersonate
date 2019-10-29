@@ -1,8 +1,15 @@
 # Laravel Impersonate Changelog
 
+## 1.4.3
+
+### Fixed
+
+- `can_impersonate()` helper
+- Tests for Blade directives
+
 ## 1.4.2
 
-## Added
+### Added
 
 - `is_impersonating()`, `can_impersonate()` and `can_be_impersonated()` helpers
 
