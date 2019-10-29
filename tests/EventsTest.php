@@ -14,10 +14,8 @@ class EventsTest extends TestCase
 {
     /** @var  User $admin */
     protected $admin;
-
     /** @var  User $user */
     protected $user;
-
     /** @var  string $guard */
     protected $guard;
 

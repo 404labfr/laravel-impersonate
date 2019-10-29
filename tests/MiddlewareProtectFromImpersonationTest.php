@@ -8,16 +8,13 @@ use Lab404\Impersonate\Middleware\ProtectFromImpersonation;
 
 class MiddlewareProtectFromImpersonationTest extends TestCase
 {
-    /** @var  User $user */
+    /** @var User $user */
     protected $user;
-
-    /** @var  User $admin */
+    /** @var User $admin */
     protected $admin;
-
-    /** @var  Request $request */
+    /** @var Request $request */
     protected $request;
-
-    /** @var  ProtectFromImpersonation */
+    /** @var ProtectFromImpersonation $middleware */
     protected $middleware;
 
     public function setUp() : void
@@ -29,7 +26,6 @@ class MiddlewareProtectFromImpersonationTest extends TestCase
         $this->request = new Request();
         $this->middleware = new ProtectFromImpersonation;
     }
-
 
     /**
      * @param   void
@@ -58,12 +54,12 @@ class MiddlewareProtectFromImpersonationTest extends TestCase
     {
         $this->actingAs($this->admin);
         $this->admin->impersonate($this->user);
+
         $return = $this->middleware->handle($this->request, function () {
             return 'This is private';
         });
 
         $this->assertNotEquals('This is private', $return);
-
         $this->logout();
     }
 }

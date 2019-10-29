@@ -8,10 +8,8 @@ class BladeDirectivesTest extends TestCase
 {
     /** @var  User $user */
     protected $user;
-
     /** @var  User $admin */
     protected $admin;
-
     /** @var  string $view */
     protected $view;
 
@@ -31,7 +29,7 @@ class BladeDirectivesTest extends TestCase
      */
     protected function makeView($view = 'impersonate', array $with = [])
     {
-        $this->view = (string)$this->app['view']->make($view, $with);
+        $this->view = $this->app['view']->make($view, $with)->render();
     }
 
     /**

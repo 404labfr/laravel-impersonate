@@ -14,7 +14,8 @@ if (! function_exists('can_impersonate')) {
 	{
 		$guard = $guard ?? app('impersonate')->getCurrentAuthGuardName();
 
-		return app('auth')->guard($guard)->check() && app('auth')->guard($guard)->canImpersonate();
+		return app('auth')->guard($guard)->check()
+            && app('auth')->guard($guard)->user()->canImpersonate();
 	}
 }
 
@@ -49,6 +50,7 @@ if (! function_exists('is_impersonating')) {
 	{
 		$guard = $guard ?? app('impersonate')->getCurrentAuthGuardName();
 
-		return app('auth')->guard($guard)->check() && app('auth')->guard($guard)->user()->isImpersonated();
+		return app('auth')->guard($guard)->check()
+            && app('auth')->guard($guard)->user()->isImpersonated();
 	}
 }

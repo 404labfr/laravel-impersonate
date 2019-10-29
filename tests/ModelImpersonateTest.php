@@ -17,7 +17,6 @@ class ModelImpersonateTest extends TestCase
         parent::setUp();
 
         $this->manager = $this->app->make(ImpersonateManager::class);
-
         $this->guard = 'web';
     }
 
