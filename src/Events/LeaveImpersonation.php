@@ -3,7 +3,7 @@
 namespace Lab404\Impersonate\Events;
 
 use Illuminate\Broadcasting\Channel;
-use Illuminate\Database\Eloquent\Model;
+use Illuminate\Contracts\Auth\Authenticatable;
 use Illuminate\Queue\SerializesModels;
 use Illuminate\Broadcasting\PrivateChannel;
 use Illuminate\Broadcasting\PresenceChannel;
@@ -15,10 +15,10 @@ class LeaveImpersonation
 {
     use Dispatchable, InteractsWithSockets, SerializesModels;
 
-    /** @var  Model */
+    /** @var Authenticatable */
     public $impersonator;
 
-    /** @var  Model */
+    /** @var Authenticatable */
     public $impersonated;
 
     /**
@@ -26,7 +26,7 @@ class LeaveImpersonation
      *
      * @return  void
      */
-    public function __construct(Model $impersonator, Model $impersonated)
+    public function __construct(Authenticatable $impersonator, Authenticatable $impersonated)
     {
         $this->impersonator = $impersonator;
         $this->impersonated = $impersonated;

@@ -4,6 +4,7 @@ namespace Lab404\Impersonate\Services;
 
 use Exception;
 use Illuminate\Database\Eloquent\Model;
+use Illuminate\Database\Eloquent\ModelNotFoundException;
 use Illuminate\Foundation\Application;
 use Lab404\Impersonate\Events\LeaveImpersonation;
 use Lab404\Impersonate\Events\TakeImpersonation;
@@ -36,18 +37,15 @@ class ImpersonateManager
             $guardName = $this->app['config']->get('auth.default.guard', 'web');
         }
 
-        $userProvider = $this->app['config']->get("auth.guards.$guardName.provider");
-        $model = $this->app['config']->get("auth.providers.$userProvider.model");
+        $providerName = $this->app['config']->get("auth.guards.$guardName.provider");
+        $userProvider = $this->app['auth']->createUserProvider($providerName);
 
-        if (!$model) {
-            throw new Exception("Auth guard \"$guardName\" does not exist.");
+        if (!($modelInstance = $userProvider->retrieveById($id))) {
+            throw (new ModelNotFoundException())->setModel(
+                $model,
+                $id
+            );
         }
-
-        /** @var Model $modelInstance */
-        $modelInstance = call_user_func([
-            $model,
-            'findOrFail'
-        ], $id);
 
         return $modelInstance;
     }
@@ -80,7 +78,7 @@ class ImpersonateManager
 
         return is_null($id) ? null : $this->findUserById($id);
     }
-  
+
     /**
      * @return string|null
      */
