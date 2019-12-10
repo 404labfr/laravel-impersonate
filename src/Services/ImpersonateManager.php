@@ -41,6 +41,8 @@ class ImpersonateManager
         $userProvider = $this->app['auth']->createUserProvider($providerName);
 
         if (!($modelInstance = $userProvider->retrieveById($id))) {
+            $model = $this->app['config']->get("auth.providers.$providerName.model");
+
             throw (new ModelNotFoundException())->setModel(
                 $model,
                 $id
