@@ -1,5 +1,16 @@
 # Laravel Impersonate Changelog
 
+## 1.5.0
+
+### Changed
+
+- Events uses `Illuminate\Contracts\Auth\Authenticatable` instead of `Illuminate\Database\Eloquent\Model` [#92](https://github.com/404labfr/laravel-impersonate/pull/92)
+- PHPDoc and return values for `ImpersonateManager`
+
+### Fixed
+
+- Security issue for `symfony/http-foundation` ([CVE-2019-18888](https://github.com/advisories/GHSA-xhh6-956q-4q69)) 
+
 ## 1.4.3
 
 ### Fixed
