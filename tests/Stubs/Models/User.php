@@ -39,4 +39,10 @@ class User extends Authenticatable
     {
         return $this->attributes['can_be_impersonated'] == 1;
     }
+
+
+    public function getAuthIdentifierName()
+    {
+        return 'email';
+    }
 }

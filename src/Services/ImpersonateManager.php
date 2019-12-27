@@ -22,7 +22,7 @@ class ImpersonateManager
 
     /**
      * @param int $id
-     * @return \Illuminate\Database\Eloquent\Model
+     * @return \Illuminate\Contracts\Auth\Authenticatable
      * @throws Exception
      */
     public function findUserById($id, $guardName = null)
@@ -60,7 +60,7 @@ class ImpersonateManager
     }
 
     /**
-     * @return \Illuminate\Database\Eloquent\Model
+     * @return \Illuminate\Contracts\Auth\Authenticatable
      */
     public function getImpersonator()
     {
@@ -86,8 +86,8 @@ class ImpersonateManager
     }
 
     /**
-     * @param \Illuminate\Database\Eloquent\Model $from
-     * @param \Illuminate\Database\Eloquent\Model $to
+     * @param \Illuminate\Contracts\Auth\Authenticatable $from
+     * @param \Illuminate\Contracts\Auth\Authenticatable $to
      * @param string|null                         $guardName
      * @return bool
      */
@@ -97,7 +97,7 @@ class ImpersonateManager
 
         try {
             $currentGuard = $this->getCurrentAuthGuardName();
-            session()->put($this->getSessionKey(), $from->getKey());
+            session()->put($this->getSessionKey(), $from->getAuthIdentifier());
             session()->put($this->getSessionGuard(), $currentGuard);
             session()->put($this->getSessionGuardUsing(), $guardName);
 

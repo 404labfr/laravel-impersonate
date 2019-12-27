@@ -37,9 +37,9 @@ class ImpersonateManagerTest extends TestCase
     /** @test */
     public function it_can_find_an_user()
     {
-        $admin = $this->manager->findUserById(1, $this->firstGuard);
-        $user = $this->manager->findUserById(2, $this->firstGuard);
-        $superAdmin = $this->manager->findUserById(3, $this->secondGuard);
+        $admin = $this->manager->findUserById('admin@test.rocks', $this->firstGuard);
+        $user = $this->manager->findUserById('user@test.rocks', $this->firstGuard);
+        $superAdmin = $this->manager->findUserById('superadmin@test.rocks', $this->secondGuard);
 
         $this->assertInstanceOf(User::class, $admin);
         $this->assertInstanceOf(User::class, $user);
@@ -53,15 +53,15 @@ class ImpersonateManagerTest extends TestCase
     public function it_can_verify_impersonating()
     {
         $this->assertFalse($this->manager->isImpersonating());
-        $this->app['session']->put($this->manager->getSessionKey(), 1);
+        $this->app['session']->put($this->manager->getSessionKey(), 'admin@test.rocks');
         $this->assertTrue($this->manager->isImpersonating());
-        $this->assertEquals(1, $this->manager->getImpersonatorId());
+        $this->assertEquals('admin@test.rocks', $this->manager->getImpersonatorId());
     }
 
     /** @test */
     public function it_can_clear_impersonating()
     {
-        $this->app['session']->put($this->manager->getSessionKey(), 1);
+        $this->app['session']->put($this->manager->getSessionKey(), 'admin@test.rocks');
         $this->app['session']->put($this->manager->getSessionGuard(), 'guard_name');
         $this->app['session']->put($this->manager->getSessionGuardUsing(), 'guard_using_name');
         $this->assertTrue($this->app['session']->has($this->manager->getSessionKey()));
@@ -76,11 +76,11 @@ class ImpersonateManagerTest extends TestCase
     /** @test */
     public function it_can_take_impersonating()
     {
-        $this->app['auth']->guard($this->firstGuard)->loginUsingId(1);
+        $this->app['auth']->guard($this->firstGuard)->loginUsingId('admin@test.rocks');
         $this->assertTrue($this->app['auth']->check());
-        $this->manager->take($this->app['auth']->user(), $this->manager->findUserById(2, $this->firstGuard), $this->firstGuard);
-        $this->assertEquals(2, $this->app['auth']->user()->getKey());
-        $this->assertEquals(1, $this->manager->getImpersonatorId());
+        $this->manager->take($this->app['auth']->user(), $this->manager->findUserById('user@test.rocks', $this->firstGuard), $this->firstGuard);
+        $this->assertEquals('user@test.rocks', $this->app['auth']->user()->getAuthIdentifier());
+        $this->assertEquals('admin@test.rocks', $this->manager->getImpersonatorId());
         $this->assertEquals($this->firstGuard, $this->manager->getImpersonatorGuardName());
         $this->assertEquals($this->firstGuard, $this->manager->getImpersonatorGuardUsingName());
         $this->assertTrue($this->manager->isImpersonating());
@@ -89,15 +89,15 @@ class ImpersonateManagerTest extends TestCase
     /** @test */
     public function it_can_take_impersonating_other_guard()
     {
-        $this->app['auth']->guard($this->secondGuard)->loginUsingId(1);
+        $this->app['auth']->guard($this->secondGuard)->loginUsingId('admin@test.rocks');
         $this->assertTrue($this->app['auth']->guard($this->secondGuard)->check());
         $this->manager->take(
             $this->app['auth']->guard($this->secondGuard)->user(),
-            $this->manager->findUserById(3, $this->firstGuard),
+            $this->manager->findUserById('superadmin@test.rocks', $this->firstGuard),
             $this->firstGuard
         );
-        $this->assertEquals(3, $this->app['auth']->user()->getKey());
-        $this->assertEquals(1, $this->manager->getImpersonatorId());
+        $this->assertEquals('superadmin@test.rocks', $this->app['auth']->user()->getAuthIdentifier());
+        $this->assertEquals('admin@test.rocks', $this->manager->getImpersonatorId());
         $this->assertEquals($this->secondGuard, $this->manager->getImpersonatorGuardName());
         $this->assertEquals($this->firstGuard, $this->manager->getImpersonatorGuardUsingName());
         $this->assertTrue($this->manager->isImpersonating());
@@ -106,8 +106,8 @@ class ImpersonateManagerTest extends TestCase
     /** @test */
     public function it_can_leave_impersonating()
     {
-        $this->app['auth']->loginUsingId(1);
-        $this->manager->take($this->app['auth']->user(), $this->manager->findUserById(2, $this->firstGuard));
+        $this->app['auth']->loginUsingId('admin@test.rocks');
+        $this->manager->take($this->app['auth']->user(), $this->manager->findUserById('user@test.rocks', $this->firstGuard));
         $this->assertTrue($this->manager->leave());
         $this->assertFalse($this->manager->isImpersonating());
         $this->assertInstanceOf(User::class, $this->app['auth']->user());
@@ -116,10 +116,10 @@ class ImpersonateManagerTest extends TestCase
     /** @test */
     public function it_can_leave_impersonating_other_guard()
     {
-        $this->app['auth']->guard($this->secondGuard)->loginUsingId(1);
+        $this->app['auth']->guard($this->secondGuard)->loginUsingId('admin@test.rocks');
         $this->manager->take(
             $this->app['auth']->guard($this->secondGuard)->user(),
-            $this->manager->findUserById(2, $this->firstGuard),
+            $this->manager->findUserById('user@test.rocks', $this->firstGuard),
             $this->firstGuard
         );
         $this->assertTrue($this->manager->leave());
@@ -130,11 +130,11 @@ class ImpersonateManagerTest extends TestCase
     /** @test */
     public function it_keeps_remember_token_when_taking_and_leaving()
     {
-        $admin = $this->manager->findUserById(1, $this->firstGuard);
+        $admin = $this->manager->findUserById('admin@test.rocks', $this->firstGuard);
         $admin->remember_token = 'impersonator_token';
         $admin->save();
 
-        $user = $this->manager->findUserById(2, $this->firstGuard);
+        $user = $this->manager->findUserById('user@test.rocks', $this->firstGuard);
         $user->remember_token = 'impersonated_token';
         $user->save();
 
@@ -151,10 +151,10 @@ class ImpersonateManagerTest extends TestCase
     /** @test */
     public function it_can_get_impersonator()
     {
-        $this->app['auth']->loginUsingId(1);
+        $this->app['auth']->loginUsingId('admin@test.rocks');
         $this->assertTrue($this->app['auth']->check());
-        $this->manager->take($this->app['auth']->user(), $this->manager->findUserById(2));
-        $this->assertEquals(2, $this->app['auth']->user()->getKey());
+        $this->manager->take($this->app['auth']->user(), $this->manager->findUserById('user@test.rocks'));
+        $this->assertEquals('user@test.rocks', $this->app['auth']->user()->getAuthIdentifier());
         $this->assertEquals(1, $this->manager->getImpersonator()->id);
         $this->assertEquals('Admin', $this->manager->getImpersonator()->name);
     }
@@ -170,7 +170,7 @@ class ImpersonateManagerTest extends TestCase
         $cookies = [$cookie->getName() => $cookie->getValue(), 'random' => 'cookie'];
         $this->app['request'] = (object) ['cookies' => new ParameterBag($cookies)];
 
-        $this->manager->take($this->app['auth']->user(), $this->manager->findUserById(2));
+        $this->manager->take($this->app['auth']->user(), $this->manager->findUserById('user@test.rocks'));
         $this->assertArrayHasKey(ImpersonateManager::REMEMBER_PREFIX, session()->all());
         $this->assertEquals([$cookie->getName(), $cookie->getValue()], session()->get(ImpersonateManager::REMEMBER_PREFIX));
 
