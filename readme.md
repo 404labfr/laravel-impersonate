@@ -171,7 +171,7 @@ There are two events available that can be used to improve your workflow:
 - `TakeImpersonation` is fired when an impersonation is taken.
 - `LeaveImpersonation` is fired when an impersonation is leaved.
 
-Each events returns two properties `$event->impersonator` and `$event->impersonated` containing User model isntance.
+Each events returns two properties `$event->impersonator` and `$event->impersonated` containing User model instance.
 
 ## Configuration
 
