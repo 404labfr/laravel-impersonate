@@ -1,5 +1,12 @@
 # Laravel Impersonate Changelog
 
+## 1.5.1
+
+### Changed
+
+- Use `Illuminate\Contracts\Auth\Authenticatable@getAuthIdentifier` instead of `Illuminate\Database\Eloquent\Model@getKey` [#96](https://github.com/404labfr/laravel-impersonate/pull/96)
+- PHPDoc updated
+
 ## 1.5.0
 
 ### Changed
