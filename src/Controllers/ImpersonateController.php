@@ -4,6 +4,7 @@ namespace Lab404\Impersonate\Controllers;
 
 use Illuminate\Http\RedirectResponse;
 use Illuminate\Http\Request;
+use Illuminate\Http\Resources\Json\JsonResource;
 use Illuminate\Routing\Controller;
 use Lab404\Impersonate\Services\ImpersonateManager;
 
@@ -37,11 +38,6 @@ class ImpersonateController extends Controller
             abort(403);
         }
 
-        // Cannot impersonate again if you're already impersonate a user
-        if ($this->manager->isImpersonating()) {
-            abort(403);
-        }
-
         if (!$request->user()->canImpersonate()) {
             abort(403);
         }
@@ -65,16 +61,11 @@ class ImpersonateController extends Controller
      */
     public function leave()
     {
-        if (!$this->manager->isImpersonating()) {
-            abort(403);
-        }
-
         $this->manager->leave();
 
         $leaveRedirect = $this->manager->getLeaveRedirectTo();
         if ($leaveRedirect !== 'back') {
-            return redirect()->to($leaveRedirect);
+            return new JsonResource(['redirect_url' => $leaveRedirect]);
         }
-        return redirect()->back();
     }
 }
