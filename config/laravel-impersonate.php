@@ -23,7 +23,7 @@ return [
     'default_impersonator_guard' => 'web',
 
     /**
-     * The URI to redirect after taking an impersonation.
+     * The URL to redirect after taking an impersonation.
      *
      * Only used in the built-in controller.
      * * Use 'back' to redirect to the previous page

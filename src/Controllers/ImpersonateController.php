@@ -77,4 +77,19 @@ class ImpersonateController extends Controller
         }
         return redirect()->back();
     }
+
+    public function info(Request $request)
+    {
+        $token = $request->bearerToken();
+        $response = [
+            'impersonating' => $this->manager->isImpersonating(),
+            'data' => [
+                'user_to_impersonate' => $request->user(),
+                'impersonator' => $this->manager->isImpersonating() ?
+                    $this->manager->findUserById($this->manager->getImpersonatorId()) : null,
+                'token' => $token,
+            ],
+        ];
+        return response()->json($response);
+    }
 }
