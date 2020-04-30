@@ -32,7 +32,7 @@ if (! function_exists('can_be_impersonated')) {
 	{
 		$guard = $guard ?? app('impersonate')->getCurrentAuthGuardName();
 		return app('auth')->guard($guard)->check()
-		       && app('auth')->guard($guard)->user()->{app('auth')->guard($guard)->user()->getkeyName()} != $user->{app('auth')->guard($guard)->user()->getkeyName()}
+		       && app('auth')->guard($guard)->user()->getAuthIdentifier() != $user->{app('auth')->guard($guard)->user()->getkeyName()}
 		       && $user->canBeImpersonated();
 	}
 }
