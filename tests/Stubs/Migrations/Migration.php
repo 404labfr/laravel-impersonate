@@ -1,19 +1,16 @@
 <?php
 
+namespace Lab404\Tests\Stubs\Migrations;
+
 use Illuminate\Support\Facades\Schema;
 use Illuminate\Database\Schema\Blueprint;
-use Illuminate\Database\Migrations\Migration;
 use Illuminate\Support\Facades\DB;
 use Carbon\Carbon;
 
-class CreateUsersTable extends Migration
+class Migration extends \Illuminate\Database\Migrations\Migration
 {
-    /**
-     * Run the migrations.
-     *
-     * @return void
-     */
-    public function up()
+
+    public static function up()
     {
         Schema::create('users', function (Blueprint $table)
         {
@@ -55,13 +52,4 @@ class CreateUsersTable extends Migration
         ]);
     }
 
-    /**
-     * Reverse the migrations.
-     *
-     * @return void
-     */
-    public function down()
-    {
-        Schema::dropIfExists('users');
-    }
 }

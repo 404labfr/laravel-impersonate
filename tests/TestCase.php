@@ -3,6 +3,7 @@
 namespace Lab404\Tests;
 
 use Lab404\Impersonate\ImpersonateServiceProvider;
+use Lab404\Tests\Stubs\Migrations\Migration;
 use Lab404\Tests\Stubs\Models\User;
 use Orchestra\Database\ConsoleServiceProvider;
 
@@ -22,6 +23,8 @@ class TestCase extends \Orchestra\Testbench\TestCase
             '--database' => 'testbench',
             '--realpath' => realpath(__DIR__ . '/../migrations'),
         ]);
+
+        Migration::up();
 
         $this->setUpRoutes();
     }
