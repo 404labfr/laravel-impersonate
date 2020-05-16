@@ -3,6 +3,7 @@
 namespace Lab404\Impersonate\Models;
 
 use Illuminate\Database\Eloquent\Model;
+use Illuminate\Support\Collection;
 use Lab404\Impersonate\Services\ImpersonateManager;
 
 trait Impersonate
@@ -63,5 +64,12 @@ trait Impersonate
         if ($this->isImpersonated()) {
             return app(ImpersonateManager::class)->leave();
         }
+    }
+
+    public static function getCanImpersonate(): Collection
+    {
+         return collect(static::cursor())->filter(function ($model){
+            return $model->canBeImpersonated();
+        });
     }
 }
