@@ -1,5 +1,11 @@
 # Laravel Impersonate Changelog
 
+## Unreleased
+
+### Changed
+
+- Git attributes [#108](https://github.com/404labfr/laravel-impersonate/pull/108)
+
 ## 1.6.0
 
 ### Added

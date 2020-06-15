@@ -19,7 +19,6 @@
 - [Contributors](#contributors)
 - [Why Not Just Use loginAsId()?](#rationale)
 
-
 ## Requirements
 
 - Laravel 6.x or 7.x
