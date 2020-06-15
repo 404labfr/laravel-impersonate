@@ -32,6 +32,7 @@ class ImpersonateManager
         }
 
         $providerName = $this->app['config']->get("auth.guards.$guardName.provider");
+        abort_unless($providerName, 422);
         $userProvider = $this->app['auth']->createUserProvider($providerName);
 
         if (!($modelInstance = $userProvider->retrieveById($id))) {
