@@ -1,14 +1,15 @@
 # Laravel Impersonate Changelog
 
-## Unreleased
+## 1.7.0
 
 ### Added
 
-- `ImpersonateManager@findUserById` will now throw a `MissingUserProvider` exception when guard has no user provider
-- `ImpersonateManager@findUserById` will now throw a `InvalidUserProvider` exception when guard has an invalid user provider
+- `ImpersonateManager@findUserById` will now throw a `MissingUserProvider` exception when guard has no user provider [baa722b](https://github.com/404labfr/laravel-impersonate/commit/baa722b1bde0aefd9efbd9454c699b7894ddc49b)
+- `ImpersonateManager@findUserById` will now throw a `InvalidUserProvider` exception when guard has an invalid user provider [baa722b](https://github.com/404labfr/laravel-impersonate/commit/baa722b1bde0aefd9efbd9454c699b7894ddc49b)
 
 ### Changed
 
+- Helper `can_be_impersonated` now use model `getAuthIdentifier()` instead of hardcoded `id` column [#105](https://github.com/404labfr/laravel-impersonate/pull/105)
 - Git attributes [#108](https://github.com/404labfr/laravel-impersonate/pull/108)
 
 ## 1.6.0
