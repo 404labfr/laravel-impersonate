@@ -2,6 +2,11 @@
 
 ## Unreleased
 
+### Added
+
+- `ImpersonateManager@findUserById` will now throw a `MissingUserProvider` exception when guard has no user provider
+- `ImpersonateManager@findUserById` will now throw a `InvalidUserProvider` exception when guard has an invalid user provider
+
 ### Changed
 
 - Git attributes [#108](https://github.com/404labfr/laravel-impersonate/pull/108)

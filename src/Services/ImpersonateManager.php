@@ -3,10 +3,14 @@
 namespace Lab404\Impersonate\Services;
 
 use Exception;
+use Illuminate\Contracts\Auth\Guard;
+use Illuminate\Contracts\Auth\UserProvider;
 use Illuminate\Database\Eloquent\ModelNotFoundException;
 use Illuminate\Foundation\Application;
 use Lab404\Impersonate\Events\LeaveImpersonation;
 use Lab404\Impersonate\Events\TakeImpersonation;
+use Lab404\Impersonate\Exceptions\InvalidUserProvider;
+use Lab404\Impersonate\Exceptions\MissingUserProvider;
 
 class ImpersonateManager
 {
@@ -23,7 +27,9 @@ class ImpersonateManager
     /**
      * @param int $id
      * @return \Illuminate\Contracts\Auth\Authenticatable
-     * @throws Exception
+     * @throws MissingUserProvider
+     * @throws InvalidUserProvider
+     * @throws ModelNotFoundException
      */
     public function findUserById($id, $guardName = null)
     {
@@ -32,8 +38,17 @@ class ImpersonateManager
         }
 
         $providerName = $this->app['config']->get("auth.guards.$guardName.provider");
-        abort_unless($providerName, 422);
-        $userProvider = $this->app['auth']->createUserProvider($providerName);
+
+        if (empty($providerName)) {
+            throw new MissingUserProvider($guardName);
+        }
+
+        try {
+            /** @var UserProvider $userProvider */
+            $userProvider = $this->app['auth']->createUserProvider($providerName);
+        } catch (\InvalidArgumentException $e) {
+            throw new InvalidUserProvider($guardName);
+        }
 
         if (!($modelInstance = $userProvider->retrieveById($id))) {
             $model = $this->app['config']->get("auth.providers.$providerName.model");
