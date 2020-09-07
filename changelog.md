@@ -1,5 +1,11 @@
 # Laravel Impersonate Changelog
 
+## 1.7.1
+
+### Added
+
+- Laravel 8.x support
+
 ## 1.7.0
 
 ### Added
