@@ -16,6 +16,8 @@ class ImpersonateManagerTest extends TestCase
     protected $firstGuard;
     /** @var  string */
     protected $secondGuard;
+    /** @var  string */
+    protected $thirdGuard;
 
     public function setUp() : void
     {
@@ -24,6 +26,7 @@ class ImpersonateManagerTest extends TestCase
         $this->manager = $this->app->make(ImpersonateManager::class);
         $this->firstGuard = 'web';
         $this->secondGuard = 'admin';
+        $this->thirdGuard = 'otheruser';
     }
 
     /** @test */
@@ -157,6 +160,28 @@ class ImpersonateManagerTest extends TestCase
         $this->assertEquals('user@test.rocks', $this->app['auth']->user()->getAuthIdentifier());
         $this->assertEquals(1, $this->manager->getImpersonator()->id);
         $this->assertEquals('Admin', $this->manager->getImpersonator()->name);
+    }
+
+    /** @test */
+    public function it_can_get_impersonator_with_guards_from_different_tables()
+    {
+        $this->app['auth']->guard($this->thirdGuard)->loginUsingId('otheradmin@test.rocks');
+        $this->assertTrue($this->app['auth']->guard($this->thirdGuard)->check());
+        $this->manager->take(
+            $this->app['auth']->guard($this->thirdGuard)->user(),
+            $this->manager->findUserById('user@test.rocks', $this->firstGuard),
+            $this->thirdGuard
+        );
+
+        # Impersonated user ("User" #2) is from table "users"
+        $this->assertEquals(2, $this->app['auth']->guard($this->thirdGuard)->user()->id);
+        $this->assertEquals('User', $this->app['auth']->guard($this->thirdGuard)->user()->name);
+        $this->assertEquals('users', $this->app['auth']->guard($this->thirdGuard)->user()->getTable());
+
+        # Impersonating user ("OtherAdmin" #1) is from table "other_users"
+        $this->assertEquals(1, $this->manager->getImpersonator()->id);
+        $this->assertEquals('OtherAdmin', $this->manager->getImpersonator()->name);
+        $this->assertEquals('other_users', $this->manager->getImpersonator()->getTable());
     }
 
     public function it_renames_the_remember_web_cookie_when_taking_and_reverts_the_change_when_leaving()

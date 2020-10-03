@@ -4,6 +4,7 @@ namespace Lab404\Tests;
 
 use Lab404\Impersonate\ImpersonateServiceProvider;
 use Lab404\Tests\Stubs\Models\User;
+use Lab404\Tests\Stubs\Models\OtherUser;
 use Orchestra\Database\ConsoleServiceProvider;
 
 class TestCase extends \Orchestra\Testbench\TestCase
@@ -49,6 +50,16 @@ class TestCase extends \Orchestra\Testbench\TestCase
         $app['config']->set('auth.guards.admin', [
             'driver' => 'session',
             'provider' => 'admins',
+        ]);
+
+        // Setup a guard from another user table/model
+        $app['config']->set('auth.providers.otherusers', [
+            'driver' => 'eloquent',
+            'model' => OtherUser::class,
+        ]);
+        $app['config']->set('auth.guards.otheruser', [
+            'driver' => 'session',
+            'provider' => 'otherusers',
         ]);
     }
 
