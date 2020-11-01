@@ -18,7 +18,7 @@
     "laravel/framework": "^6.0 | ^7.0 | ^8.0"
   },
   "require-dev": {
-    "phpunit/phpunit": "^7.5 | ^8.0",
+    "phpunit/phpunit": "^7.5 | ^8.0 | ^9.0",
     "orchestra/testbench": "^4.0 | ^5.0",
     "orchestra/database": "^4.0 | ^5.0",
     "symfony/mime": ">=4.3.8",
