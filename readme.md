@@ -91,6 +91,8 @@ class RouteServiceProvider extends ServiceProvider
 ```php
 // Where $id is the ID of the user you want impersonate
 route('impersonate', $id)
+// or in case of multi guards, you should also add `guardName` (defaults to `web`)
+route('impersonate', ['id' => $Id, 'guardName' => 'admin'])
 
 // Generate an URL to leave current impersonation
 route('impersonate.leave')
