@@ -1,5 +1,25 @@
 # Laravel Impersonate Changelog
 
+## 1.7.2
+
+### Added
+
+- Supports for PHP 8.0 (thanks to [pascalbaljet](https://github.com/pascalbaljet), [#121](https://github.com/404labfr/laravel-impersonate/pull/121))
+
+### Fixed
+
+- getImpersonator() when working with multiple guards (thanks to [carsso](https://github.com/carsso)), [#120](https://github.com/404labfr/laravel-impersonate/pull/120))
+- Can't leave impersonation when multi-guard is used (thanks to [ctf0](https://github.com/ctf0), [#116](https://github.com/404labfr/laravel-impersonate/pull/117))
+
+### Changed
+
+- Allow guard name in blade directives (thanks to [ctf0](https://github.com/ctf0), [#115](https://github.com/404labfr/laravel-impersonate/pull/117))
+- Documentation about multi-guard usage (thanks to [ctf0](https://github.com/ctf0), [#117](https://github.com/404labfr/laravel-impersonate/pull/117))
+
+### Removed
+
+- composer.lock
+
 ## 1.7.1
 
 ### Added

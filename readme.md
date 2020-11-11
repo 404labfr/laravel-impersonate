@@ -22,7 +22,7 @@
 ## Requirements
 
 - Laravel 6.x, 7.x or 8.x
-- PHP >= 7.2
+- PHP >= 7.2 or 8.0
 
 ### Laravel support
 
@@ -91,6 +91,9 @@ class RouteServiceProvider extends ServiceProvider
 ```php
 // Where $id is the ID of the user you want impersonate
 route('impersonate', $id)
+
+// Or in case of multi guards, you should also add `guardName` (defaults to `web`)
+route('impersonate', ['id' => $id, 'guardName' => 'admin'])
 
 // Generate an URL to leave current impersonation
 route('impersonate.leave')
@@ -209,7 +212,7 @@ There are three Blade directives available.
 ### When the user can impersonate
 
 ```blade
-@canImpersonate
+@canImpersonate($guard = null)
     <a href="{{ route('impersonate', $user->id) }}">Impersonate this user</a>
 @endCanImpersonate
 ```
@@ -220,7 +223,7 @@ This comes in handy when you have a user list and want to show an "Impersonate" 
 But you don\'t want that button next to the current authenticated user neither to that users which should not be able to impersonated according your implementation of `canBeImpersonated()` . 
 
 ```blade
-@canBeImpersonated($user)
+@canBeImpersonated($user, $guard = null)
     <a href="{{ route('impersonate', $user->id) }}">Impersonate this user</a>
 @endCanBeImpersonated
 ```
@@ -228,7 +231,7 @@ But you don\'t want that button next to the current authenticated user neither t
 ### When the user is impersonated
 
 ```blade
-@impersonating
+@impersonating($guard = null)
     <a href="{{ route('impersonate.leave') }}">Leave impersonation</a>
 @endImpersonating
 ```
@@ -241,9 +244,7 @@ vendor/bin/phpunit
 
 ## Contributors
 
-- [MarceauKa](https://github.com/MarceauKa)
-- [tghpow](https://github.com/tghpow)
-- and all others [contributors](https://github.com/404labfr/laravel-impersonate/graphs/contributors)
+- This package was created by [MarceauKa](https://github.com/MarceauKa) and [tghpow](https://github.com/tghpow). Many thanks to all of our [contributors](https://github.com/404labfr/laravel-impersonate/graphs/contributors).
 
 ## Rationale
 

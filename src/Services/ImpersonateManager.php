@@ -82,7 +82,7 @@ class ImpersonateManager
     {
         $id = session($this->getSessionKey(), null);
 
-        return is_null($id) ? null : $this->findUserById($id);
+        return is_null($id) ? null : $this->findUserById($id, $this->getImpersonatorGuardName());
     }
 
     /**
