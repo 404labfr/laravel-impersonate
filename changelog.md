@@ -2,6 +2,10 @@
 
 ## Unreleased
 
+### Fixed
+
+- Can't leave impersonation when multi-guard is used (thanks to [ctf0](https://github.com/ctf0), [#116](https://github.com/404labfr/laravel-impersonate/pull/117))
+
 ### Changed
 
 - Documentation about multi-guard usage (thanks to [ctf0](https://github.com/ctf0), [#117](https://github.com/404labfr/laravel-impersonate/pull/117))
