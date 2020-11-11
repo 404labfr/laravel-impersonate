@@ -22,7 +22,7 @@
 ## Requirements
 
 - Laravel 6.x, 7.x or 8.x
-- PHP >= 7.2
+- PHP >= 7.2 or 8.0
 
 ### Laravel support
 
@@ -244,9 +244,7 @@ vendor/bin/phpunit
 
 ## Contributors
 
-- [MarceauKa](https://github.com/MarceauKa)
-- [tghpow](https://github.com/tghpow)
-- and all others [contributors](https://github.com/404labfr/laravel-impersonate/graphs/contributors)
+- This package was created by [MarceauKa](https://github.com/MarceauKa) and [tghpow](https://github.com/tghpow). Many thanks to all of our [contributors](https://github.com/404labfr/laravel-impersonate/graphs/contributors).
 
 ## Rationale
 
