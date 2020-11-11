@@ -1,5 +1,11 @@
 # Laravel Impersonate Changelog
 
+## Unreleased
+
+### Changed
+
+- Documentation about multi-guard usage (thanks to [ctf0](https://github.com/ctf0), [#117](https://github.com/404labfr/laravel-impersonate/pull/117))
+
 ## 1.7.1
 
 ### Added
