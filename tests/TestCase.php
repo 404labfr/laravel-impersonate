@@ -19,10 +19,7 @@ class TestCase extends \Orchestra\Testbench\TestCase
 
         $this->artisan('migrate', ['--database' => 'testbench']);
 
-        $this->loadMigrationsFrom([
-            '--database' => 'testbench',
-            '--realpath' => realpath(__DIR__ . '/../migrations'),
-        ]);
+        $this->loadMigrationsFrom(__DIR__ . '/../migrations');
 
         $this->setUpRoutes();
     }
