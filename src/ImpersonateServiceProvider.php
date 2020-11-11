@@ -72,16 +72,16 @@ class ImpersonateServiceProvider extends \Illuminate\Support\ServiceProvider
     protected function registerBladeDirectives()
     {
         $this->app->afterResolving('blade.compiler', function (BladeCompiler $bladeCompiler) {
-            $bladeCompiler->directive('impersonating', function () {
-                return "<?php if (is_impersonating()) : ?>";
+            $bladeCompiler->directive('impersonating', function ($guard = null) {
+                return "<?php if (is_impersonating({$guard})) : ?>";
             });
 
             $bladeCompiler->directive('endImpersonating', function () {
                 return '<?php endif; ?>';
             });
 
-            $bladeCompiler->directive('canImpersonate', function () {
-                return "<?php if (can_impersonate()) : ?>";
+            $bladeCompiler->directive('canImpersonate', function ($guard = null) {
+                return "<?php if (can_impersonate({$guard})) : ?>";
             });
 
             $bladeCompiler->directive('endCanImpersonate', function () {
@@ -89,7 +89,10 @@ class ImpersonateServiceProvider extends \Illuminate\Support\ServiceProvider
             });
 
             $bladeCompiler->directive('canBeImpersonated', function ($expression) {
-                return "<?php if (can_be_impersonated({$expression})) : ?>";
+                $args = preg_split("/,(\s+)?/", $expression);
+                $guard = $args[1] ?? null;
+
+                return "<?php if (can_be_impersonated({$args[0]}, {$guard})) : ?>";
             });
 
             $bladeCompiler->directive('endCanBeImpersonated', function () {
