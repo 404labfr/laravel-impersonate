@@ -4,6 +4,7 @@
 
 ### Fixed
 
+- getImpersonator() when working with multiple guards (thanks to [carsso](https://github.com/carsso)), [#120](https://github.com/404labfr/laravel-impersonate/pull/120))
 - Can't leave impersonation when multi-guard is used (thanks to [ctf0](https://github.com/ctf0), [#116](https://github.com/404labfr/laravel-impersonate/pull/117))
 
 ### Changed
