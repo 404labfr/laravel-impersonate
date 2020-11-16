@@ -35,30 +35,33 @@ class ImpersonateController extends Controller
 
         // Cannot impersonate yourself
         if ($id == $request->user()->getAuthIdentifier() && ($this->manager->getCurrentAuthGuardName() == $guardName)) {
-            abort(403);
+            abort(403, 'You cannot impersonate yourself.');
         }
 
         // Cannot impersonate again if you're already impersonate a user
         if ($this->manager->isImpersonating()) {
-            abort(403);
+            abort(403, 'You are already impersonating a user.');
         }
 
         if (!$request->user()->canImpersonate()) {
-            abort(403);
+            abort(403, 'You cannot impersonate users.');
         }
 
         $userToImpersonate = $this->manager->findUserById($id, $guardName);
 
-        if ($userToImpersonate->canBeImpersonated()) {
-            if ($this->manager->take($request->user(), $userToImpersonate, $guardName)) {
-                $takeRedirect = $this->manager->getTakeRedirectTo();
-                if ($takeRedirect !== 'back') {
-                    return redirect()->to($takeRedirect);
-                }
-            }
+        if (!$userToImpersonate->canBeImpersonated()) {
+            abort(403, 'User cannot be impersonated.');
         }
 
-        return redirect()->back();
+        if ($this->manager->take($request->user(), $userToImpersonate, $guardName)) {
+            $takeRedirect = $this->manager->getTakeRedirectTo();
+            if ($takeRedirect === 'back') {
+                return redirect()->back();
+            }
+            return redirect()->to($takeRedirect);
+        }
+
+        abort(403, 'Impersonation failed.');
     }
 
     /**
@@ -67,7 +70,7 @@ class ImpersonateController extends Controller
     public function leave()
     {
         if (!$this->manager->isImpersonating()) {
-            abort(403);
+            abort(403, 'You are not currently impersonating any user.');
         }
 
         $this->manager->leave();
