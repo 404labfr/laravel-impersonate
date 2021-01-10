@@ -91,6 +91,29 @@ class BladeDirectivesTest extends TestCase
     }
 
     /** @test */
+    public function it_displays_not_impersonating_content_directive() {
+        $this->actingAs($this->user);
+        $this->makeView();
+        $this->assertStringContainsString('Not impersonating this user', $this->view);
+        $this->logout();
+
+        $this->actingAs($this->admin);
+        $this->makeView();
+        $this->assertStringContainsString('Not impersonating this user', $this->view);
+        $this->logout();
+    }
+
+    /** @test */
+    public function it_not_displays_not_impersonating_content_directive() {
+        $this->actingAs($this->admin);
+        $this->admin->impersonate($this->user);
+        $this->makeView();
+        $this->assertStringNotContainsString('Not impersonating this user', $this->view);
+        $this->admin->leaveImpersonation();
+        $this->logout();
+    }
+
+    /** @test */
     public function it_displays_can_be_impersonated_content_directive()
     {
         $this->actingAs($this->admin);
