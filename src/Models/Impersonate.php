@@ -38,6 +38,14 @@ trait Impersonate
      */
     public function impersonate(Model $user, $guardName = null)
     {
+        if ($this->canImpersonate() === false) {
+            return false;
+        }
+
+        if ($user->canBeImpersonated() === false) {
+            return false;
+        }
+
         return app(ImpersonateManager::class)->take($this, $user, $guardName);
     }
 
