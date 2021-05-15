@@ -138,6 +138,9 @@ class ImpersonateManager
 
             $this->app['auth']->guard($this->getCurrentAuthGuardName())->quietLogout();
             $this->app['auth']->guard($this->getImpersonatorGuardName())->quietLogin($impersonator);
+            session()->put([
+                'password_hash_' . $this->getImpersonatorGuardName() => $impersonator->getAuthPassword(),
+            ]);
 
             $this->extractAuthCookieFromSession();
 
