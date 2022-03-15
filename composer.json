@@ -1,5 +1,5 @@
 {
-  "name": "PM-Consulting-Energy/laravel-impersonate",
+  "name": "pm-consulting-energy/laravel-impersonate",
   "description": "Laravel Impersonate is a plugin that allows to you to authenticate as your users.",
   "type": "library",
   "keywords": [
