@@ -41,7 +41,7 @@
 composer require lab404/laravel-impersonate
 ```
 
-- Add the service provider at the end of your `config/app.php`:
+- If Laravel version is less than 5.5 or don't use package auto-discovery, then add the service provider at the end of your `config/app.php`:
 ```php
 'providers' => [
     // ...
