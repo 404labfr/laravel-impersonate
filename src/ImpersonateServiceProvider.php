@@ -71,7 +71,7 @@ class ImpersonateServiceProvider extends \Illuminate\Support\ServiceProvider
      */
     protected function registerBladeDirectives()
     {
-        $this->app->afterResolving('blade.compiler', function (BladeCompiler $bladeCompiler) {
+        $this->callAfterResolving('blade.compiler', function (BladeCompiler $bladeCompiler) {
             $bladeCompiler->directive('impersonating', function ($guard = null) {
                 return "<?php if (is_impersonating({$guard})) : ?>";
             });
