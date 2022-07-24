@@ -17,6 +17,7 @@
             <file>tests/BladeDirectivesTest.php</file>
             <file>tests/RoutesTest.php</file>
             <file>tests/MiddlewareProtectFromImpersonationTest.php</file>
+            <file>tests/SessionGuardTest.php</file>
         </testsuite>
     </testsuites>
     <filter>

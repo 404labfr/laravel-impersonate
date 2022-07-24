@@ -45,6 +45,14 @@ class CreateUsersTable extends Migration
                 'created_at' => Carbon::now()->toDateTimeString(),
             ],
             [
+                'name'       => 'Different Password User',
+                'email'      => 'different-password-user@test.rocks',
+                'password'   => bcrypt('different-password'),
+                'is_admin'   => 0,
+                'can_be_impersonated' => 1,
+                'created_at' => Carbon::now()->toDateTimeString(),
+            ],
+            [
                 'name'       => 'SuperAdmin',
                 'email'      => 'superadmin@test.rocks',
                 'password'   => bcrypt('password'),

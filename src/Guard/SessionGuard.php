@@ -17,6 +17,8 @@ class SessionGuard extends BaseSessionGuard
     {
         $this->updateSession($user->getAuthIdentifier());
 
+        $this->updatePasswordHashes($user);
+
         $this->setUser($user);
     }
 
@@ -34,5 +36,22 @@ class SessionGuard extends BaseSessionGuard
         $this->user = null;
 
         $this->loggedOut = true;
+    }
+
+    /**
+     * Removes the stored password hashes from the session.
+     *
+     * @param   void
+     * @return  void
+     */
+    protected function updatePasswordHashes(Authenticatable $user)
+    {
+        // Sort out password hashes stored in session
+        foreach (array_keys(config('auth.guards')) as $guard) {
+            $hashName = 'password_hash_' . $guard;
+            if ($this->session->has($hashName)) {
+                $this->session->put($hashName, $user->getAuthPassword());
+            }
+        }
     }
 }
