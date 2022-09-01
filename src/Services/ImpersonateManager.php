@@ -240,7 +240,7 @@ class ImpersonateManager
             return;
         }
 
-        $this->app['cookie']->queue($session[0], $session[1]);
+        $this->app['cookie']->queue($session[0], $session[1], 525600);
         session()->forget($session);
     }
 
