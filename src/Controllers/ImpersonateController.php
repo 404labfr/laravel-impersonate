@@ -18,7 +18,7 @@ class ImpersonateController extends Controller
     public function __construct()
     {
         $this->manager = app()->make(ImpersonateManager::class);
-        
+
         $guard = $this->manager->getDefaultSessionGuard();
         $this->middleware('auth:' . $guard)->only('take');
     }
@@ -31,15 +31,16 @@ class ImpersonateController extends Controller
      */
     public function take(Request $request, $id, $guardName = null)
     {
-        $guardName = $guardName ?? $this->manager->getDefaultSessionGuard();
+        $manager = app()->make(ImpersonateManager::class);
+        $guardName = $guardName ?? $manager->getDefaultSessionGuard();
 
         // Cannot impersonate yourself
-        if ($id == $request->user()->getAuthIdentifier() && ($this->manager->getCurrentAuthGuardName() == $guardName)) {
+        if ($id == $request->user()->getAuthIdentifier() && ($manager->getCurrentAuthGuardName() == $guardName)) {
             abort(403);
         }
 
         // Cannot impersonate again if you're already impersonate a user
-        if ($this->manager->isImpersonating()) {
+        if ($manager->isImpersonating()) {
             abort(403);
         }
 
@@ -47,11 +48,11 @@ class ImpersonateController extends Controller
             abort(403);
         }
 
-        $userToImpersonate = $this->manager->findUserById($id, $guardName);
+        $userToImpersonate = $manager->findUserById($id, $guardName);
 
         if ($userToImpersonate->canBeImpersonated()) {
-            if ($this->manager->take($request->user(), $userToImpersonate, $guardName)) {
-                $takeRedirect = $this->manager->getTakeRedirectTo();
+            if ($manager->take($request->user(), $userToImpersonate, $guardName)) {
+                $takeRedirect = $manager->getTakeRedirectTo();
                 if ($takeRedirect !== 'back') {
                     return redirect()->to($takeRedirect);
                 }
@@ -66,13 +67,14 @@ class ImpersonateController extends Controller
      */
     public function leave()
     {
-        if (!$this->manager->isImpersonating()) {
+        $manager = app()->make(ImpersonateManager::class);
+        if (!$manager->isImpersonating()) {
             abort(403);
         }
 
-        $this->manager->leave();
+        $manager->leave();
 
-        $leaveRedirect = $this->manager->getLeaveRedirectTo();
+        $leaveRedirect = $manager->getLeaveRedirectTo();
         if ($leaveRedirect !== 'back') {
             return redirect()->to($leaveRedirect);
         }
