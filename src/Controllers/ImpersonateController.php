@@ -52,6 +52,7 @@ class ImpersonateController extends Controller
 
         if ($userToImpersonate->canBeImpersonated()) {
             if ($this->manager->take($request->user(), $userToImpersonate, $guardName)) {
+                // Check if Session imp_back_url exist and redirect to that url or use the url from config file
                 $takeRedirect = (Session::get('imp_back_url')) ? Session::get('imp_back_url') : $this->manager->getTakeRedirectTo();
                 if ($takeRedirect !== 'back') {
                     return redirect()->to($takeRedirect);
@@ -74,7 +75,8 @@ class ImpersonateController extends Controller
         $this->manager->leave();
 
         $leaveRedirect = (Session::get('imp_back_url')) ? Session::get('imp_back_url') : $this->manager->getLeaveRedirectTo();
-        Session::forget('imp_back_url');
+        
+        Session::forget('imp_back_url'); // Will clean session for next use
 
         if ($leaveRedirect !== 'back') {
             return redirect()->to($leaveRedirect);
