@@ -5,6 +5,7 @@ namespace Lab404\Impersonate\Controllers;
 use Illuminate\Http\RedirectResponse;
 use Illuminate\Http\Request;
 use Illuminate\Routing\Controller;
+use Illuminate\Support\Facades\Session;
 use Lab404\Impersonate\Services\ImpersonateManager;
 
 class ImpersonateController extends Controller
@@ -51,7 +52,7 @@ class ImpersonateController extends Controller
 
         if ($userToImpersonate->canBeImpersonated()) {
             if ($this->manager->take($request->user(), $userToImpersonate, $guardName)) {
-                $takeRedirect = $this->manager->getTakeRedirectTo();
+                $takeRedirect = (Session::get('imp_back_url')) ? Session::get('imp_back_url') : $this->manager->getTakeRedirectTo();
                 if ($takeRedirect !== 'back') {
                     return redirect()->to($takeRedirect);
                 }
@@ -72,7 +73,9 @@ class ImpersonateController extends Controller
 
         $this->manager->leave();
 
-        $leaveRedirect = $this->manager->getLeaveRedirectTo();
+        $leaveRedirect = (Session::get('imp_back_url')) ? Session::get('imp_back_url') : $this->manager->getLeaveRedirectTo();
+        Session::forget('imp_back_url');
+
         if ($leaveRedirect !== 'back') {
             return redirect()->to($leaveRedirect);
         }
