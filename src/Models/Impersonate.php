@@ -10,7 +10,6 @@ trait Impersonate
     /**
      * Return true or false if the user can impersonate an other user.
      *
-     * @param void
      * @return  bool
      */
     public function canImpersonate()
@@ -21,7 +20,6 @@ trait Impersonate
     /**
      * Return true or false if the user can be impersonate.
      *
-     * @param void
      * @return  bool
      */
     public function canBeImpersonated()
@@ -44,7 +42,6 @@ trait Impersonate
     /**
      * Check if the current user is impersonated.
      *
-     * @param void
      * @return  bool
      */
     public function isImpersonated()
@@ -55,7 +52,6 @@ trait Impersonate
     /**
      * Leave the current impersonation.
      *
-     * @param void
      * @return  bool
      */
     public function leaveImpersonation()

@@ -10,7 +10,6 @@ use Orchestra\Database\ConsoleServiceProvider;
 class TestCase extends \Orchestra\Testbench\TestCase
 {
     /**
-     * @param void
      * @return  void
      */
     public function setUp(): void
