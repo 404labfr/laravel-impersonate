@@ -103,7 +103,7 @@ route('impersonate.leave')
 
 ### Defining impersonation authorization
 
-By default all users can **impersonate** an user.  
+By default, all users can **impersonate** a user.  
 You need to add the method `canImpersonate()` to your user model:
 
 ```php
@@ -117,7 +117,7 @@ You need to add the method `canImpersonate()` to your user model:
     }
 ```
 
-By default all users can **be impersonated**.  
+By default, all users can **be impersonated**.  
 You need to add the method `canBeImpersonated()` to your user model to extend this behavior:
 
 ```php
@@ -180,7 +180,7 @@ There are two events available that can be used to improve your workflow:
 - `TakeImpersonation` is fired when an impersonation is taken.
 - `LeaveImpersonation` is fired when an impersonation is leaved.
 
-Each events returns two properties `$event->impersonator` and `$event->impersonated` containing User model instance.
+Each event returns two properties `$event->impersonator` and `$event->impersonated` containing User model instance.
 
 ## Configuration
 
