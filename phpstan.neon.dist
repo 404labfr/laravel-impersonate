@@ -1,0 +1,23 @@
+includes:
+    - ./vendor/larastan/larastan/extension.neon
+    - phpstan-baseline.neon
+
+parameters:
+    level: 5
+    paths:
+        - src
+        - config
+        - migrations
+    tmpDir: build/phpstan
+    checkOctaneCompatibility: true
+    reportUnmatchedIgnoredErrors: false
+
+    ignoreErrors:
+        - '#Call to an undefined method .*::isImpersonated#'
+        - '#Call to an undefined method .*::canImpersonate#'
+        - '#Call to an undefined method .*::canBeImpersonated#'
+        - '#Call to an undefined method .*::quietLogin#'
+        - '#Call to an undefined method .*::quietLogout#'
+        - '#Call to function method_exists\(\) with Lab404\\Impersonate\\Guard\\SessionGuard .* will always evaluate to true#'
+        - '#Constructor of class Lab404\\Impersonate\\Exceptions\\.* has an unused parameter \$message#'
+        - '#Parameter.* expects Illuminate\\Database\\Eloquent\\Model\|null, Illuminate\\Contracts\\Auth\\Authenticatable given#'

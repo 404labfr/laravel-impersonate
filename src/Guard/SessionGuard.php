@@ -24,7 +24,6 @@ class SessionGuard extends BaseSessionGuard
      * Logout the user without updating remember_token
      * and without firing the Logout event.
      *
-     * @param   void
      * @return  void
      */
     public function quietLogout()
