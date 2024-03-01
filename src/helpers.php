@@ -64,7 +64,7 @@ if (! function_exists('get_impersonator')) {
 	function get_impersonator()
 	{
 		$manager = app('impersonate');
-		if ($manager->isImpersonating()) {
+		if (!$manager->isImpersonating()) {
 			return null;
 		}
 
