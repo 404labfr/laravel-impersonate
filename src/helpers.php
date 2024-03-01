@@ -53,3 +53,21 @@ if (! function_exists('is_impersonating')) {
             && app('auth')->guard($guard)->user()->isImpersonated();
 	}
 }
+
+if (! function_exists('get_impersonator')) {
+
+	/**
+	 * Get the impersonator user.
+	 *
+	 * @return Authenticatable|null
+	 */
+	function get_impersonator()
+	{
+		$manager = app('impersonate');
+		if ($manager->isImpersonating()) {
+			return null;
+		}
+
+		return $manager->findUserById($manager->getImpersonatorId());
+	}
+}
