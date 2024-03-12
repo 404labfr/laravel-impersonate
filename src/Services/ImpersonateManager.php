@@ -34,7 +34,7 @@ class ImpersonateManager
     public function findUserById($id, $guardName = null)
     {
         if (empty($guardName)) {
-            $guardName = $this->app['config']->get('auth.default.guard', 'web');
+            $guardName = $this->app['config']->get('auth.defaults.guard', 'web');
         }
 
         $providerName = $this->app['config']->get("auth.guards.$guardName.provider");
