@@ -18,6 +18,11 @@ return [
     'session_guard_using' => 'impersonator_guard_using',
 
     /**
+     * The session key used to store the URI to go to after leaving an impersonation.
+     */
+    'session_leave_redirect_to' => 'impersonator_leave_redirect_to',
+
+    /**
      * The default impersonator guard used.
      */
     'default_impersonator_guard' => 'web',

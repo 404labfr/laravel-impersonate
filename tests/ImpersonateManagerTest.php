@@ -214,4 +214,19 @@ class ImpersonateManagerTest extends TestCase
         $this->assertEquals($cookie->getName(), $response->headers->getCookies()[0]->getName());
         $this->assertEquals($cookie->getValue(), $response->headers->getCookies()[0]->getValue());
     }
+
+    /** @test */
+    public function it_puts_leave_redirect_to_in_session_when_take_is_called()
+    {
+        // Arrange
+        $this->app['auth']->loginUsingId('admin@test.rocks');
+        $leaveRedirectTo = 'http://localhost/custom-redirect-url';
+
+        // Act
+        $this->manager->take($this->app['auth']->user(), $this->manager->findUserById('user@test.rocks'), null, $leaveRedirectTo);
+
+        // Assert
+        $this->assertEquals($leaveRedirectTo, $this->app['session']->get($this->manager->getSessionLeaveRedirectTo()));
+    }
+
 }
