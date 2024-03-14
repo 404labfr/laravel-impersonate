@@ -66,7 +66,6 @@ class ImpersonateServiceProvider extends \Illuminate\Support\ServiceProvider
     /**
      * Register plugin blade directives.
      *
-     * @param void
      * @return  void
      */
     protected function registerBladeDirectives()
@@ -104,7 +103,6 @@ class ImpersonateServiceProvider extends \Illuminate\Support\ServiceProvider
     /**
      * Register routes macro.
      *
-     * @param void
      * @return  void
      */
     protected function registerRoutesMacro()
@@ -120,7 +118,6 @@ class ImpersonateServiceProvider extends \Illuminate\Support\ServiceProvider
     }
 
     /**
-     * @param void
      * @return  void
      */
     protected function registerAuthDriver()
@@ -152,7 +149,6 @@ class ImpersonateServiceProvider extends \Illuminate\Support\ServiceProvider
     /**
      * Register plugin middleware.
      *
-     * @param void
      * @return  void
      */
     public function registerMiddleware()
@@ -163,7 +159,6 @@ class ImpersonateServiceProvider extends \Illuminate\Support\ServiceProvider
     /**
      * Merge config file.
      *
-     * @param void
      * @return  void
      */
     protected function mergeConfig()
@@ -176,7 +171,6 @@ class ImpersonateServiceProvider extends \Illuminate\Support\ServiceProvider
     /**
      * Publish config file.
      *
-     * @param void
      * @return  void
      */
     protected function publishConfig()

@@ -33,7 +33,6 @@ class BladeDirectivesTest extends TestCase
     }
 
     /**
-     * @param void
      * @return  void
      */
     protected function logout()
