@@ -2,10 +2,9 @@
 
 namespace Lab404\Impersonate\Guard;
 
-use Illuminate\Auth\SessionGuard as BaseSessionGuard;
 use Illuminate\Contracts\Auth\Authenticatable;
 
-class SessionGuard extends BaseSessionGuard
+class SessionGuardMixin
 {
     /**
      * Log a user into the application without firing the Login event.
@@ -13,11 +12,13 @@ class SessionGuard extends BaseSessionGuard
      * @param  \Illuminate\Contracts\Auth\Authenticatable  $user
      * @return void
      */
-    public function quietLogin(Authenticatable $user)
+    public function quietLogin()
     {
-        $this->updateSession($user->getAuthIdentifier());
+        return function (Authenticatable $user) {
+            $this->updateSession($user->getAuthIdentifier());
 
-        $this->setUser($user);
+            $this->setUser($user);
+        };
     }
 
     /**
@@ -29,10 +30,12 @@ class SessionGuard extends BaseSessionGuard
      */
     public function quietLogout()
     {
-        $this->clearUserDataFromStorage();
+        return function () {
+            $this->clearUserDataFromStorage();
 
-        $this->user = null;
+            $this->user = null;
 
-        $this->loggedOut = true;
+            $this->loggedOut = true;
+        };
     }
 }
