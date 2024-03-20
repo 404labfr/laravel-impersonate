@@ -76,7 +76,7 @@ class ImpersonateManager
     }
 
     /**
-     * @return \Illuminate\Contracts\Auth\Authenticatable
+     * @return \Illuminate\Contracts\Auth\Authenticatable|null
      */
     public function getImpersonator()
     {
