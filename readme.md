@@ -169,7 +169,7 @@ You can use the middleware `impersonate.protect` to protect your routes against 
 This middleware can be useful when you want to protect specific pages like users subscriptions, users credit cards, ... 
 
 ```php
-Router::get('/my-credit-card', function() {
+Route::get('/my-credit-card', function() {
     echo "Can't be accessed by an impersonator";
 })->middleware('impersonate.protect');
 ```
