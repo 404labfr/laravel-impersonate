@@ -38,4 +38,10 @@ return [
      */
     'leave_redirect_to' => '/',
 
+    /**
+     * The expiration date in minutes for the remember me token after leaving an impersonation.
+     * Default is 1 year.
+     */
+    'remember_me_expiration' => 525600,
+
 ];
