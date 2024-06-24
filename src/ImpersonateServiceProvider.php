@@ -145,6 +145,10 @@ class ImpersonateServiceProvider extends \Illuminate\Support\ServiceProvider
                 $guard->setRequest($app->refresh('request', $guard, 'setRequest'));
             }
 
+            if (isset($config['remember'])) {
+                $guard->setRememberDuration($config['remember']);
+            }
+            
             return $guard;
         });
     }
