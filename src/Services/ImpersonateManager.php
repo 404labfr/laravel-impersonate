@@ -3,10 +3,12 @@
 namespace Lab404\Impersonate\Services;
 
 use Exception;
+use Illuminate\Contracts\Auth\Authenticatable;
 use Illuminate\Contracts\Auth\Guard;
 use Illuminate\Contracts\Auth\UserProvider;
 use Illuminate\Database\Eloquent\ModelNotFoundException;
 use Illuminate\Foundation\Application;
+use Illuminate\Support\Collection;
 use Lab404\Impersonate\Events\LeaveImpersonation;
 use Lab404\Impersonate\Events\TakeImpersonation;
 use Lab404\Impersonate\Exceptions\InvalidUserProvider;
@@ -31,7 +33,7 @@ class ImpersonateManager
      * @throws InvalidUserProvider
      * @throws ModelNotFoundException
      */
-    public function findUserById($id, $guardName = null)
+    public function findUserById(int $id, ?string $guardName = null): Authenticatable
     {
         if (empty($guardName)) {
             $guardName = $this->app['config']->get('auth.default.guard', 'web');
@@ -70,7 +72,7 @@ class ImpersonateManager
     /**
      * @return  int|null
      */
-    public function getImpersonatorId()
+    public function getImpersonatorId(): ?int
     {
         return session($this->getSessionKey(), null);
     }
@@ -78,7 +80,7 @@ class ImpersonateManager
     /**
      * @return \Illuminate\Contracts\Auth\Authenticatable
      */
-    public function getImpersonator()
+    public function getImpersonator(): Authenticatable
     {
         $id = session($this->getSessionKey(), null);
 
@@ -88,7 +90,7 @@ class ImpersonateManager
     /**
      * @return string|null
      */
-    public function getImpersonatorGuardName()
+    public function getImpersonatorGuardName(): ?string
     {
         return session($this->getSessionGuard(), null);
     }
@@ -96,7 +98,7 @@ class ImpersonateManager
     /**
      * @return string|null
      */
-    public function getImpersonatorGuardUsingName()
+    public function getImpersonatorGuardUsingName(): ?string
     {
         return session($this->getSessionGuardUsing(), null);
     }
@@ -107,7 +109,7 @@ class ImpersonateManager
      * @param string|null                         $guardName
      * @return bool
      */
-    public function take($from, $to, $guardName = null)
+    public function take(Authenticatable $from, Authenticatable $to, ?string $guardName = null): bool
     {
         $this->saveAuthCookieInSession();
 
@@ -153,7 +155,7 @@ class ImpersonateManager
         return true;
     }
 
-    public function clear()
+    public function clear(): void
     {
         session()->forget($this->getSessionKey());
         session()->forget($this->getSessionGuard());
@@ -205,7 +207,7 @@ class ImpersonateManager
     /**
      * @return array|null
      */
-    public function getCurrentAuthGuardName()
+    public function getCurrentAuthGuardName(): ?array
     {
         $guards = array_keys(config('auth.guards'));
 
@@ -249,7 +251,7 @@ class ImpersonateManager
      * @param string $search
      * @return \Illuminate\Support\Collection
      */
-    protected function findByKeyInArray(array $values, string $search)
+    protected function findByKeyInArray(array $values, string $search): Collection
     {
         return collect($values ?? session()->all())
             ->filter(function ($val, $key) use ($search) {
