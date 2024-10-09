@@ -34,7 +34,7 @@ class ImpersonateController extends Controller
      * @throws InvalidUserProvider
      * @throws MissingUserProvider
      */
-    public function take(Request $request, int $id, ?string $guardName = null): RedirectResponse
+    public function take(Request $request, int $id, string|null $guardName = null): RedirectResponse
     {
         $guardName = $guardName ?? $this->manager->getDefaultSessionGuard();
 

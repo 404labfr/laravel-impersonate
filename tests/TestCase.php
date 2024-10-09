@@ -6,9 +6,9 @@ use Illuminate\Foundation\Application;
 use Lab404\Impersonate\ImpersonateServiceProvider;
 use Lab404\Tests\Stubs\Models\OtherUser;
 use Lab404\Tests\Stubs\Models\User;
-use Orchestra\Database\ConsoleServiceProvider;
+use Orchestra\Testbench\TestCase as OrchestraTestCase;
 
-class TestCase extends \Orchestra\Testbench\TestCase
+class TestCase extends OrchestraTestCase
 {
     /**
      * @return  void
