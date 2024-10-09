@@ -44,6 +44,11 @@
       "Lab404\\Tests\\": "tests/"
     }
   },
+  "scripts": {
+    "test": "vendor/bin/pest",
+    "test-coverage": "vendor/bin/pest --coverage --min=100",
+    "type-coverage": "vendor/bin/pest --type-coverage --min=100"
+  },
   "extra": {
     "laravel": {
       "providers": [
