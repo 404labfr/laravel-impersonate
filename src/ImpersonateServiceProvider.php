@@ -7,6 +7,7 @@ use Illuminate\Auth\Events\Login;
 use Illuminate\Auth\Events\Logout;
 use Illuminate\Foundation\Application;
 use Illuminate\Support\Facades\Event;
+use Illuminate\Support\ServiceProvider;
 use Illuminate\View\Compilers\BladeCompiler;
 use Lab404\Impersonate\Guard\SessionGuard;
 use Lab404\Impersonate\Middleware\ProtectFromImpersonation;
@@ -17,7 +18,7 @@ use Lab404\Impersonate\Services\ImpersonateManager;
  *
  * @package Lab404\Impersonate
  */
-class ImpersonateServiceProvider extends \Illuminate\Support\ServiceProvider
+class ImpersonateServiceProvider extends ServiceProvider
 {
     /** @var string $configName */
     protected $configName = 'laravel-impersonate';
@@ -66,7 +67,6 @@ class ImpersonateServiceProvider extends \Illuminate\Support\ServiceProvider
     /**
      * Register plugin blade directives.
      *
-     * @param void
      * @return  void
      */
     protected function registerBladeDirectives()
@@ -104,7 +104,6 @@ class ImpersonateServiceProvider extends \Illuminate\Support\ServiceProvider
     /**
      * Register routes macro.
      *
-     * @param void
      * @return  void
      */
     protected function registerRoutesMacro()
@@ -120,7 +119,6 @@ class ImpersonateServiceProvider extends \Illuminate\Support\ServiceProvider
     }
 
     /**
-     * @param void
      * @return  void
      */
     protected function registerAuthDriver()
@@ -152,7 +150,6 @@ class ImpersonateServiceProvider extends \Illuminate\Support\ServiceProvider
     /**
      * Register plugin middleware.
      *
-     * @param void
      * @return  void
      */
     public function registerMiddleware()
@@ -163,7 +160,6 @@ class ImpersonateServiceProvider extends \Illuminate\Support\ServiceProvider
     /**
      * Merge config file.
      *
-     * @param void
      * @return  void
      */
     protected function mergeConfig()
@@ -174,9 +170,8 @@ class ImpersonateServiceProvider extends \Illuminate\Support\ServiceProvider
     }
 
     /**
-     * Publish config file.
+     * Publish the config file.
      *
-     * @param void
      * @return  void
      */
     protected function publishConfig()
