@@ -1,11 +1,11 @@
 <?php
 
-namespace Lab404\Tests\Feature;
+namespace Tests\Feature;
 
 use Illuminate\Contracts\Container\BindingResolutionException;
 use Lab404\Impersonate\Services\ImpersonateManager;
-use Lab404\Tests\Stubs\Models\User;
-use Lab404\Tests\TestCase;
+use Tests\Stubs\Models\User;
+use Tests\TestCase;
 use Symfony\Component\HttpFoundation\ParameterBag;
 
 class ImpersonateManagerTest extends TestCase

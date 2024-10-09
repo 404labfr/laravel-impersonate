@@ -41,7 +41,7 @@
   },
   "autoload-dev": {
     "psr-4": {
-      "Lab404\\Tests\\": "tests/"
+      "Tests\\": "tests/"
     }
   },
   "scripts": {

@@ -1,11 +1,11 @@
 <?php
 
-namespace Lab404\Tests;
+namespace Tests;
 
 use Illuminate\Foundation\Application;
 use Lab404\Impersonate\ImpersonateServiceProvider;
-use Lab404\Tests\Stubs\Models\OtherUser;
-use Lab404\Tests\Stubs\Models\User;
+use Tests\Stubs\Models\OtherUser;
+use Tests\Stubs\Models\User;
 use Orchestra\Testbench\TestCase as OrchestraTestCase;
 
 class TestCase extends OrchestraTestCase

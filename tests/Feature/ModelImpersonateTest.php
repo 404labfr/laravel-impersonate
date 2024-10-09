@@ -1,10 +1,10 @@
 <?php
 
-namespace Lab404\Tests\Feature;
+namespace Tests\Feature;
 
 use Illuminate\Contracts\Container\BindingResolutionException;
 use Lab404\Impersonate\Services\ImpersonateManager;
-use Lab404\Tests\TestCase;
+use Tests\TestCase;
 
 class ModelImpersonateTest extends TestCase
 {

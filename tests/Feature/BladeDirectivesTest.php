@@ -1,9 +1,9 @@
 <?php
 
-namespace Lab404\Tests\Feature;
+namespace Tests\Feature;
 
-use Lab404\Tests\Stubs\Models\User;
-use Lab404\Tests\TestCase;
+use Tests\Stubs\Models\User;
+use Tests\TestCase;
 
 class BladeDirectivesTest extends TestCase
 {

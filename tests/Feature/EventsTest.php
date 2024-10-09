@@ -1,6 +1,6 @@
 <?php
 
-namespace Lab404\Tests\Feature;
+namespace Tests\Feature;
 
 use Illuminate\Auth\Events\Login;
 use Illuminate\Auth\Events\Logout;
@@ -8,8 +8,8 @@ use Illuminate\Support\Facades\Event;
 use Lab404\Impersonate\Events\LeaveImpersonation;
 use Lab404\Impersonate\Events\TakeImpersonation;
 use Lab404\Impersonate\Services\ImpersonateManager;
-use Lab404\Tests\Stubs\Models\User;
-use Lab404\Tests\TestCase;
+use Tests\Stubs\Models\User;
+use Tests\TestCase;
 
 class EventsTest extends TestCase
 {
