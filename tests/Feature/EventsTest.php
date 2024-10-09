@@ -1,6 +1,6 @@
 <?php
 
-namespace Lab404\Tests;
+namespace Lab404\Tests\Feature;
 
 use Illuminate\Auth\Events\Login;
 use Illuminate\Auth\Events\Logout;
@@ -9,16 +9,17 @@ use Lab404\Impersonate\Events\LeaveImpersonation;
 use Lab404\Impersonate\Events\TakeImpersonation;
 use Lab404\Impersonate\Services\ImpersonateManager;
 use Lab404\Tests\Stubs\Models\User;
+use Lab404\Tests\TestCase;
 
 class EventsTest extends TestCase
 {
-    /** @var  User $admin */
-    protected $admin;
-    /** @var  User $user */
-    protected $user;
-    /** @var  string $guard */
-    protected $guard;
+    protected User $admin;
+    protected User $user;
+    protected string $guard;
 
+    /**
+     * @return  void
+     */
     public function setUp(): void
     {
         parent::setUp();

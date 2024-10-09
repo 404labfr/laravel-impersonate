@@ -1,6 +1,8 @@
 <?php
 
-namespace Lab404\Tests;
+namespace Lab404\Tests\Feature;
+
+use Lab404\Tests\TestCase;
 
 class RoutesTest extends TestCase
 {

@@ -1,25 +1,26 @@
 <?php
 
-namespace Lab404\Tests;
+namespace Lab404\Tests\Feature;
 
-use Illuminate\Support\Facades\Cookie;
-use Illuminate\Support\Facades\Request;
+use Illuminate\Contracts\Container\BindingResolutionException;
 use Lab404\Impersonate\Services\ImpersonateManager;
 use Lab404\Tests\Stubs\Models\User;
+use Lab404\Tests\TestCase;
 use Symfony\Component\HttpFoundation\ParameterBag;
 
 class ImpersonateManagerTest extends TestCase
 {
-    /** @var  ImpersonateManager */
-    protected $manager;
-    /** @var  string */
-    protected $firstGuard;
-    /** @var  string */
-    protected $secondGuard;
-    /** @var  string */
-    protected $thirdGuard;
+    protected ImpersonateManager $manager;
+    protected string $firstGuard;
+    protected string $secondGuard;
+    protected string $thirdGuard;
 
-    public function setUp() : void
+    /**
+     * @return  void
+     *
+     * @throws BindingResolutionException
+     */
+    public function setUp(): void
     {
         parent::setUp();
 

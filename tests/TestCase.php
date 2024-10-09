@@ -2,15 +2,15 @@
 
 namespace Lab404\Tests;
 
+use Illuminate\Foundation\Application;
 use Lab404\Impersonate\ImpersonateServiceProvider;
-use Lab404\Tests\Stubs\Models\User;
 use Lab404\Tests\Stubs\Models\OtherUser;
+use Lab404\Tests\Stubs\Models\User;
 use Orchestra\Database\ConsoleServiceProvider;
 
 class TestCase extends \Orchestra\Testbench\TestCase
 {
     /**
-     * @param void
      * @return  void
      */
     public function setUp(): void
@@ -25,7 +25,7 @@ class TestCase extends \Orchestra\Testbench\TestCase
     }
 
     /**
-     * @param \Illuminate\Foundation\Application $app
+     * @param Application $app
      * @return void
      */
     protected function getEnvironmentSetUp($app)
@@ -61,10 +61,11 @@ class TestCase extends \Orchestra\Testbench\TestCase
     }
 
     /**
-     * @param \Illuminate\Foundation\Application $app
+     * @param Application $app
+     *
      * @return array
      */
-    protected function getPackageProviders($app)
+    protected function getPackageProviders($app): array
     {
         return [
             ImpersonateServiceProvider::class,
@@ -74,7 +75,7 @@ class TestCase extends \Orchestra\Testbench\TestCase
     /**
      * @return void
      */
-    protected function setUpRoutes()
+    protected function setUpRoutes(): void
     {
         // Add routes by calling macro
         $this->app['router']->impersonate();

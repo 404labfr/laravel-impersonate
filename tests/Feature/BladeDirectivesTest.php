@@ -1,42 +1,43 @@
 <?php
 
-namespace Lab404\Tests;
+namespace Lab404\Tests\Feature;
 
 use Lab404\Tests\Stubs\Models\User;
+use Lab404\Tests\TestCase;
 
 class BladeDirectivesTest extends TestCase
 {
-    /** @var  User $user */
-    protected $user;
-    /** @var  User $admin */
-    protected $admin;
-    /** @var  string $view */
-    protected $view;
+    protected User $user;
+    protected User $admin;
+    protected string $view;
 
+    /**
+     * @return  void
+     */
     public function setUp(): void
     {
         parent::setUp();
 
-        $this->app['view']->addLocation(__DIR__ . '/Stubs/views/');
+        $this->app['view']->addLocation(__DIR__ . '/../Stubs/views/');
         $this->user = User::find(2);
         $this->admin = User::find(1);
     }
 
     /**
-     * @param string $view
+     * @param  string  $view
      * @param array  $with
+     *
      * @return  void
      */
-    protected function makeView($view = 'impersonate', array $with = [])
+    protected function makeView(string $view = 'impersonate', array $with = []): void
     {
         $this->view = $this->app['view']->make($view, $with)->render();
     }
 
     /**
-     * @param void
      * @return  void
      */
-    protected function logout()
+    protected function logout(): void
     {
         $this->app['auth']->logout();
     }

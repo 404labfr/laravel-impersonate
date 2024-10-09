@@ -1,23 +1,23 @@
 <?php
 
-namespace Lab404\Tests;
+namespace Lab404\Tests\Feature;
 
 use Illuminate\Http\Request;
-use Lab404\Tests\Stubs\Models\User;
 use Lab404\Impersonate\Middleware\ProtectFromImpersonation;
+use Lab404\Tests\Stubs\Models\User;
+use Lab404\Tests\TestCase;
 
 class MiddlewareProtectFromImpersonationTest extends TestCase
 {
-    /** @var User $user */
-    protected $user;
-    /** @var User $admin */
-    protected $admin;
-    /** @var Request $request */
-    protected $request;
-    /** @var ProtectFromImpersonation $middleware */
-    protected $middleware;
+    protected User $user;
+    protected User $admin;
+    protected Request $request;
+    protected ProtectFromImpersonation $middleware;
 
-    public function setUp() : void
+    /**
+     * @return  void
+     */
+    public function setUp(): void
     {
         parent::setUp();
 
@@ -28,10 +28,9 @@ class MiddlewareProtectFromImpersonationTest extends TestCase
     }
 
     /**
-     * @param   void
      * @return  void
      */
-    protected function logout()
+    protected function logout(): void
     {
         $this->app['auth']->logout();
     }

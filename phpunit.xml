@@ -5,13 +5,9 @@
          xsi:noNamespaceSchemaLocation="https://schema.phpunit.de/10.5/phpunit.xsd"
          cacheDirectory=".phpunit.cache">
   <testsuites>
-    <testsuite name="Laravel Impersonate Test Suite">
-      <file>tests/ImpersonateManagerTest.php</file>
-      <file>tests/ModelImpersonateTest.php</file>
-      <file>tests/EventsTest.php</file>
-      <file>tests/BladeDirectivesTest.php</file>
-      <file>tests/RoutesTest.php</file>
-      <file>tests/MiddlewareProtectFromImpersonationTest.php</file>
+    <testsuite name="Feature">
+      <directory>tests/Feature</directory>
+      <directory>modules/*/Tests/Feature</directory>
     </testsuite>
   </testsuites>
   <php>

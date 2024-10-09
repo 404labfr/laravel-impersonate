@@ -1,17 +1,22 @@
 <?php
 
-namespace Lab404\Tests;
+namespace Lab404\Tests\Feature;
 
+use Illuminate\Contracts\Container\BindingResolutionException;
 use Lab404\Impersonate\Services\ImpersonateManager;
+use Lab404\Tests\TestCase;
 
 class ModelImpersonateTest extends TestCase
 {
-    /** @var  ImpersonateManager $manager */
-    protected $manager;
+    protected ImpersonateManager $manager;
 
-    /** @var  string $guard */
-    protected $guard;
+    protected string $guard;
 
+    /**
+     * @return void
+     *
+     * @throws BindingResolutionException
+     */
     public function setUp(): void
     {
         parent::setUp();
