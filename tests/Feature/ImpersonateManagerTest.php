@@ -1,218 +1,183 @@
 <?php
 
-namespace Tests\Feature;
-
 use Illuminate\Contracts\Container\BindingResolutionException;
 use Lab404\Impersonate\Services\ImpersonateManager;
 use Tests\Stubs\Models\User;
-use Tests\TestCase;
 use Symfony\Component\HttpFoundation\ParameterBag;
 
-class ImpersonateManagerTest extends TestCase
+
+/**
+ * @return  void
+ *
+ * @throws BindingResolutionException
+ */
+beforeEach(function () {
+    $this->manager = $this->app->make(ImpersonateManager::class);
+    $this->firstGuard = 'web';
+    $this->secondGuard = 'admin';
+    $this->thirdGuard = 'otheruser';
+});
+
+it('can be accessed from container', function () {
+    expect($this->manager)->toBeInstanceOf(ImpersonateManager::class);
+    expect($this->app[ImpersonateManager::class])->toBeInstanceOf(ImpersonateManager::class);
+    expect(app('impersonate'))->toBeInstanceOf(ImpersonateManager::class);
+});
+
+it('can find an user', function () {
+    $admin = $this->manager->findUserById('admin@test.rocks', $this->firstGuard);
+    $user = $this->manager->findUserById('user@test.rocks', $this->firstGuard);
+    $superAdmin = $this->manager->findUserById('superadmin@test.rocks', $this->secondGuard);
+
+    expect($admin)->toBeInstanceOf(User::class);
+    expect($user)->toBeInstanceOf(User::class);
+    expect($superAdmin)->toBeInstanceOf(User::class);
+    expect($admin->name)->toEqual('Admin');
+    expect($user->name)->toEqual('User');
+    expect($superAdmin->name)->toEqual('SuperAdmin');
+});
+
+it('can verify impersonating', function () {
+    expect($this->manager->isImpersonating())->toBeFalse();
+    $this->app['session']->put($this->manager->getSessionKey(), 'admin@test.rocks');
+    expect($this->manager->isImpersonating())->toBeTrue();
+    expect($this->manager->getImpersonatorId())->toEqual('admin@test.rocks');
+});
+
+it('can clear impersonating', function () {
+    $this->app['session']->put($this->manager->getSessionKey(), 'admin@test.rocks');
+    $this->app['session']->put($this->manager->getSessionGuard(), 'guard_name');
+    $this->app['session']->put($this->manager->getSessionGuardUsing(), 'guard_using_name');
+    expect($this->app['session']->has($this->manager->getSessionKey()))->toBeTrue();
+    expect($this->app['session']->has($this->manager->getSessionGuard()))->toBeTrue();
+    expect($this->app['session']->has($this->manager->getSessionGuardUsing()))->toBeTrue();
+    $this->manager->clear();
+    expect($this->app['session']->has($this->manager->getSessionKey()))->toBeFalse();
+    expect($this->app['session']->has($this->manager->getSessionGuard()))->toBeFalse();
+    expect($this->app['session']->has($this->manager->getSessionGuardUsing()))->toBeFalse();
+});
+
+it('can take impersonating', function () {
+    $this->app['auth']->guard($this->firstGuard)->loginUsingId('admin@test.rocks');
+    expect($this->app['auth']->check())->toBeTrue();
+    $this->manager->take($this->app['auth']->user(), $this->manager->findUserById('user@test.rocks', $this->firstGuard), $this->firstGuard);
+    expect($this->app['auth']->user()->getAuthIdentifier())->toEqual('user@test.rocks');
+    expect($this->manager->getImpersonatorId())->toEqual('admin@test.rocks');
+    expect($this->manager->getImpersonatorGuardName())->toEqual($this->firstGuard);
+    expect($this->manager->getImpersonatorGuardUsingName())->toEqual($this->firstGuard);
+    expect($this->manager->isImpersonating())->toBeTrue();
+});
+
+it('can take impersonating other guard', function () {
+    $this->app['auth']->guard($this->secondGuard)->loginUsingId('admin@test.rocks');
+    expect($this->app['auth']->guard($this->secondGuard)->check())->toBeTrue();
+    $this->manager->take(
+        $this->app['auth']->guard($this->secondGuard)->user(),
+        $this->manager->findUserById('superadmin@test.rocks', $this->firstGuard),
+        $this->firstGuard
+    );
+    expect($this->app['auth']->user()->getAuthIdentifier())->toEqual('superadmin@test.rocks');
+    expect($this->manager->getImpersonatorId())->toEqual('admin@test.rocks');
+    expect($this->manager->getImpersonatorGuardName())->toEqual($this->secondGuard);
+    expect($this->manager->getImpersonatorGuardUsingName())->toEqual($this->firstGuard);
+    expect($this->manager->isImpersonating())->toBeTrue();
+});
+
+it('can leave impersonating', function () {
+    $this->app['auth']->loginUsingId('admin@test.rocks');
+    $this->manager->take($this->app['auth']->user(), $this->manager->findUserById('user@test.rocks', $this->firstGuard));
+    expect($this->manager->leave())->toBeTrue();
+    expect($this->manager->isImpersonating())->toBeFalse();
+    expect($this->app['auth']->user())->toBeInstanceOf(User::class);
+});
+
+it('can leave impersonating other guard', function () {
+    $this->app['auth']->guard($this->secondGuard)->loginUsingId('admin@test.rocks');
+    $this->manager->take(
+        $this->app['auth']->guard($this->secondGuard)->user(),
+        $this->manager->findUserById('user@test.rocks', $this->firstGuard),
+        $this->firstGuard
+    );
+    expect($this->manager->leave())->toBeTrue();
+    expect($this->manager->isImpersonating())->toBeFalse();
+    expect($this->app['auth']->guard($this->secondGuard)->user())->toBeInstanceOf(User::class);
+});
+
+it('keeps remember token when taking and leaving', function () {
+    $admin = $this->manager->findUserById('admin@test.rocks', $this->firstGuard);
+    $admin->remember_token = 'impersonator_token';
+    $admin->save();
+
+    $user = $this->manager->findUserById('user@test.rocks', $this->firstGuard);
+    $user->remember_token = 'impersonated_token';
+    $user->save();
+
+    $admin->impersonate($user);
+    $user->leaveImpersonation();
+
+    $user->fresh();
+    $admin->fresh();
+
+    expect($admin->remember_token)->toEqual('impersonator_token');
+    expect($user->remember_token)->toEqual('impersonated_token');
+});
+
+it('can get impersonator', function () {
+    $this->app['auth']->loginUsingId('admin@test.rocks');
+    expect($this->app['auth']->check())->toBeTrue();
+    $this->manager->take($this->app['auth']->user(), $this->manager->findUserById('user@test.rocks'));
+    expect($this->app['auth']->user()->getAuthIdentifier())->toEqual('user@test.rocks');
+    expect($this->manager->getImpersonator()->id)->toEqual(1);
+    expect($this->manager->getImpersonator()->name)->toEqual('Admin');
+});
+
+it('can get impersonator with guards from different tables', function () {
+    $this->app['auth']->guard($this->thirdGuard)->loginUsingId('otheradmin@test.rocks');
+    expect($this->app['auth']->guard($this->thirdGuard)->check())->toBeTrue();
+    $this->manager->take(
+        $this->app['auth']->guard($this->thirdGuard)->user(),
+        $this->manager->findUserById('user@test.rocks', $this->firstGuard),
+        $this->thirdGuard
+    );
+
+    # Impersonated user ("User" #2) is from table "users"
+    expect($this->app['auth']->guard($this->thirdGuard)->user()->id)->toEqual(2);
+    expect($this->app['auth']->guard($this->thirdGuard)->user()->name)->toEqual('User');
+    expect($this->app['auth']->guard($this->thirdGuard)->user()->getTable())->toEqual('users');
+
+    # Impersonating user ("OtherAdmin" #1) is from table "other_users"
+    expect($this->manager->getImpersonator()->id)->toEqual(1);
+    expect($this->manager->getImpersonator()->name)->toEqual('OtherAdmin');
+    expect($this->manager->getImpersonator()->getTable())->toEqual('other_users');
+});
+
+function it_renames_the_remember_web_cookie_when_taking_and_reverts_the_change_when_leaving()
 {
-    protected ImpersonateManager $manager;
-    protected string $firstGuard;
-    protected string $secondGuard;
-    protected string $thirdGuard;
+    app('router')->get('/cookie', function () {
+        return 'hello';
+    })->middleware([\Illuminate\Cookie\Middleware\AddQueuedCookiesToResponse::class]);
 
-    /**
-     * @return  void
-     *
-     * @throws BindingResolutionException
-     */
-    public function setUp(): void
-    {
-        parent::setUp();
+    $this->app['auth']->loginUsingId(1, true);
+    $cookie = array_values($this->app['cookie']->getQueuedCookies())[0];
+    $cookies = [$cookie->getName() => $cookie->getValue(), 'random' => 'cookie'];
+    $this->app['request'] = (object) ['cookies' => new ParameterBag($cookies)];
 
-        $this->manager = $this->app->make(ImpersonateManager::class);
-        $this->firstGuard = 'web';
-        $this->secondGuard = 'admin';
-        $this->thirdGuard = 'otheruser';
-    }
+    $this->manager->take($this->app['auth']->user(), $this->manager->findUserById('user@test.rocks'));
+    expect(session()->all())->toHaveKey(ImpersonateManager::REMEMBER_PREFIX);
+    expect(session()->get(ImpersonateManager::REMEMBER_PREFIX))->toEqual([$cookie->getName(), $cookie->getValue()]);
 
-    /** @test */
-    public function it_can_be_accessed_from_container()
-    {
-        $this->assertInstanceOf(ImpersonateManager::class, $this->manager);
-        $this->assertInstanceOf(ImpersonateManager::class, $this->app[ImpersonateManager::class]);
-        $this->assertInstanceOf(ImpersonateManager::class, app('impersonate'));
-    }
+    // When user's session's auth !== the remember cookie's auth
+    // Laravel seems to delete the cookie, so this is what we are faking
+    $this->app['cookie']->unqueue($cookie->getName());
 
-    /** @test */
-    public function it_can_find_an_user()
-    {
-        $admin = $this->manager->findUserById('admin@test.rocks', $this->firstGuard);
-        $user = $this->manager->findUserById('user@test.rocks', $this->firstGuard);
-        $superAdmin = $this->manager->findUserById('superadmin@test.rocks', $this->secondGuard);
+    $response = $this->get('/cookie');
+    expect($response->headers->getCookies())->toHaveCount(0);
 
-        $this->assertInstanceOf(User::class, $admin);
-        $this->assertInstanceOf(User::class, $user);
-        $this->assertInstanceOf(User::class, $superAdmin);
-        $this->assertEquals('Admin', $admin->name);
-        $this->assertEquals('User', $user->name);
-        $this->assertEquals('SuperAdmin', $superAdmin->name);
-    }
+    $this->manager->leave();
+    $this->assertArrayNotHasKey($cookie->getName(), session()->all());
 
-    /** @test */
-    public function it_can_verify_impersonating()
-    {
-        $this->assertFalse($this->manager->isImpersonating());
-        $this->app['session']->put($this->manager->getSessionKey(), 'admin@test.rocks');
-        $this->assertTrue($this->manager->isImpersonating());
-        $this->assertEquals('admin@test.rocks', $this->manager->getImpersonatorId());
-    }
-
-    /** @test */
-    public function it_can_clear_impersonating()
-    {
-        $this->app['session']->put($this->manager->getSessionKey(), 'admin@test.rocks');
-        $this->app['session']->put($this->manager->getSessionGuard(), 'guard_name');
-        $this->app['session']->put($this->manager->getSessionGuardUsing(), 'guard_using_name');
-        $this->assertTrue($this->app['session']->has($this->manager->getSessionKey()));
-        $this->assertTrue($this->app['session']->has($this->manager->getSessionGuard()));
-        $this->assertTrue($this->app['session']->has($this->manager->getSessionGuardUsing()));
-        $this->manager->clear();
-        $this->assertFalse($this->app['session']->has($this->manager->getSessionKey()));
-        $this->assertFalse($this->app['session']->has($this->manager->getSessionGuard()));
-        $this->assertFalse($this->app['session']->has($this->manager->getSessionGuardUsing()));
-    }
-
-    /** @test */
-    public function it_can_take_impersonating()
-    {
-        $this->app['auth']->guard($this->firstGuard)->loginUsingId('admin@test.rocks');
-        $this->assertTrue($this->app['auth']->check());
-        $this->manager->take($this->app['auth']->user(), $this->manager->findUserById('user@test.rocks', $this->firstGuard), $this->firstGuard);
-        $this->assertEquals('user@test.rocks', $this->app['auth']->user()->getAuthIdentifier());
-        $this->assertEquals('admin@test.rocks', $this->manager->getImpersonatorId());
-        $this->assertEquals($this->firstGuard, $this->manager->getImpersonatorGuardName());
-        $this->assertEquals($this->firstGuard, $this->manager->getImpersonatorGuardUsingName());
-        $this->assertTrue($this->manager->isImpersonating());
-    }
-
-    /** @test */
-    public function it_can_take_impersonating_other_guard()
-    {
-        $this->app['auth']->guard($this->secondGuard)->loginUsingId('admin@test.rocks');
-        $this->assertTrue($this->app['auth']->guard($this->secondGuard)->check());
-        $this->manager->take(
-            $this->app['auth']->guard($this->secondGuard)->user(),
-            $this->manager->findUserById('superadmin@test.rocks', $this->firstGuard),
-            $this->firstGuard
-        );
-        $this->assertEquals('superadmin@test.rocks', $this->app['auth']->user()->getAuthIdentifier());
-        $this->assertEquals('admin@test.rocks', $this->manager->getImpersonatorId());
-        $this->assertEquals($this->secondGuard, $this->manager->getImpersonatorGuardName());
-        $this->assertEquals($this->firstGuard, $this->manager->getImpersonatorGuardUsingName());
-        $this->assertTrue($this->manager->isImpersonating());
-    }
-
-    /** @test */
-    public function it_can_leave_impersonating()
-    {
-        $this->app['auth']->loginUsingId('admin@test.rocks');
-        $this->manager->take($this->app['auth']->user(), $this->manager->findUserById('user@test.rocks', $this->firstGuard));
-        $this->assertTrue($this->manager->leave());
-        $this->assertFalse($this->manager->isImpersonating());
-        $this->assertInstanceOf(User::class, $this->app['auth']->user());
-    }
-
-    /** @test */
-    public function it_can_leave_impersonating_other_guard()
-    {
-        $this->app['auth']->guard($this->secondGuard)->loginUsingId('admin@test.rocks');
-        $this->manager->take(
-            $this->app['auth']->guard($this->secondGuard)->user(),
-            $this->manager->findUserById('user@test.rocks', $this->firstGuard),
-            $this->firstGuard
-        );
-        $this->assertTrue($this->manager->leave());
-        $this->assertFalse($this->manager->isImpersonating());
-        $this->assertInstanceOf(User::class, $this->app['auth']->guard($this->secondGuard)->user());
-    }
-
-    /** @test */
-    public function it_keeps_remember_token_when_taking_and_leaving()
-    {
-        $admin = $this->manager->findUserById('admin@test.rocks', $this->firstGuard);
-        $admin->remember_token = 'impersonator_token';
-        $admin->save();
-
-        $user = $this->manager->findUserById('user@test.rocks', $this->firstGuard);
-        $user->remember_token = 'impersonated_token';
-        $user->save();
-
-        $admin->impersonate($user);
-        $user->leaveImpersonation();
-
-        $user->fresh();
-        $admin->fresh();
-
-        $this->assertEquals('impersonator_token', $admin->remember_token);
-        $this->assertEquals('impersonated_token', $user->remember_token);
-    }
-
-    /** @test */
-    public function it_can_get_impersonator()
-    {
-        $this->app['auth']->loginUsingId('admin@test.rocks');
-        $this->assertTrue($this->app['auth']->check());
-        $this->manager->take($this->app['auth']->user(), $this->manager->findUserById('user@test.rocks'));
-        $this->assertEquals('user@test.rocks', $this->app['auth']->user()->getAuthIdentifier());
-        $this->assertEquals(1, $this->manager->getImpersonator()->id);
-        $this->assertEquals('Admin', $this->manager->getImpersonator()->name);
-    }
-
-    /** @test */
-    public function it_can_get_impersonator_with_guards_from_different_tables()
-    {
-        $this->app['auth']->guard($this->thirdGuard)->loginUsingId('otheradmin@test.rocks');
-        $this->assertTrue($this->app['auth']->guard($this->thirdGuard)->check());
-        $this->manager->take(
-            $this->app['auth']->guard($this->thirdGuard)->user(),
-            $this->manager->findUserById('user@test.rocks', $this->firstGuard),
-            $this->thirdGuard
-        );
-
-        # Impersonated user ("User" #2) is from table "users"
-        $this->assertEquals(2, $this->app['auth']->guard($this->thirdGuard)->user()->id);
-        $this->assertEquals('User', $this->app['auth']->guard($this->thirdGuard)->user()->name);
-        $this->assertEquals('users', $this->app['auth']->guard($this->thirdGuard)->user()->getTable());
-
-        # Impersonating user ("OtherAdmin" #1) is from table "other_users"
-        $this->assertEquals(1, $this->manager->getImpersonator()->id);
-        $this->assertEquals('OtherAdmin', $this->manager->getImpersonator()->name);
-        $this->assertEquals('other_users', $this->manager->getImpersonator()->getTable());
-    }
-
-    public function it_renames_the_remember_web_cookie_when_taking_and_reverts_the_change_when_leaving()
-    {
-        app('router')->get('/cookie', function () {
-            return 'hello';
-        })->middleware([\Illuminate\Cookie\Middleware\AddQueuedCookiesToResponse::class]);
-
-        $this->app['auth']->loginUsingId(1, true);
-        $cookie = array_values($this->app['cookie']->getQueuedCookies())[0];
-        $cookies = [$cookie->getName() => $cookie->getValue(), 'random' => 'cookie'];
-        $this->app['request'] = (object) ['cookies' => new ParameterBag($cookies)];
-
-        $this->manager->take($this->app['auth']->user(), $this->manager->findUserById('user@test.rocks'));
-        $this->assertArrayHasKey(ImpersonateManager::REMEMBER_PREFIX, session()->all());
-        $this->assertEquals([$cookie->getName(), $cookie->getValue()], session()->get(ImpersonateManager::REMEMBER_PREFIX));
-
-        // When user's session's auth !== the remember cookie's auth
-        // Laravel seems to delete the cookie, so this is what we are faking
-        $this->app['cookie']->unqueue($cookie->getName());
-
-        $response = $this->get('/cookie');
-        $this->assertCount(0, $response->headers->getCookies());
-
-        $this->manager->leave();
-        $this->assertArrayNotHasKey($cookie->getName(), session()->all());
-
-        $response = $this->get('/cookie');
-        $response->assertCookie($cookie->getName());
-        $this->assertEquals($cookie->getName(), $response->headers->getCookies()[0]->getName());
-        $this->assertEquals($cookie->getValue(), $response->headers->getCookies()[0]->getValue());
-    }
+    $response = $this->get('/cookie');
+    $response->assertCookie($cookie->getName());
+    expect($response->headers->getCookies()[0]->getName())->toEqual($cookie->getName());
+    expect($response->headers->getCookies()[0]->getValue())->toEqual($cookie->getValue());
 }

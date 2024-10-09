@@ -1,77 +1,52 @@
 <?php
 
-namespace Tests\Feature;
-
 use Illuminate\Contracts\Container\BindingResolutionException;
 use Lab404\Impersonate\Services\ImpersonateManager;
-use Tests\TestCase;
 
-class ModelImpersonateTest extends TestCase
-{
-    protected ImpersonateManager $manager;
+/**
+ * @return void
+ *
+ * @throws BindingResolutionException
+ */
+beforeEach(function () {
+    $this->manager = $this->app->make(ImpersonateManager::class);
+    $this->guard = 'web';
+});
 
-    protected string $guard;
+it('can impersonate', function () {
+    $user = $this->app['auth']->loginUsingId('admin@test.rocks');
+    expect($user->canImpersonate())->toBeTrue();
+});
 
-    /**
-     * @return void
-     *
-     * @throws BindingResolutionException
-     */
-    public function setUp(): void
-    {
-        parent::setUp();
+it('cant impersonate', function () {
+    $user = $this->app['auth']->loginUsingId('user@test.rocks');
+    expect($user->canImpersonate())->toBeFalse();
+});
 
-        $this->manager = $this->app->make(ImpersonateManager::class);
-        $this->guard = 'web';
-    }
+it('can be impersonate', function () {
+    $user = $this->app['auth']->loginUsingId('admin@test.rocks');
+    expect($user->canBeImpersonated())->toBeTrue();
+});
 
-    /** @test */
-    public function it_can_impersonate()
-    {
-        $user = $this->app['auth']->loginUsingId('admin@test.rocks');
-        $this->assertTrue($user->canImpersonate());
-    }
+it('cant be impersonate', function () {
+    $user = $this->app['auth']->loginUsingId('superadmin@test.rocks');
+    expect($user->canBeImpersonated())->toBeFalse();
+});
 
-    /** @test */
-    public function it_cant_impersonate()
-    {
-        $user = $this->app['auth']->loginUsingId('user@test.rocks');
-        $this->assertFalse($user->canImpersonate());
-    }
+it('impersonates', function () {
+    $admin = $this->app['auth']->loginUsingId('admin@test.rocks');
+    expect($admin->isImpersonated())->toBeFalse();
+    $user = $this->manager->findUserById('user@test.rocks', $this->guard);
+    $admin->impersonate($user, $this->guard);
+    expect($user->isImpersonated())->toBeTrue();
+    expect('user@test.rocks')->toEqual($this->app['auth']->user()->getAuthIdentifier());
+});
 
-    /** @test */
-    public function it_can_be_impersonate()
-    {
-        $user = $this->app['auth']->loginUsingId('admin@test.rocks');
-        $this->assertTrue($user->canBeImpersonated());
-    }
-
-    /** @test */
-    public function it_cant_be_impersonate()
-    {
-        $user = $this->app['auth']->loginUsingId('superadmin@test.rocks');
-        $this->assertFalse($user->canBeImpersonated());
-    }
-
-    /** @test */
-    public function it_impersonates()
-    {
-        $admin = $this->app['auth']->loginUsingId('admin@test.rocks');
-        $this->assertFalse($admin->isImpersonated());
-        $user = $this->manager->findUserById('user@test.rocks', $this->guard);
-        $admin->impersonate($user, $this->guard);
-        $this->assertTrue($user->isImpersonated());
-        $this->assertEquals($this->app['auth']->user()->getAuthIdentifier(), 'user@test.rocks');
-    }
-
-    /** @test */
-    public function it_can_leave_impersonation()
-    {
-        $admin = $this->app['auth']->loginUsingId('admin@test.rocks');
-        $user = $this->manager->findUserById('user@test.rocks', $this->guard);
-        $admin->impersonate($user, $this->guard);
-        $admin->leaveImpersonation();
-        $this->assertFalse($user->isImpersonated());
-        $this->assertNotEquals($this->app['auth']->user()->getAuthIdentifier(), 'user@test.rocks');
-    }
-}
+it('can leave impersonation', function () {
+    $admin = $this->app['auth']->loginUsingId('admin@test.rocks');
+    $user = $this->manager->findUserById('user@test.rocks', $this->guard);
+    $admin->impersonate($user, $this->guard);
+    $admin->leaveImpersonation();
+    expect($user->isImpersonated())->toBeFalse();
+    $this->assertNotEquals($this->app['auth']->user()->getAuthIdentifier(), 'user@test.rocks');
+});

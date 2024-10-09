@@ -1,64 +1,38 @@
 <?php
 
-namespace Tests\Feature;
-
 use Illuminate\Http\Request;
 use Lab404\Impersonate\Middleware\ProtectFromImpersonation;
 use Tests\Stubs\Models\User;
-use Tests\TestCase;
 
-class MiddlewareProtectFromImpersonationTest extends TestCase
-{
-    protected User $user;
-    protected User $admin;
-    protected Request $request;
-    protected ProtectFromImpersonation $middleware;
+/**
+ * @return  void
+ */
+beforeEach(function () {
+    $this->user = User::find(2);
+    $this->admin = User::find(1);
+    $this->request = new Request();
+    $this->middleware = new ProtectFromImpersonation;
+});
 
-    /**
-     * @return  void
-     */
-    public function setUp(): void
-    {
-        parent::setUp();
+it('can acces when no impersonating', function () {
+    $this->actingAs($this->user);
+    $return = $this->middleware->handle($this->request, function () {
+        return 'This is private';
+    });
 
-        $this->user = User::find(2);
-        $this->admin = User::find(1);
-        $this->request = new Request();
-        $this->middleware = new ProtectFromImpersonation;
-    }
+    expect($return)->toEqual('This is private');
 
-    /**
-     * @return  void
-     */
-    protected function logout(): void
-    {
-        $this->app['auth']->logout();
-    }
+    logout();
+});
 
-    /** @test */
-    public function it_can_acces_when_no_impersonating()
-    {
-        $this->actingAs($this->user);
-        $return = $this->middleware->handle($this->request, function () {
-            return 'This is private';
-        });
+it('cant acces when impersonating', function () {
+    $this->actingAs($this->admin);
+    $this->admin->impersonate($this->user);
 
-        $this->assertEquals('This is private', $return);
+    $return = $this->middleware->handle($this->request, function () {
+        return 'This is private';
+    });
 
-        $this->logout();
-    }
-
-    /** @test */
-    public function it_cant_acces_when_impersonating()
-    {
-        $this->actingAs($this->admin);
-        $this->admin->impersonate($this->user);
-
-        $return = $this->middleware->handle($this->request, function () {
-            return 'This is private';
-        });
-
-        $this->assertNotEquals('This is private', $return);
-        $this->logout();
-    }
-}
+    $this->assertNotEquals('This is private', $return);
+    logout();
+});

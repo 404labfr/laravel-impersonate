@@ -1,31 +1,15 @@
 <?php
 
-namespace Tests\Feature;
+beforeEach(function () {
+    $this->routes = $this->app['router']->getRoutes();
+});
 
-use Tests\TestCase;
+it('adds impersonate route', function () {
+    expect((bool) $this->routes->getByName('impersonate'))->toBeTrue();
+    expect((bool) $this->routes->getByAction('Lab404\Impersonate\Controllers\ImpersonateController@take'))->toBeTrue();
+});
 
-class RoutesTest extends TestCase
-{
-    private $routes;
-
-    public function setUp(): void
-    {
-        parent::setUp();
-
-        $this->routes = $this->app['router']->getRoutes();
-    }
-
-    /** @test */
-    function it_adds_impersonate_route()
-    {
-        $this->assertTrue((bool) $this->routes->getByName('impersonate'));
-        $this->assertTrue((bool) $this->routes->getByAction('Lab404\Impersonate\Controllers\ImpersonateController@take'));
-    }
-
-    /** @test */
-    function it_adds_leave_route()
-    {
-        $this->assertTrue((bool) $this->routes->getByName('impersonate.leave'));
-        $this->assertTrue((bool) $this->routes->getByAction('Lab404\Impersonate\Controllers\ImpersonateController@leave'));
-    }
-}
+it('adds leave route', function () {
+    expect((bool) $this->routes->getByName('impersonate.leave'))->toBeTrue();
+    expect((bool) $this->routes->getByAction('Lab404\Impersonate\Controllers\ImpersonateController@leave'))->toBeTrue();
+});

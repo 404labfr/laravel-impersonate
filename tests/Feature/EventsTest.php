@@ -1,7 +1,5 @@
 <?php
 
-namespace Tests\Feature;
-
 use Illuminate\Auth\Events\Login;
 use Illuminate\Auth\Events\Logout;
 use Illuminate\Support\Facades\Event;
@@ -9,85 +7,66 @@ use Lab404\Impersonate\Events\LeaveImpersonation;
 use Lab404\Impersonate\Events\TakeImpersonation;
 use Lab404\Impersonate\Services\ImpersonateManager;
 use Tests\Stubs\Models\User;
-use Tests\TestCase;
 
-class EventsTest extends TestCase
-{
-    protected User $admin;
-    protected User $user;
-    protected string $guard;
+/**
+ * @return  void
+ */
+beforeEach(function () {
+    $this->admin = User::find(1);
+    $this->user = User::find(2);
+    $this->guard = 'web';
+});
 
-    /**
-     * @return  void
-     */
-    public function setUp(): void
-    {
-        parent::setUp();
+it('dispatches events when taking impersonation', function () {
+    Event::fake();
 
-        $this->admin = User::find(1);
-        $this->user = User::find(2);
-        $this->guard = 'web';
-    }
+    $admin = $this->admin;
+    $user = $this->user;
 
-    /** @test */
-    public function it_dispatches_events_when_taking_impersonation()
-    {
-        Event::fake();
+    expect($admin->impersonate($user, $this->guard))->toBeTrue();
 
-        $admin = $this->admin;
-        $user = $this->user;
+    Event::assertDispatched(TakeImpersonation::class, function ($event) use ($admin, $user) {
+        return $event->impersonator->id == $admin->id && $event->impersonated->id == $user->id;
+    });
 
-        $this->assertTrue($admin->impersonate($user, $this->guard));
+    Event::assertNotDispatched(Login::class);
+});
 
-        Event::assertDispatched(TakeImpersonation::class, function ($event) use ($admin, $user) {
-            return $event->impersonator->id == $admin->id && $event->impersonated->id == $user->id;
-        });
+it('dispatches events when leaving impersonation', function () {
+    Event::fake();
 
-        Event::assertNotDispatched(Login::class);
-    }
+    $admin = $this->admin;
+    $user = $this->user;
+    $this->app['auth']->loginUsingId($admin->id);
 
-    /** @test */
-    public function it_dispatches_events_when_leaving_impersonation()
-    {
-        Event::fake();
+    expect($admin->impersonate($user, $this->guard))->toBeTrue();
+    expect($user->leaveImpersonation())->toBeTrue();
 
-        $admin = $this->admin;
-        $user = $this->user;
-        $this->app['auth']->loginUsingId($admin->id);
+    Event::assertDispatched(LeaveImpersonation::class, function ($event) use ($admin, $user) {
+        return $event->impersonator->id == $admin->id && $event->impersonated->id == $user->id;
+    });
 
-        $this->assertTrue($admin->impersonate($user, $this->guard));
-        $this->assertTrue($user->leaveImpersonation());
+    Event::assertNotDispatched(Logout::class);
+});
 
-        Event::assertDispatched(LeaveImpersonation::class, function ($event) use ($admin, $user) {
-            return $event->impersonator->id == $admin->id && $event->impersonated->id == $user->id;
-        });
+it('dispatches login event', function () {
+    $manager = $this->app->make(ImpersonateManager::class);
+    $manager->take($this->admin, $this->user, $this->guard);
 
-        Event::assertNotDispatched(Logout::class);
-    }
+    event(new Login($this->guard, $this->user, false));
 
-    /** @test */
-    public function it_dispatches_login_event()
-    {
-        $manager = $this->app->make(ImpersonateManager::class);
-        $manager->take($this->admin, $this->user, $this->guard);
+    expect($this->app['session']->has($manager->getSessionKey()))->toBeFalse();
+    expect($this->app['session']->has($manager->getSessionGuard()))->toBeFalse();
+    expect($this->app['session']->has($manager->getSessionGuardUsing()))->toBeFalse();
+});
 
-        event(new Login($this->guard, $this->user, false));
+it('dispatches logout event', function () {
+    $manager = $this->app->make(ImpersonateManager::class);
+    $manager->take($this->admin, $this->user, $this->guard);
 
-        $this->assertFalse($this->app['session']->has($manager->getSessionKey()));
-        $this->assertFalse($this->app['session']->has($manager->getSessionGuard()));
-        $this->assertFalse($this->app['session']->has($manager->getSessionGuardUsing()));
-    }
+    event(new Logout($this->guard, $this->user));
 
-    /** @test */
-    public function it_dispatches_logout_event()
-    {
-        $manager = $this->app->make(ImpersonateManager::class);
-        $manager->take($this->admin, $this->user, $this->guard);
-
-        event(new Logout($this->guard, $this->user));
-
-        $this->assertFalse($this->app['session']->has($manager->getSessionKey()));
-        $this->assertFalse($this->app['session']->has($manager->getSessionGuard()));
-        $this->assertFalse($this->app['session']->has($manager->getSessionGuardUsing()));
-    }
-}
+    expect($this->app['session']->has($manager->getSessionKey()))->toBeFalse();
+    expect($this->app['session']->has($manager->getSessionGuard()))->toBeFalse();
+    expect($this->app['session']->has($manager->getSessionGuardUsing()))->toBeFalse();
+});
