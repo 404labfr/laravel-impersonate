@@ -21,18 +21,19 @@
 
 ## Requirements
 
-- Laravel 6.x to 11.x
-- PHP >= 7.2 or >= 8.0
+- Laravel 9.x to 11.x
+- PHP >= 8.0
 
 ### Laravel support
 
-| Version       | Release       |
-|:-------------:|:-------------:|
-| 6.x to 11.x   | 1.7           |
-| 6.x, 7.x      | 1.6           |
-| 5.8           | 1.5           |
-| 5.7, 5.6      | 1.2           |
-| 5.5, 5.4      | 1.1           |
+|   Version   | Release |
+|:-----------:|:-------:|
+| 9.x to 11.x |   1.8   |
+| 6.x to 11.x |   1.7   |
+|  6.x, 7.x   |   1.6   |
+|     5.8     |   1.5   |
+|  5.7, 5.6   |   1.2   |
+|  5.5, 5.4   |   1.1   |
 
 ## Installation
 
@@ -239,7 +240,9 @@ But you don\'t want that button next to the current authenticated user neither t
 ## Tests
 
 ```bash
-vendor/bin/phpunit
+composer test
+composer test-coverage
+composer type-coverage
 ```
 
 ## Contributors
