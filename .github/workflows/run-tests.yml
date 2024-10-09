@@ -24,6 +24,8 @@ jobs:
             php: 8.0, 8.1
           - laravel: "^10.0"
             php: 8.0
+          - laravel: "^9.0"
+            php: 8.3
 
     name: P${{ matrix.php }} - L${{ matrix.laravel }} - ${{ matrix.dependency-version }}
 
