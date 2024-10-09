@@ -1,32 +1,27 @@
 <?xml version="1.0" encoding="UTF-8"?>
-<phpunit bootstrap="vendor/autoload.php"
-         backupGlobals="false"
-         backupStaticAttributes="false"
+<phpunit xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+         bootstrap="vendor/autoload.php"
          colors="true"
-         verbose="true"
-         convertErrorsToExceptions="true"
-         convertNoticesToExceptions="true"
-         convertWarningsToExceptions="true"
-         processIsolation="false"
-         stopOnFailure="false">
-    <testsuites>
-        <testsuite name="Laravel Impersonate Test Suite">
-            <file>tests/ImpersonateManagerTest.php</file>
-            <file>tests/ModelImpersonateTest.php</file>
-            <file>tests/EventsTest.php</file>
-            <file>tests/BladeDirectivesTest.php</file>
-            <file>tests/RoutesTest.php</file>
-            <file>tests/MiddlewareProtectFromImpersonationTest.php</file>
-        </testsuite>
-    </testsuites>
-    <filter>
-        <whitelist>
-            <directory suffix=".php">src/</directory>
-        </whitelist>
-    </filter>
-    <php>
-        <env name="SESSION_DRIVER" value="array"/>
-        <env name="CACHE_DRIVER" value="array"/>
-        <env name="APP_KEY" value="AckfSECXIvnK5r28GVIWUAxmbBSjTsmF"/>
-    </php>
+         xsi:noNamespaceSchemaLocation="https://schema.phpunit.de/10.5/phpunit.xsd"
+         cacheDirectory=".phpunit.cache">
+  <testsuites>
+    <testsuite name="Laravel Impersonate Test Suite">
+      <file>tests/ImpersonateManagerTest.php</file>
+      <file>tests/ModelImpersonateTest.php</file>
+      <file>tests/EventsTest.php</file>
+      <file>tests/BladeDirectivesTest.php</file>
+      <file>tests/RoutesTest.php</file>
+      <file>tests/MiddlewareProtectFromImpersonationTest.php</file>
+    </testsuite>
+  </testsuites>
+  <php>
+    <env name="SESSION_DRIVER" value="array"/>
+    <env name="CACHE_DRIVER" value="array"/>
+    <env name="APP_KEY" value="AckfSECXIvnK5r28GVIWUAxmbBSjTsmF"/>
+  </php>
+  <source>
+    <include>
+      <directory>src/</directory>
+    </include>
+  </source>
 </phpunit>
