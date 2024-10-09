@@ -10,6 +10,12 @@
       <directory>modules/*/Tests/Feature</directory>
     </testsuite>
   </testsuites>
+  <coverage>
+    <report>
+      <cobertura outputFile=".phpunit.cache/coverage/cobertura.xml"/>
+      <html outputDirectory=".phpunit.cache/coverage/html"/>
+    </report>
+  </coverage>
   <php>
     <env name="SESSION_DRIVER" value="array"/>
     <env name="CACHE_DRIVER" value="array"/>
