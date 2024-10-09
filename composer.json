@@ -21,7 +21,7 @@
     "phpunit/phpunit": "^9.0 | ^10.0",
     "mockery/mockery": "^1.3.3",
     "orchestra/testbench": "^7.0 | ^8.0 | ^9.0",
-    "pestphp/pest": "^2.35",
+    "pestphp/pest": "^1.0 | ^2.35",
     "pestphp/pest-plugin-type-coverage": "^2.8"
   },
   "license": "MIT",
