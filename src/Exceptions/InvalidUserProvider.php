@@ -13,7 +13,7 @@ class InvalidUserProvider extends \Exception
      * @param int $code [optional] The Exception code.
      * @param null|Throwable  $previous [optional] The previous throwable used for the exception chaining.
      */
-    public function __construct(string $guard, $message = '', $code = 0, ?Throwable $previous = null)
+    public function __construct(string $guard, string $message = '', int $code = 0, ?Throwable $previous = null)
     {
         parent::__construct(sprintf('Invalid user provider for guard %s', $guard), $code, $previous);
     }

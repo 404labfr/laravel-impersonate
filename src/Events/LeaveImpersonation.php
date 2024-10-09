@@ -13,11 +13,9 @@ class LeaveImpersonation
     use InteractsWithSockets;
     use SerializesModels;
 
-    /** @var Authenticatable */
-    public $impersonator;
+    public Authenticatable $impersonator;
 
-    /** @var Authenticatable */
-    public $impersonated;
+    public Authenticatable $impersonated;
 
     /**
      * Create a new event instance.

@@ -13,7 +13,7 @@ class SessionGuard extends BaseSessionGuard
      * @param  Authenticatable  $user
      * @return void
      */
-    public function quietLogin(Authenticatable $user)
+    public function quietLogin(Authenticatable $user): void
     {
         $this->updateSession($user->getAuthIdentifier());
 
@@ -26,7 +26,7 @@ class SessionGuard extends BaseSessionGuard
      *
      * @return  void
      */
-    public function quietLogout()
+    public function quietLogout(): void
     {
         $this->clearUserDataFromStorage();
 

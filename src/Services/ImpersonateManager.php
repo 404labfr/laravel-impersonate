@@ -18,8 +18,7 @@ class ImpersonateManager
 {
     public const REMEMBER_PREFIX = 'remember_web';
 
-    /** @var Application $app */
-    private $app;
+    private Application $app;
 
     /**
      * @param  Application  $app
@@ -121,7 +120,7 @@ class ImpersonateManager
      *
      * @return bool
      */
-    public function take(Authenticatable $from, Authenticatable $to, ?string $guardName = null)
+    public function take(Authenticatable $from, Authenticatable $to, ?string $guardName = null): bool
     {
         $this->saveAuthCookieInSession();
 
@@ -241,9 +240,9 @@ class ImpersonateManager
     }
 
     /**
-     * @return int|string|null
+     * @return string|null
      */
-    public function getCurrentAuthGuardName()
+    public function getCurrentAuthGuardName(): ?string
     {
         $guards = array_keys(config('auth.guards'));
 
@@ -296,8 +295,6 @@ class ImpersonateManager
     protected function findByKeyInArray(array $values, string $search): Collection
     {
         return collect($values ?? session()->all())
-            ->filter(function ($val, $key) use ($search) {
-                return strpos($key, $search) !== false;
-            });
+            ->filter(fn (?string $val, string $key) => strpos($key, $search) !== false);
     }
 }

@@ -7,6 +7,7 @@ use Illuminate\Contracts\Container\BindingResolutionException;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Redirect;
 use Lab404\Impersonate\Services\ImpersonateManager;
+use Symfony\Component\HttpFoundation\Response;
 
 class ProtectFromImpersonation
 {
@@ -16,10 +17,10 @@ class ProtectFromImpersonation
      * @param  Request  $request
      * @param  Closure  $next
      *
-     * @return  mixed
+     * @return  Response|string
      * @throws BindingResolutionException
      */
-    public function handle(Request $request, Closure $next)
+    public function handle(Request $request, Closure $next): Response|string
     {
         $impersonate_manager = app()->make(ImpersonateManager::class);
 

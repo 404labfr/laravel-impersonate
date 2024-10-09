@@ -11,8 +11,7 @@ use Lab404\Impersonate\Services\ImpersonateManager;
 
 class ImpersonateController extends Controller
 {
-    /** @var ImpersonateManager */
-    protected $manager;
+    protected ImpersonateManager $manager;
 
     /**
      * ImpersonateController constructor.
