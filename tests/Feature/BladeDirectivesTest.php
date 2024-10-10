@@ -1,10 +1,8 @@
 <?php
 
 use Tests\Stubs\Models\User;
+use function Pest\Laravel\actingAs;
 
-/**
- * @return  void
- */
 beforeEach(function () {
     $this->app['view']->addLocation(__DIR__ . '/../Stubs/views/');
     $this->user = User::find(2);
@@ -12,55 +10,61 @@ beforeEach(function () {
 })->group('blade');
 
 it('displays can impersonate content directive', function () {
-    $this->actingAs($this->admin);
-    $view = makeView();
-    $this->assertStringContainsString('Impersonate this user', $view);
+    actingAs($this->admin);
+
+    expect(makeView())->toContain('Impersonate this user');
 
     $this->admin->impersonate($this->user);
     $this->admin->leaveImpersonation();
-    $view = makeView();
-    $this->assertStringContainsString('Impersonate this user', $view);
+
+    expect(makeView())->toContain('Impersonate this user');
+
     logout();
 });
 
 it('not displays can impersonate content directive', function () {
-    $this->actingAs($this->user);
-    $view = makeView();
-    $this->assertStringNotContainsString('Impersonate this user', $view);
+    actingAs($this->user);
+
+    expect(makeView())->not->toContain('Impersonate this user');
+
     logout();
 });
 
 it('displays impersonating content directive', function () {
-    $this->actingAs($this->admin);
+    actingAs($this->admin);
+
     $this->admin->impersonate($this->user);
-    $view = makeView();
-    $this->assertStringContainsString('Leave impersonation', $view);
+
+    expect(makeView())->toContain('Leave impersonation');
+
     logout();
 });
 
 it('not displays impersonating content directive', function () {
-    $this->actingAs($this->user);
-    $view = makeView();
-    $this->assertStringNotContainsString('Leave impersonation', $view);
-    logout();
+    actingAs($this->user);
 
-    $this->actingAs($this->admin);
+    expect(makeView())->not->toContain('Leave impersonation');
+
+    logout();
+    actingAs($this->admin);
+
     $this->admin->impersonate($this->user);
     $this->admin->leaveImpersonation();
-    $view = makeView();
-    $this->assertStringNotContainsString('Leave impersonation', $view);
+
+    expect(makeView())->not->toContain('Leave impersonation');
+
     logout();
 });
 
 it('displays can be impersonated content directive', function () {
-    $this->actingAs($this->admin);
-    $view = makeView('can_be_impersonated', ['user' => $this->user]);
-    $this->assertStringContainsString('Impersonate this user', $view);
+    actingAs($this->admin);
+    expect(makeView('can_be_impersonated', ['user' => $this->user]))
+        ->toContain('Impersonate this user');
     logout();
 
-    $this->actingAs($this->admin);
+    actingAs($this->admin);
     $this->admin->impersonate($this->user);
-    $view = makeView('can_be_impersonated', ['user' => $this->user]);
-    $this->assertStringNotContainsString('Impersonate this user', $view);
+    expect(makeView('can_be_impersonated', ['user' => $this->user]))
+        ->not->toContain('Impersonate this user');
     logout();
 });

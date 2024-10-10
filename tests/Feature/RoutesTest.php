@@ -5,11 +5,11 @@ beforeEach(function () {
 });
 
 it('adds impersonate route', function () {
-    expect((bool) $this->routes->getByName('impersonate'))->toBeTrue();
-    expect((bool) $this->routes->getByAction('Lab404\Impersonate\Controllers\ImpersonateController@take'))->toBeTrue();
+    expect((bool) $this->routes->getByName('impersonate'))->toBeTrue()
+        ->and((bool) $this->routes->getByAction('Lab404\Impersonate\Controllers\ImpersonateController@take'))->toBeTrue();
 });
 
 it('adds leave route', function () {
-    expect((bool) $this->routes->getByName('impersonate.leave'))->toBeTrue();
-    expect((bool) $this->routes->getByAction('Lab404\Impersonate\Controllers\ImpersonateController@leave'))->toBeTrue();
+    expect((bool) $this->routes->getByName('impersonate.leave'))->toBeTrue()
+        ->and((bool) $this->routes->getByAction('Lab404\Impersonate\Controllers\ImpersonateController@leave'))->toBeTrue();
 });

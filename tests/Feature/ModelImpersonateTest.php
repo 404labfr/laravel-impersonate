@@ -3,15 +3,10 @@
 use Illuminate\Contracts\Container\BindingResolutionException;
 use Lab404\Impersonate\Services\ImpersonateManager;
 
-/**
- * @return void
- *
- * @throws BindingResolutionException
- */
 beforeEach(function () {
     $this->manager = $this->app->make(ImpersonateManager::class);
     $this->guard = 'web';
-});
+})->group('model');
 
 it('can impersonate', function () {
     $user = $this->app['auth']->loginUsingId('admin@test.rocks');
@@ -35,18 +30,23 @@ it('cant be impersonate', function () {
 
 it('impersonates', function () {
     $admin = $this->app['auth']->loginUsingId('admin@test.rocks');
+
     expect($admin->isImpersonated())->toBeFalse();
+
     $user = $this->manager->findUserById('user@test.rocks', $this->guard);
     $admin->impersonate($user, $this->guard);
-    expect($user->isImpersonated())->toBeTrue();
-    expect('user@test.rocks')->toEqual($this->app['auth']->user()->getAuthIdentifier());
+
+    expect($user->isImpersonated())->toBeTrue()
+        ->and('user@test.rocks')->toEqual($this->app['auth']->user()->getAuthIdentifier());
 });
 
 it('can leave impersonation', function () {
     $admin = $this->app['auth']->loginUsingId('admin@test.rocks');
     $user = $this->manager->findUserById('user@test.rocks', $this->guard);
+
     $admin->impersonate($user, $this->guard);
     $admin->leaveImpersonation();
-    expect($user->isImpersonated())->toBeFalse();
-    $this->assertNotEquals($this->app['auth']->user()->getAuthIdentifier(), 'user@test.rocks');
+
+    expect($user->isImpersonated())->toBeFalse()
+        ->and($this->app['auth']->user()->getAuthIdentifier())->not->toEqual('user@test.rocks');
 });

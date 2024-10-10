@@ -8,14 +8,11 @@ use Lab404\Impersonate\Events\TakeImpersonation;
 use Lab404\Impersonate\Services\ImpersonateManager;
 use Tests\Stubs\Models\User;
 
-/**
- * @return  void
- */
 beforeEach(function () {
     $this->admin = User::find(1);
     $this->user = User::find(2);
     $this->guard = 'web';
-});
+})->group('events');
 
 it('dispatches events when taking impersonation', function () {
     Event::fake();
@@ -39,8 +36,10 @@ it('dispatches events when leaving impersonation', function () {
     $user = $this->user;
     $this->app['auth']->loginUsingId($admin->id);
 
-    expect($admin->impersonate($user, $this->guard))->toBeTrue();
-    expect($user->leaveImpersonation())->toBeTrue();
+    expect($admin->impersonate($user, $this->guard))
+        ->toBeTrue()
+        ->and($user->leaveImpersonation())
+        ->toBeTrue();
 
     Event::assertDispatched(LeaveImpersonation::class, function ($event) use ($admin, $user) {
         return $event->impersonator->id == $admin->id && $event->impersonated->id == $user->id;
@@ -55,9 +54,9 @@ it('dispatches login event', function () {
 
     event(new Login($this->guard, $this->user, false));
 
-    expect($this->app['session']->has($manager->getSessionKey()))->toBeFalse();
-    expect($this->app['session']->has($manager->getSessionGuard()))->toBeFalse();
-    expect($this->app['session']->has($manager->getSessionGuardUsing()))->toBeFalse();
+    expect($this->app['session']->has($manager->getSessionKey()))->toBeFalse()
+        ->and($this->app['session']->has($manager->getSessionGuard()))->toBeFalse()
+        ->and($this->app['session']->has($manager->getSessionGuardUsing()))->toBeFalse();
 });
 
 it('dispatches logout event', function () {
@@ -66,7 +65,7 @@ it('dispatches logout event', function () {
 
     event(new Logout($this->guard, $this->user));
 
-    expect($this->app['session']->has($manager->getSessionKey()))->toBeFalse();
-    expect($this->app['session']->has($manager->getSessionGuard()))->toBeFalse();
-    expect($this->app['session']->has($manager->getSessionGuardUsing()))->toBeFalse();
+    expect($this->app['session']->has($manager->getSessionKey()))->toBeFalse()
+        ->and($this->app['session']->has($manager->getSessionGuard()))->toBeFalse()
+        ->and($this->app['session']->has($manager->getSessionGuardUsing()))->toBeFalse();
 });
