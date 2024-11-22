@@ -193,10 +193,17 @@ class ImpersonateManager
 
     public function getLeaveRedirectTo(): string
     {
+        $routeName = config('laravel-impersonate.leave_redirect_to');
+
+        if (session()->has('laravel-impersonate:leave_redirect_to')) {
+            $routeName = session('laravel-impersonate:leave_redirect_to');
+            session()->forget('laravel-impersonate:leave_redirect_to');
+        }
+
         try {
-            $uri = route(config('laravel-impersonate.leave_redirect_to'));
+            $uri = route($routeName);
         } catch (\InvalidArgumentException $e) {
-            $uri = config('laravel-impersonate.leave_redirect_to');
+            $uri = $routeName;
         }
 
         return $uri;
