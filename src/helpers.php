@@ -10,7 +10,7 @@ if (! function_exists('can_impersonate')) {
 	 * @param  null  $guard
 	 * @return bool
 	 */
-	function can_impersonate(string $guard = null): bool
+	function can_impersonate(?string $guard = null): bool
 	{
 		$guard = $guard ?? app('impersonate')->getCurrentAuthGuardName();
 
@@ -28,7 +28,7 @@ if (! function_exists('can_be_impersonated')) {
 	 * @param  string|null      $guard
 	 * @return bool
 	 */
-		function can_be_impersonated(Authenticatable $user, string $guard = null): bool
+		function can_be_impersonated(Authenticatable $user, ?string $guard = null): bool
 	{
 		$guard = $guard ?? app('impersonate')->getCurrentAuthGuardName();
 		return app('auth')->guard($guard)->check()
@@ -45,7 +45,7 @@ if (! function_exists('is_impersonating')) {
 	 * @param  string|null  $guard
 	 * @return bool
 	 */
-	function is_impersonating(string $guard = null): bool
+	function is_impersonating(?string $guard = null): bool
 	{
 		$guard = $guard ?? app('impersonate')->getCurrentAuthGuardName();
 
