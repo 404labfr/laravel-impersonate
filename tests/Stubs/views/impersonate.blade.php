@@ -7,3 +7,7 @@
 @canImpersonate
 <a href="{{ route('impersonate', 2) }}">Impersonate this user</a>
 @endCanImpersonate
+
+@notImpersonating
+Not impersonating this user
+@endNotImpersonating
