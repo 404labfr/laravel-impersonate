@@ -2,24 +2,20 @@
 
 namespace Lab404\Impersonate\Events;
 
-use Illuminate\Broadcasting\Channel;
 use Illuminate\Contracts\Auth\Authenticatable;
 use Illuminate\Queue\SerializesModels;
-use Illuminate\Broadcasting\PrivateChannel;
-use Illuminate\Broadcasting\PresenceChannel;
 use Illuminate\Foundation\Events\Dispatchable;
 use Illuminate\Broadcasting\InteractsWithSockets;
-use Illuminate\Contracts\Broadcasting\ShouldBroadcast;
 
 class LeaveImpersonation
 {
-    use Dispatchable, InteractsWithSockets, SerializesModels;
+    use Dispatchable;
+    use InteractsWithSockets;
+    use SerializesModels;
 
-    /** @var Authenticatable */
-    public $impersonator;
+    public Authenticatable $impersonator;
 
-    /** @var Authenticatable */
-    public $impersonated;
+    public Authenticatable $impersonated;
 
     /**
      * Create a new event instance.

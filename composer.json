@@ -14,13 +14,15 @@
     "laravel-plugin"
   ],
   "require": {
-    "php": "^7.2 | ^8.0",
-    "laravel/framework": "^6.0 | ^7.0 | ^8.0 | ^9.0 | ^10.0 | ^11.0"
+    "php": "^8.1",
+    "laravel/framework": "^9.0 | ^10.0 | ^11.0"
   },
   "require-dev": {
-    "phpunit/phpunit": "^7.5 | ^8.0 | ^9.0 | ^10.0",
     "mockery/mockery": "^1.3.3",
-    "orchestra/testbench": "^4.0 | ^5.0 | ^6.0 | ^7.0 | ^8.0 | ^9.0"
+    "orchestra/testbench": "^7.0 | ^8.0 | ^9.0",
+    "pestphp/pest": "^1.0 | ^2.35",
+    "pestphp/pest-plugin-type-coverage": "^2.8",
+    "pestphp/pest-plugin-laravel": "^2.4"
   },
   "license": "MIT",
   "authors": [
@@ -39,8 +41,13 @@
   },
   "autoload-dev": {
     "psr-4": {
-      "Lab404\\Tests\\": "tests/"
+      "Tests\\": "tests/"
     }
+  },
+  "scripts": {
+    "test": "vendor/bin/pest",
+    "test-coverage": "vendor/bin/pest --coverage --min=100",
+    "type-coverage": "vendor/bin/pest --type-coverage --min=100"
   },
   "extra": {
     "laravel": {
@@ -50,5 +57,10 @@
     }
   },
   "minimum-stability": "dev",
-  "prefer-stable": true
+  "prefer-stable": true,
+  "config": {
+    "allow-plugins": {
+      "pestphp/pest-plugin": true
+    }
+  }
 }

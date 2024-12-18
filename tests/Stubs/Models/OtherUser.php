@@ -1,6 +1,6 @@
 <?php
 
-namespace Lab404\Tests\Stubs\Models;
+namespace Tests\Stubs\Models;
 
 use Illuminate\Notifications\Notifiable;
 use Illuminate\Foundation\Auth\User as Authenticatable;
@@ -8,7 +8,8 @@ use Lab404\Impersonate\Models\Impersonate;
 
 class OtherUser extends Authenticatable
 {
-    use Notifiable, Impersonate;
+    use Impersonate;
+    use Notifiable;
 
     /**
      * @var array
@@ -27,21 +28,26 @@ class OtherUser extends Authenticatable
     /**
      * @return  bool
      */
-    public function canImpersonate()
+    public function canImpersonate(): bool
     {
         return $this->attributes['is_admin'] == 1;
     }
 
-    /*
+    /**
      * @return bool
      */
-    public function canBeImpersonated()
+    public function canBeImpersonated(): bool
     {
         return $this->attributes['can_be_impersonated'] == 1;
     }
 
 
-    public function getAuthIdentifierName()
+    /**
+     * Get the name of the unique identifier for the user.
+     *
+     * @return string
+     */
+    public function getAuthIdentifierName(): string
     {
         return 'email';
     }

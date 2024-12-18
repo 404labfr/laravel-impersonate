@@ -1,5 +1,10 @@
 # Laravel Impersonate Changelog
 
+## 1.8.0
+
+- Drop support for Laravel 6.x, 7.x and 8.x
+- Test suite migrated to Pest
+
 ## 1.7.5
 
 - Laravel 11.x support (thanks to [erikn69](https://github.com/erikn69), [#195](https://github.
