@@ -247,7 +247,7 @@ class ImpersonateManager
             return;
         }
 
-        $this->app['cookie']->queue($session[0], $session[1]);
+        $this->app['cookie']->queue($session[0], $session[1], config('laravel-impersonate.remember_me_expiration'));
         session()->forget($session);
     }
 
