@@ -2,6 +2,7 @@
 
 namespace Lab404\Impersonate\Services;
 
+use Closure;
 use Exception;
 use Illuminate\Contracts\Auth\Guard;
 use Illuminate\Contracts\Auth\UserProvider;
@@ -19,9 +20,9 @@ class ImpersonateManager
     /** @var Application $app */
     private $app;
 
-    public function __construct(Application $app)
+    public function __construct(Closure $app)
     {
-        $this->app = $app;
+        $this->app = $app();
     }
 
     /**
