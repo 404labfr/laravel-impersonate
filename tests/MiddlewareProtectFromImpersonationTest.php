@@ -37,7 +37,7 @@ class MiddlewareProtectFromImpersonationTest extends TestCase
     }
 
     /** @test */
-    public function it_can_acces_when_no_impersonating()
+    public function it_can_access_when_no_impersonating()
     {
         $this->actingAs($this->user);
         $return = $this->middleware->handle($this->request, function () {
@@ -50,7 +50,7 @@ class MiddlewareProtectFromImpersonationTest extends TestCase
     }
 
     /** @test */
-    public function it_cant_acces_when_impersonating()
+    public function it_cant_access_when_impersonating()
     {
         $this->actingAs($this->admin);
         $this->admin->impersonate($this->user);
