@@ -13,7 +13,7 @@ trait Impersonate
      * @param void
      * @return  bool
      */
-    public function canImpersonate()
+    public function canImpersonate(): bool
     {
         return true;
     }
@@ -24,7 +24,7 @@ trait Impersonate
      * @param void
      * @return  bool
      */
-    public function canBeImpersonated()
+    public function canBeImpersonated(): bool
     {
         return true;
     }
@@ -36,7 +36,7 @@ trait Impersonate
      * @param string|null $guardName
      * @return  bool
      */
-    public function impersonate(Model $user, $guardName = null)
+    public function impersonate(Model $user, ?string $guardName = null): bool
     {
         return app(ImpersonateManager::class)->take($this, $user, $guardName);
     }
@@ -47,7 +47,7 @@ trait Impersonate
      * @param void
      * @return  bool
      */
-    public function isImpersonated()
+    public function isImpersonated(): bool
     {
         return app(ImpersonateManager::class)->isImpersonating();
     }
@@ -58,7 +58,7 @@ trait Impersonate
      * @param void
      * @return  bool
      */
-    public function leaveImpersonation()
+    public function leaveImpersonation(): bool
     {
         if ($this->isImpersonated()) {
             return app(ImpersonateManager::class)->leave();

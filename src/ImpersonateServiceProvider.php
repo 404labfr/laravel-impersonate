@@ -27,7 +27,7 @@ class ImpersonateServiceProvider extends \Illuminate\Support\ServiceProvider
      *
      * @return void
      */
-    public function register()
+    public function register(): void
     {
         $this->mergeConfig();
 
@@ -50,7 +50,7 @@ class ImpersonateServiceProvider extends \Illuminate\Support\ServiceProvider
      *
      * @return void
      */
-    public function boot()
+    public function boot(): void
     {
         $this->publishConfig();
 
@@ -69,7 +69,7 @@ class ImpersonateServiceProvider extends \Illuminate\Support\ServiceProvider
      * @param void
      * @return  void
      */
-    protected function registerBladeDirectives()
+    protected function registerBladeDirectives(): void
     {
         $this->app->afterResolving('blade.compiler', function (BladeCompiler $bladeCompiler) {
             $bladeCompiler->directive('impersonating', function ($guard = null) {
@@ -107,7 +107,7 @@ class ImpersonateServiceProvider extends \Illuminate\Support\ServiceProvider
      * @param void
      * @return  void
      */
-    protected function registerRoutesMacro()
+    protected function registerRoutesMacro(): void
     {
         $router = $this->app['router'];
 
@@ -123,7 +123,7 @@ class ImpersonateServiceProvider extends \Illuminate\Support\ServiceProvider
      * @param void
      * @return  void
      */
-    protected function registerAuthDriver()
+    protected function registerAuthDriver(): void
     {
         /** @var AuthManager $auth */
         $auth = $this->app['auth'];
@@ -155,7 +155,7 @@ class ImpersonateServiceProvider extends \Illuminate\Support\ServiceProvider
      * @param void
      * @return  void
      */
-    public function registerMiddleware()
+    public function registerMiddleware(): void
     {
         $this->app['router']->aliasMiddleware('impersonate.protect', ProtectFromImpersonation::class);
     }
@@ -166,7 +166,7 @@ class ImpersonateServiceProvider extends \Illuminate\Support\ServiceProvider
      * @param void
      * @return  void
      */
-    protected function mergeConfig()
+    protected function mergeConfig(): void
     {
         $configPath = __DIR__ . '/../config/' . $this->configName . '.php';
 
@@ -179,7 +179,7 @@ class ImpersonateServiceProvider extends \Illuminate\Support\ServiceProvider
      * @param void
      * @return  void
      */
-    protected function publishConfig()
+    protected function publishConfig(): void
     {
         $configPath = __DIR__ . '/../config/' . $this->configName . '.php';
 
