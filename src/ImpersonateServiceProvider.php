@@ -5,10 +5,11 @@ namespace Lab404\Impersonate;
 use Illuminate\Auth\AuthManager;
 use Illuminate\Auth\Events\Login;
 use Illuminate\Auth\Events\Logout;
+use Illuminate\Auth\SessionGuard;
 use Illuminate\Foundation\Application;
 use Illuminate\Support\Facades\Event;
 use Illuminate\View\Compilers\BladeCompiler;
-use Lab404\Impersonate\Guard\SessionGuard;
+use Lab404\Impersonate\Guard\SessionGuardMixin;
 use Lab404\Impersonate\Middleware\ProtectFromImpersonation;
 use Lab404\Impersonate\Services\ImpersonateManager;
 
@@ -112,10 +113,14 @@ class ImpersonateServiceProvider extends \Illuminate\Support\ServiceProvider
         $router = $this->app['router'];
 
         $router->macro('impersonate', function () use ($router) {
-            $router->get('/impersonate/take/{id}/{guardName?}',
-                '\Lab404\Impersonate\Controllers\ImpersonateController@take')->name('impersonate');
-            $router->get('/impersonate/leave',
-                '\Lab404\Impersonate\Controllers\ImpersonateController@leave')->name('impersonate.leave');
+            $router->get(
+                '/impersonate/take/{id}/{guardName?}',
+                '\Lab404\Impersonate\Controllers\ImpersonateController@take'
+            )->name('impersonate');
+            $router->get(
+                '/impersonate/leave',
+                '\Lab404\Impersonate\Controllers\ImpersonateController@leave'
+            )->name('impersonate.leave');
         });
     }
 
@@ -128,25 +133,7 @@ class ImpersonateServiceProvider extends \Illuminate\Support\ServiceProvider
         /** @var AuthManager $auth */
         $auth = $this->app['auth'];
 
-        $auth->extend('session', function (Application $app, $name, array $config) use ($auth) {
-            $provider = $auth->createUserProvider($config['provider']);
-
-            $guard = new SessionGuard($name, $provider, $app['session.store']);
-
-            if (method_exists($guard, 'setCookieJar')) {
-                $guard->setCookieJar($app['cookie']);
-            }
-
-            if (method_exists($guard, 'setDispatcher')) {
-                $guard->setDispatcher($app['events']);
-            }
-
-            if (method_exists($guard, 'setRequest')) {
-                $guard->setRequest($app->refresh('request', $guard, 'setRequest'));
-            }
-
-            return $guard;
-        });
+        SessionGuard::mixin(new SessionGuardMixin);
     }
 
     /**
