@@ -50,6 +50,14 @@ composer require lab404/laravel-impersonate
 ```
 
 - Add the trait `Lab404\Impersonate\Models\Impersonate` to your **User** model.
+```php
+use Lab404\Impersonate\Models\Impersonate;
+
+class User extends Authenticatable
+{
+    use Impersonate;
+}
+```
 
 ## Simple usage
 
