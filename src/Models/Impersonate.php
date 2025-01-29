@@ -8,23 +8,21 @@ use Lab404\Impersonate\Services\ImpersonateManager;
 trait Impersonate
 {
     /**
-     * Return true or false if the user can impersonate an other user.
+     * Return true or false if the user can impersonate another user.
      *
-     * @param void
      * @return  bool
      */
-    public function canImpersonate()
+    public function canImpersonate(): bool
     {
         return true;
     }
 
     /**
-     * Return true or false if the user can be impersonate.
+     * Return true or false if the user can be impersonated.
      *
-     * @param void
      * @return  bool
      */
-    public function canBeImpersonated()
+    public function canBeImpersonated(): bool
     {
         return true;
     }
@@ -33,10 +31,11 @@ trait Impersonate
      * Impersonate the given user.
      *
      * @param Model       $user
-     * @param string|null $guardName
+     * @param  string|null  $guardName
+     *
      * @return  bool
      */
-    public function impersonate(Model $user, $guardName = null)
+    public function impersonate(Model $user, ?string $guardName = null): bool
     {
         return app(ImpersonateManager::class)->take($this, $user, $guardName);
     }
@@ -44,10 +43,9 @@ trait Impersonate
     /**
      * Check if the current user is impersonated.
      *
-     * @param void
      * @return  bool
      */
-    public function isImpersonated()
+    public function isImpersonated(): bool
     {
         return app(ImpersonateManager::class)->isImpersonating();
     }
@@ -55,13 +53,14 @@ trait Impersonate
     /**
      * Leave the current impersonation.
      *
-     * @param void
      * @return  bool
      */
-    public function leaveImpersonation()
+    public function leaveImpersonation(): bool
     {
         if ($this->isImpersonated()) {
             return app(ImpersonateManager::class)->leave();
         }
+
+        return false;
     }
 }

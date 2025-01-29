@@ -5,12 +5,13 @@ namespace Lab404\Impersonate\Controllers;
 use Illuminate\Http\RedirectResponse;
 use Illuminate\Http\Request;
 use Illuminate\Routing\Controller;
+use Lab404\Impersonate\Exceptions\InvalidUserProvider;
+use Lab404\Impersonate\Exceptions\MissingUserProvider;
 use Lab404\Impersonate\Services\ImpersonateManager;
 
 class ImpersonateController extends Controller
 {
-    /** @var ImpersonateManager */
-    protected $manager;
+    protected ImpersonateManager $manager;
 
     /**
      * ImpersonateController constructor.
@@ -24,12 +25,16 @@ class ImpersonateController extends Controller
     }
 
     /**
-     * @param int         $id
-     * @param string|null $guardName
+     * @param  Request  $request
+     * @param  int  $id
+     * @param  string|null  $guardName
+     *
      * @return  RedirectResponse
-     * @throws  \Exception
+     *
+     * @throws InvalidUserProvider
+     * @throws MissingUserProvider
      */
-    public function take(Request $request, $id, $guardName = null)
+    public function take(Request $request, int $id, string|null $guardName = null): RedirectResponse
     {
         $guardName = $guardName ?? $this->manager->getDefaultSessionGuard();
 
@@ -38,7 +43,7 @@ class ImpersonateController extends Controller
             abort(403);
         }
 
-        // Cannot impersonate again if you're already impersonate a user
+        // Cannot impersonate again if you're already impersonating a user
         if ($this->manager->isImpersonating()) {
             abort(403);
         }
@@ -49,12 +54,13 @@ class ImpersonateController extends Controller
 
         $userToImpersonate = $this->manager->findUserById($id, $guardName);
 
-        if ($userToImpersonate->canBeImpersonated()) {
-            if ($this->manager->take($request->user(), $userToImpersonate, $guardName)) {
-                $takeRedirect = $this->manager->getTakeRedirectTo();
-                if ($takeRedirect !== 'back') {
-                    return redirect()->to($takeRedirect);
-                }
+        if ($userToImpersonate->canBeImpersonated() &&
+            $this->manager->take($request->user(), $userToImpersonate, $guardName)
+        ) {
+            $takeRedirect = $this->manager->getTakeRedirectTo();
+
+            if ($takeRedirect !== 'back') {
+                return redirect()->to($takeRedirect);
             }
         }
 
@@ -64,7 +70,7 @@ class ImpersonateController extends Controller
     /**
      * @return RedirectResponse
      */
-    public function leave()
+    public function leave(): RedirectResponse
     {
         if (!$this->manager->isImpersonating()) {
             abort(403);
@@ -73,9 +79,11 @@ class ImpersonateController extends Controller
         $this->manager->leave();
 
         $leaveRedirect = $this->manager->getLeaveRedirectTo();
+
         if ($leaveRedirect !== 'back') {
             return redirect()->to($leaveRedirect);
         }
+
         return redirect()->back();
     }
 }

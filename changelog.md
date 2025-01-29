@@ -1,5 +1,10 @@
 # Laravel Impersonate Changelog
 
+## 1.8.0
+
+- Drop support for Laravel 6.x, 7.x and 8.x
+- Test suite migrated to Pest
+
 ## 1.7.6
 
 - Supports for PHP 8.4 (thanks to [MarioGattolla](https://github.com/MarioGattolla), [#211](https://github.com/404labfr/laravel-impersonate/pull/211))

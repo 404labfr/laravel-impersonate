@@ -7,7 +7,7 @@ if (! function_exists('can_impersonate')) {
 	/**
 	 * Check whether the current user is authorized to impersonate.
 	 *
-	 * @param  null  $guard
+	 * @param  string|null  $guard
 	 * @return bool
 	 */
 	function can_impersonate(?string $guard = null): bool
