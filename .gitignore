@@ -1,4 +1,6 @@
 /vendor/
-*.phpunit.result.cache
+.phpunit.cache
+.phpunit.result.cache
+build
 composer.lock
 /.idea

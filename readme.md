@@ -21,14 +21,14 @@
 
 ## Requirements
 
-- Laravel 6.x to 11.x
+- Laravel 6.x to 12.x
 - PHP >= 7.2 or >= 8.0
 
 ### Laravel support
 
 | Version       | Release       |
 |:-------------:|:-------------:|
-| 6.x to 11.x   | 1.7           |
+| 6.x to 12.x   | 1.7           |
 | 6.x, 7.x      | 1.6           |
 | 5.8           | 1.5           |
 | 5.7, 5.6      | 1.2           |
