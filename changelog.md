@@ -1,5 +1,9 @@
 # Laravel Impersonate Changelog
 
+## 1.7.7
+
+- Laravel 12.x support (thanks to [erikn69](https://github.com/erikn69), [#216](https://github.com/404labfr/laravel-impersonate/pull/216))
+
 ## 1.7.6
 
 - Supports for PHP 8.4 (thanks to [MarioGattolla](https://github.com/MarioGattolla), [#211](https://github.com/404labfr/laravel-impersonate/pull/211))
@@ -7,8 +11,7 @@
 
 ## 1.7.5
 
-- Laravel 11.x support (thanks to [erikn69](https://github.com/erikn69), [#195](https://github.
-  com/404labfr/laravel-impersonate/pull/195))
+- Laravel 11.x support (thanks to [erikn69](https://github.com/erikn69), [#195](https://github.com/404labfr/laravel-impersonate/pull/195))
 
 ## 1.7.4
 
