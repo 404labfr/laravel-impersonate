@@ -5,6 +5,7 @@ namespace Lab404\Impersonate\Models;
 use Illuminate\Database\Eloquent\Model;
 use Lab404\Impersonate\Services\ImpersonateManager;
 
+// @phpstan-ignore trait.unused
 trait Impersonate
 {
     /**

@@ -210,7 +210,7 @@ class ImpersonateManager
     }
 
     /**
-     * @return array|null
+     * @return string|null
      */
     public function getCurrentAuthGuardName()
     {
@@ -252,11 +252,11 @@ class ImpersonateManager
     }
 
     /**
-     * @param array  $values
+     * @param array|null  $values
      * @param string $search
      * @return \Illuminate\Support\Collection
      */
-    protected function findByKeyInArray(array $values, string $search)
+    protected function findByKeyInArray(?array $values, string $search)
     {
         return collect($values ?? session()->all())
             ->filter(function ($val, $key) use ($search) {
