@@ -112,6 +112,13 @@ class ImpersonateManager
         $this->saveAuthCookieInSession();
 
         try {
+            if (
+                !method_exists($this->app['auth']->guard($currentGuard), 'quietLogout')
+                || !method_exists($this->app['auth']->guard($guardName), 'quietLogin')
+            ) {
+                return false; 
+            }
+
             $currentGuard = $this->getCurrentAuthGuardName();
             session()->put($this->getSessionKey(), $from->getAuthIdentifier());
             session()->put($this->getSessionGuard(), $currentGuard);
@@ -122,6 +129,7 @@ class ImpersonateManager
 
         } catch (\Exception $e) {
             unset($e);
+            $this->clear();
             return false;
         }
 
