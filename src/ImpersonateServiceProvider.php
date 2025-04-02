@@ -131,11 +131,11 @@ class ImpersonateServiceProvider extends \Illuminate\Support\ServiceProvider
         $auth->extend('session', function (Application $app, $name, array $config) use ($auth) {
             $provider = $auth->createUserProvider($config['provider']);
 
-            $guard = new SessionGuard(
-                $name,
-                $provider,
+            $guard = new SessionGuard($name, $provider,
                 $app['session.store'],
-                rehashOnLogin: config('hashing.rehash_on_login', true)
+                null,
+                null,
+                config('hashing.rehash_on_login', true)
             );
 
             if (method_exists($guard, 'setCookieJar')) {
