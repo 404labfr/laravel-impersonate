@@ -182,10 +182,17 @@ class ImpersonateManager
 
     public function getTakeRedirectTo(): string
     {
+        $routeName = config('laravel-impersonate.take_redirect_to');
+
+        if (session()->has('laravel-impersonate:take_redirect_to')) {
+            $routeName = session('laravel-impersonate:take_redirect_to');
+            session()->forget('laravel-impersonate:take_redirect_to');
+        }
+
         try {
-            $uri = route(config('laravel-impersonate.take_redirect_to'));
+            $uri = route($routeName);
         } catch (\InvalidArgumentException $e) {
-            $uri = config('laravel-impersonate.take_redirect_to');
+            $uri = $routeName;
         }
 
         return $uri;
