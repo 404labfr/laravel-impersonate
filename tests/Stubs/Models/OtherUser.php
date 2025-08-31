@@ -45,4 +45,9 @@ class OtherUser extends Authenticatable
     {
         return 'email';
     }
+
+    public function getLeaveRedirectionTo()
+    {
+        return "/home";
+    }
 }

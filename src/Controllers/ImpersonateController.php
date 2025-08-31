@@ -70,9 +70,10 @@ class ImpersonateController extends Controller
             abort(403);
         }
 
+        $leaveRedirect = $this->manager->getLeaveRedirectTo();
+
         $this->manager->leave();
 
-        $leaveRedirect = $this->manager->getLeaveRedirectTo();
         if ($leaveRedirect !== 'back') {
             return redirect()->to($leaveRedirect);
         }

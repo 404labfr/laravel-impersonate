@@ -195,6 +195,15 @@ class ImpersonateManager
     {
         $routeName = config('laravel-impersonate.leave_redirect_to');
 
+        $impersonator = $this->getImpersonator();
+
+        if (method_exists($impersonator, 'getLeaveRedirectionTo')) {
+            $leaveRedirect = $impersonator->getLeaveRedirectionTo();
+            if ($leaveRedirect && is_string($leaveRedirect)) {
+                $routeName = $leaveRedirect;
+            }
+        }
+
         if (session()->has('laravel-impersonate:leave_redirect_to')) {
             $routeName = session('laravel-impersonate:leave_redirect_to');
             session()->forget('laravel-impersonate:leave_redirect_to');
