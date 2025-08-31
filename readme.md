@@ -131,6 +131,23 @@ You need to add the method `canBeImpersonated()` to your user model to extend th
     }
 ```
 
+### Leave Redirection Based on Model
+
+By default, `config('laravel-impersonate.leave_redirect_to')` is used for redirection after leaving.
+You can modify this behaviour by add `getLeaveRedirectionTo` in your model.
+
+```php
+    // User.php
+    
+    /**
+     *  @return string
+     */
+    public function getLeaveRedirectionTo()
+    {
+        return "/home";
+    }
+```
+
 ### Using your own strategy
 
 - Getting the manager:
