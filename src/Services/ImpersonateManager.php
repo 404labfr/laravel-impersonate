@@ -112,14 +112,14 @@ class ImpersonateManager
         $this->saveAuthCookieInSession();
 
         try {
+            $currentGuard = $this->getCurrentAuthGuardName();
             if (
-                !method_exists($this->app['auth']->guard($currentGuard), 'quietLogout')
-                || !method_exists($this->app['auth']->guard($guardName), 'quietLogin')
+                !$this->guardHasMethod($this->app['auth']->guard($currentGuard), 'quietLogout')
+                || !$this->guardHasMethod($this->app['auth']->guard($guardName), 'quietLogin')
             ) {
-                return false; 
+                return false;
             }
 
-            $currentGuard = $this->getCurrentAuthGuardName();
             session()->put($this->getSessionKey(), $from->getAuthIdentifier());
             session()->put($this->getSessionGuard(), $currentGuard);
             session()->put($this->getSessionGuardUsing(), $guardName);
@@ -250,6 +250,19 @@ class ImpersonateManager
 
         $this->app['cookie']->queue($session[0], $session[1]);
         session()->forget($session);
+    }
+
+    private function guardHasMethod(?Guard $guard, string $method): bool
+    {
+        if (!$guard) {
+            return false;
+        } elseif (method_exists($guard, $method)) {
+            return true;
+        }
+
+        $guardClass = get_class($guard);
+
+        return method_exists($guardClass, 'hasMacro') && $guardClass::hasMacro($method);
     }
 
     /**

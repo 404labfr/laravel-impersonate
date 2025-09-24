@@ -2,6 +2,7 @@
 
 namespace Lab404\Tests;
 
+use Illuminate\Auth\SessionGuard;
 use Lab404\Impersonate\ImpersonateServiceProvider;
 use Lab404\Tests\Stubs\Models\User;
 use Lab404\Tests\Stubs\Models\OtherUser;
@@ -57,6 +58,17 @@ class TestCase extends \Orchestra\Testbench\TestCase
         $app['config']->set('auth.guards.otheruser', [
             'driver' => 'session',
             'provider' => 'otherusers',
+        ]);
+
+        // Setup guard with missing 'quiet' methods
+        $auth = $app->make('auth');
+        $auth->extend('othersession', function ($app, $name, array $config) {
+            $provider = $app['auth']->createUserProvider($config['provider'] ?? null);
+            return new SessionGuard($name, $provider, $app['session.store']);
+        });
+        $app['config']->set('auth.guards.othersession', [
+            'driver' => 'othersession',
+            'provider' => 'users',
         ]);
     }
 
