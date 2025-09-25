@@ -7,15 +7,16 @@ if (! function_exists('can_impersonate')) {
 	/**
 	 * Check whether the current user is authorized to impersonate.
 	 *
-	 * @param  null  $guard
+	 * @param  string|null  $guard
 	 * @return bool
 	 */
 	function can_impersonate(?string $guard = null): bool
 	{
-		$guard = $guard ?? app('impersonate')->getCurrentAuthGuardName();
+		$guard = app('auth')->guard($guard ?? app('impersonate')->getCurrentAuthGuardName());
 
-		return app('auth')->guard($guard)->check()
-            && app('auth')->guard($guard)->user()->canImpersonate();
+		return $guard->check()
+			&& method_exists($guard->user(), 'canImpersonate')
+			&& $guard->user()->canImpersonate();
 	}
 }
 
@@ -28,12 +29,14 @@ if (! function_exists('can_be_impersonated')) {
 	 * @param  string|null      $guard
 	 * @return bool
 	 */
-		function can_be_impersonated(Authenticatable $user, ?string $guard = null): bool
+	function can_be_impersonated(Authenticatable $user, ?string $guard = null): bool
 	{
-		$guard = $guard ?? app('impersonate')->getCurrentAuthGuardName();
-		return app('auth')->guard($guard)->check()
-		       && app('auth')->guard($guard)->user()->isNot($user)
-		       && $user->canBeImpersonated();
+		$guard = app('auth')->guard($guard ?? app('impersonate')->getCurrentAuthGuardName());
+
+		return $guard->check()
+			&& $guard->user()->isNot($user)
+			&& method_exists($user, 'canBeImpersonated')
+			&& $user->canBeImpersonated();
 	}
 }
 
@@ -47,9 +50,10 @@ if (! function_exists('is_impersonating')) {
 	 */
 	function is_impersonating(?string $guard = null): bool
 	{
-		$guard = $guard ?? app('impersonate')->getCurrentAuthGuardName();
+		$guard = app('auth')->guard($guard ?? app('impersonate')->getCurrentAuthGuardName());
 
-		return app('auth')->guard($guard)->check()
-            && app('auth')->guard($guard)->user()->isImpersonated();
+		return $guard->check()
+			&& method_exists($guard->user(), 'isImpersonated')
+			&& $guard->user()->isImpersonated();
 	}
 }
