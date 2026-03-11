@@ -107,7 +107,7 @@ class ImpersonateManager
      * @param string|null                         $guardName
      * @return bool
      */
-    public function take($from, $to, $guardName = null)
+    public function take($from, $to, $guardName = null, $leaveRedirectUrl = null)
     {
         $this->saveAuthCookieInSession();
 
@@ -116,6 +116,7 @@ class ImpersonateManager
             session()->put($this->getSessionKey(), $from->getAuthIdentifier());
             session()->put($this->getSessionGuard(), $currentGuard);
             session()->put($this->getSessionGuardUsing(), $guardName);
+            session()->put($this->getSessionLeaveRedirectTo(), $leaveRedirectUrl);
 
             $this->app['auth']->guard($currentGuard)->quietLogout();
             $this->app['auth']->guard($guardName)->quietLogin($to);
@@ -180,6 +181,12 @@ class ImpersonateManager
         return config('laravel-impersonate.default_impersonator_guard');
     }
 
+    public function getSessionLeaveRedirectTo(): string
+    {
+        return config('laravel-impersonate.session_leave_redirect_to');
+    }
+
+
     public function getTakeRedirectTo(): string
     {
         try {
@@ -195,9 +202,9 @@ class ImpersonateManager
     {
         $routeName = config('laravel-impersonate.leave_redirect_to');
 
-        if (session()->has('laravel-impersonate:leave_redirect_to')) {
-            $routeName = session('laravel-impersonate:leave_redirect_to');
-            session()->forget('laravel-impersonate:leave_redirect_to');
+        if (session()->has($this->getSessionLeaveRedirectTo())) {
+            $routeName = session($this->getSessionLeaveRedirectTo());
+            session()->forget($this->getSessionLeaveRedirectTo());
         }
 
         try {
