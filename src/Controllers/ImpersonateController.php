@@ -37,14 +37,14 @@ class ImpersonateController extends Controller
         if ($id == $request->user()->getAuthIdentifier() && ($this->manager->getCurrentAuthGuardName() == $guardName)) {
             abort(403);
         }
-
-        // Cannot impersonate again if you're already impersonate a user
-        if ($this->manager->isImpersonating()) {
+        
+        if (!$request->user()->canImpersonate()) {
             abort(403);
         }
 
-        if (!$request->user()->canImpersonate()) {
-            abort(403);
+        if ($this->manager->isImpersonating()) {
+            $this->manager->leave();
+//            abort(403);
         }
 
         $userToImpersonate = $this->manager->findUserById($id, $guardName);

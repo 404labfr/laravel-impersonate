@@ -182,14 +182,53 @@ class ImpersonateManager
 
     public function getTakeRedirectTo(): string
     {
+        // Get the intended redirect, e.g. saved in session or the previous URL
+        $previousUrl = session()->pull('impersonate.redirect_to', url()->previous());
+        // Define a safe fallback route, e.g., 'home' or another route name
+        $fallbackUrl = route('dashboard');
+
+        // Get the impersonated guard name that the system already switched to
+        $guardName = $this->getImpersonatorGuardUsingName();
+        $impersonatedUser = $this->app['auth']->guard($guardName)->user();
+
+        // Create a dummy request to simulate accessing the previous URL
+        $request = \Illuminate\Http\Request::create($previousUrl);
+        // Ensure the request is resolved for the impersonated user
+        $request->setUserResolver(function () use ($impersonatedUser) {
+            return $impersonatedUser;
+        });
+
         try {
-            $uri = route(config('laravel-impersonate.take_redirect_to'));
-        } catch (\InvalidArgumentException $e) {
-            $uri = config('laravel-impersonate.take_redirect_to');
+            // Use Laravel's HTTP Kernel to handle this sub-request. The "catch" flag
+            // is important so that exceptions are returned as responses.
+            $response = $this->app->make(\Illuminate\Contracts\Http\Kernel::class)
+                ->handle($request, \Symfony\Component\HttpKernel\HttpKernelInterface::SUB_REQUEST, true);
+
+            // If the response indicates forbidden access, use the fallback
+            if ($response->getStatusCode() === 403) {
+                return $fallbackUrl;
+            }
+        } catch (\Symfony\Component\HttpKernel\Exception\HttpException $e) {
+            // If a HttpException was thrown and it's 403, go to the fallback
+            if ($e->getStatusCode() === 403) {
+                return $fallbackUrl;
+            }
+            // Optionally, you can log the exception or decide on a default behavior
+        } catch (\Exception $e) {
+            // If any other exception occurs, fall back to the safe URL
+            return $fallbackUrl;
         }
 
-        return $uri;
+        // If no issues, return the previous URL
+        return $previousUrl;
     }
+        // try {
+        //     $uri = route(config('laravel-impersonate.take_redirect_to'));
+        // } catch (\InvalidArgumentException $e) {
+        //     $uri = config('laravel-impersonate.take_redirect_to');
+        // }
+
+        // return $uri
 
     public function getLeaveRedirectTo(): string
     {

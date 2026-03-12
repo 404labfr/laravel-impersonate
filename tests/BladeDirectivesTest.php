@@ -104,4 +104,47 @@ class BladeDirectivesTest extends TestCase
         $this->assertStringNotContainsString('Impersonate this user', $this->view);
         $this->logout();
     }
+
+    /** @test */
+    public function it_displays_else_impersonating_content_directive_when_not_impersonating()
+    {
+        $this->actingAs($this->admin);
+        // The impersonate_else view uses @elseImpersonating to show alternative content.
+        $this->makeView('impersonate_else');
+        $this->assertStringContainsString('Impersonate this user', $this->view);
+        $this->assertStringNotContainsString('Leave impersonation', $this->view);
+        $this->logout();
+    }
+
+    /** @test */
+    public function it_displays_else_impersonating_content_directive_when_impersonating()
+    {
+        $this->actingAs($this->admin);
+        $this->admin->impersonate($this->user);
+        $this->makeView('impersonate_else');
+        $this->assertStringContainsString('Leave impersonation', $this->view);
+        $this->assertStringNotContainsString('Impersonate this user', $this->view);
+        $this->logout();
+    }
+
+    /** @test */
+    public function it_displays_not_impersonating_content_directive()
+    {
+        $this->actingAs($this->admin);
+        // The not_impersonating view uses @notImpersonating to show content when not impersonating.
+        $this->makeView('not_impersonating');
+        $this->assertStringContainsString('Not impersonating', $this->view);
+        $this->logout();
+    }
+
+    /** @test */
+    public function it_not_displays_not_impersonating_content_directive_when_impersonating()
+    {
+        $this->actingAs($this->admin);
+        $this->admin->impersonate($this->user);
+        $this->makeView('not_impersonating');
+        $this->assertStringNotContainsString('Not impersonating', $this->view);
+        $this->logout();
+    }
+
 }
