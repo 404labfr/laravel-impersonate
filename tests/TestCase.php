@@ -9,6 +9,8 @@ use Orchestra\Database\ConsoleServiceProvider;
 
 class TestCase extends \Orchestra\Testbench\TestCase
 {
+    public static $latestResponse = null;
+
     /**
      * @param void
      * @return  void
