@@ -25,7 +25,7 @@ class ImpersonateManager
     }
 
     /**
-     * @param int $id
+     * @param int|string $id
      * @return \Illuminate\Contracts\Auth\Authenticatable
      * @throws MissingUserProvider
      * @throws InvalidUserProvider
@@ -68,7 +68,7 @@ class ImpersonateManager
     }
 
     /**
-     * @return  int|null
+     * @return  int|string|null
      */
     public function getImpersonatorId()
     {
@@ -76,11 +76,11 @@ class ImpersonateManager
     }
 
     /**
-     * @return \Illuminate\Contracts\Auth\Authenticatable
+     * @return \Illuminate\Contracts\Auth\Authenticatable|null
      */
     public function getImpersonator()
     {
-        $id = session($this->getSessionKey(), null);
+        $id = $this->getImpersonatorId();
 
         return is_null($id) ? null : $this->findUserById($id, $this->getImpersonatorGuardName());
     }
@@ -210,7 +210,7 @@ class ImpersonateManager
     }
 
     /**
-     * @return array|null
+     * @return string|null
      */
     public function getCurrentAuthGuardName()
     {
@@ -252,11 +252,11 @@ class ImpersonateManager
     }
 
     /**
-     * @param array  $values
+     * @param array|null  $values
      * @param string $search
      * @return \Illuminate\Support\Collection
      */
-    protected function findByKeyInArray(array $values, string $search)
+    protected function findByKeyInArray(?array $values, string $search)
     {
         return collect($values ?? session()->all())
             ->filter(function ($val, $key) use ($search) {
