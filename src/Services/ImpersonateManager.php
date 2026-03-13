@@ -117,7 +117,9 @@ class ImpersonateManager
             session()->put($this->getSessionGuard(), $currentGuard);
             session()->put($this->getSessionGuardUsing(), $guardName);
 
-            $this->app['auth']->guard($currentGuard)->quietLogout();
+            if($currentGuard === $guardName) {
+                $this->app['auth']->guard($currentGuard)->quietLogout();
+            }
             $this->app['auth']->guard($guardName)->quietLogin($to);
 
         } catch (\Exception $e) {
