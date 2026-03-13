@@ -29,7 +29,7 @@ class ImpersonateController extends Controller
      * @return  RedirectResponse
      * @throws  \Exception
      */
-    public function take(Request $request, $id, $guardName = null)
+    public function take(Request $request, int $id, ?string $guardName = null): RedirectResponse
     {
         $guardName = $guardName ?? $this->manager->getDefaultSessionGuard();
 
@@ -64,7 +64,7 @@ class ImpersonateController extends Controller
     /**
      * @return RedirectResponse
      */
-    public function leave()
+    public function leave(): RedirectResponse
     {
         if (!$this->manager->isImpersonating()) {
             abort(403);

@@ -3,6 +3,7 @@
 namespace Lab404\Impersonate\Middleware;
 
 use Closure;
+use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Redirect;
 use Lab404\Impersonate\Services\ImpersonateManager;
 
@@ -15,7 +16,7 @@ class ProtectFromImpersonation
      * @param   \Closure  $next
      * @return  mixed
      */
-    public function handle($request, Closure $next)
+    public function handle(Request $request, Closure $next): mixed
     {
         $impersonate_manager = app()->make(ImpersonateManager::class);
 
