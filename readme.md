@@ -4,20 +4,27 @@
 
 **Laravel Impersonate** makes it easy to **authenticate as your users**. Add a simple **trait** to your **user model** and impersonate as one of your users in one click.
  
-- [Requirements](#requirements)
-- [Installation](#installation)
-- [Simple usage](#simple-usage)
+- [Laravel Impersonate](#laravel-impersonate)
+  - [Requirements](#requirements)
+    - [Laravel support](#laravel-support)
+  - [Installation](#installation)
+  - [Simple usage](#simple-usage)
     - [Using the built-in controller](#using-the-built-in-controller)
-- [Advanced Usage](#advanced-usage)
+  - [Advanced Usage](#advanced-usage)
     - [Defining impersonation authorization](#defining-impersonation-authorization)
     - [Using your own strategy](#using-your-own-strategy)
     - [Middleware](#middleware)
     - [Events](#events)
-- [Configuration](#configuration)
-- [Blade](#blade)
-- [Tests](#tests)
-- [Contributors](#contributors)
-- [Why Not Just Use loginAsId()?](#rationale)
+  - [Configuration](#configuration)
+  - [Blade](#blade)
+    - [When the user can impersonate](#when-the-user-can-impersonate)
+    - [When the user can be impersonated](#when-the-user-can-be-impersonated)
+    - [When the user is impersonated](#when-the-user-is-impersonated)
+  - [Tests](#tests)
+  - [Contributors](#contributors)
+  - [Rationale](#rationale)
+    - [Why not just use `loginAsId()`?](#why-not-just-use-loginasid)
+  - [Licence](#licence)
 
 ## Requirements
 
@@ -103,7 +110,7 @@ route('impersonate.leave')
 
 ### Defining impersonation authorization
 
-By default all users can **impersonate** an user.  
+By default all users can **impersonate** a user.  
 You need to add the method `canImpersonate()` to your user model:
 
 ```php
@@ -145,13 +152,13 @@ public function impersonate(ImpersonateManager $manager, $user_id) { /* ... */ }
 ```php
 $manager = app('impersonate');
 
-// Find an user by its ID
+// Find a user by its ID
 $manager->findUserById($id);
 
-// TRUE if your are impersonating an user.
+// TRUE if your are impersonating a user.
 $manager->isImpersonating();
 
-// Impersonate an user. Pass the original user and the user you want to impersonate
+// Impersonate a user. Pass the original user and the user you want to impersonate
 $manager->take($from, $to);
 
 // Leave current impersonation
@@ -178,7 +185,7 @@ Router::get('/my-credit-card', function() {
 
 There are two events available that can be used to improve your workflow:
 - `TakeImpersonation` is fired when an impersonation is taken.
-- `LeaveImpersonation` is fired when an impersonation is leaved.
+- `LeaveImpersonation` is fired when an impersonation is left.
 
 Each events returns two properties `$event->impersonator` and `$event->impersonated` containing User model instance.
 
@@ -197,11 +204,11 @@ Available options:
     'session_key' => 'impersonated_by',
     // Where to redirect after taking an impersonation.
     // Only used in the built-in controller.
-    // You can use: an URI, the keyword back (to redirect back) or a route name
+    // You can use: a URI, the keyword back (to redirect back) or a route name
     'take_redirect_to' => '/',
     // Where to redirect after leaving an impersonation.
     // Only used in the built-in controller.
-    // You can use: an URI, the keyword back (to redirect back) or a route name
+    // You can use: a URI, the keyword back (to redirect back) or a route name
     'leave_redirect_to' => '/'
 ```
 
