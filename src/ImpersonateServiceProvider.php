@@ -5,6 +5,7 @@ namespace Lab404\Impersonate;
 use Illuminate\Auth\AuthManager;
 use Illuminate\Auth\Events\Login;
 use Illuminate\Auth\Events\Logout;
+use Illuminate\Container\Container;
 use Illuminate\Foundation\Application;
 use Illuminate\Support\Facades\Event;
 use Illuminate\View\Compilers\BladeCompiler;
@@ -34,7 +35,9 @@ class ImpersonateServiceProvider extends \Illuminate\Support\ServiceProvider
         $this->app->bind(ImpersonateManager::class, ImpersonateManager::class);
 
         $this->app->singleton(ImpersonateManager::class, function ($app) {
-            return new ImpersonateManager($app);
+            return new ImpersonateManager(function () {
+                return Container::getInstance();
+            });
         });
 
         $this->app->alias(ImpersonateManager::class, 'impersonate');
