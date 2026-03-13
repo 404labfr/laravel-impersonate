@@ -8,7 +8,7 @@ use Lab404\Impersonate\Services\ImpersonateManager;
 trait Impersonate
 {
     /**
-     * Return true or false if the user can impersonate an other user.
+     * Return true or false if the user can impersonate another user.
      *
      * @param void
      * @return  bool
@@ -19,7 +19,7 @@ trait Impersonate
     }
 
     /**
-     * Return true or false if the user can be impersonate.
+     * Return true or false if the user can be impersonated.
      *
      * @param void
      * @return  bool

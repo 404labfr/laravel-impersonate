@@ -8,7 +8,7 @@ return [
     'session_key' => 'impersonated_by',
 
     /**
-     * The session key used to stored the original user guard.
+     * The session key used to store the original user guard.
      */
     'session_guard' => 'impersonator_guard',
 
