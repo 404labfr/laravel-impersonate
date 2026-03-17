@@ -1,5 +1,9 @@
 # Laravel Impersonate Changelog
 
+## 1.7.8
+
+- Laravel 13.x support (thanks to [erikn69](https://github.com/erikn69), [#237](https://github.com/404labfr/laravel-impersonate/pull/237))
+
 ## 1.7.7
 
 - Laravel 12.x support (thanks to [erikn69](https://github.com/erikn69), [#216](https://github.com/404labfr/laravel-impersonate/pull/216))
