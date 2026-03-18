@@ -113,6 +113,7 @@ class ImpersonateManager
 
         try {
             $currentGuard = $this->getCurrentAuthGuardName();
+            session()->put("laravel-impersonate:leave_redirect_to", request()->headers->get('referer'));
             session()->put($this->getSessionKey(), $from->getAuthIdentifier());
             session()->put($this->getSessionGuard(), $currentGuard);
             session()->put($this->getSessionGuardUsing(), $guardName);
