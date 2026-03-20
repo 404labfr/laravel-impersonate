@@ -27,6 +27,7 @@ class ImpersonateManagerTest extends TestCase
         $this->firstGuard = 'web';
         $this->secondGuard = 'admin';
         $this->thirdGuard = 'otheruser';
+        $this->fourthGuard = 'othersession';
     }
 
     /** @test */
@@ -128,6 +129,19 @@ class ImpersonateManagerTest extends TestCase
         $this->assertTrue($this->manager->leave());
         $this->assertFalse($this->manager->isImpersonating());
         $this->assertInstanceOf(User::class, $this->app['auth']->guard($this->secondGuard)->user());
+    }
+
+    /** @test */
+    public function it_prevents_impersonation_when_the_guard_lacks_quiet_methods()
+    {
+        // When the guard lacks the 'quietLogin' and 'quietLogout' methods.
+        $this->app['auth']->guard($this->secondGuard)->loginUsingId('admin@test.rocks');
+        $this->assertFalse($this->manager->take(
+            $this->app['auth']->guard($this->secondGuard)->user(),
+            $this->manager->findUserById('user@test.rocks', $this->firstGuard),
+            $this->fourthGuard
+        ));
+        $this->assertFalse($this->manager->isImpersonating());
     }
 
     /** @test */
